@@ -1,0 +1,16 @@
+<div class="login-container">
+  <h2>Iniciar Sesión - ERO</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <div>
+      <label>Email:</label>
+      <input type="email" formControlName="email">
+    </div>
+
+    <div>
+      <label>Contraseña:</label>
+      <input type="password" formControlName="password">
+    </div>
+
+    <button type="submit" [disabled]="loginForm.invalid">Entrar</button>
+  </form>
+</div>
