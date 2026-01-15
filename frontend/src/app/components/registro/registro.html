@@ -1,0 +1,30 @@
+<div class="registro-container">
+  <h2>Crear Cuenta - Proyecto ERO</h2>
+  <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+
+    <div>
+      <label>Nombre:</label>
+      <input type="text" formControlName="name">
+    </div>
+
+    <div>
+      <label>Apellidos:</label>
+      <input type="text" formControlName="last_name">
+    </div>
+
+    <div>
+      <label>Email:</label>
+      <input type="email" formControlName="email">
+      <small *ngIf="registroForm.get('email')?.errors?.['email'] && registroForm.get('email')?.touched">
+        El formato del email no es válido.
+      </small>
+    </div>a
+
+    <div>
+      <label>Contraseña (mín. 8 caracteres):</label>
+      <input type="password" formControlName="password">
+    </div>
+
+    <button type="submit" [disabled]="registroForm.invalid">Registrar Atleta</button>
+  </form>
+</div>
