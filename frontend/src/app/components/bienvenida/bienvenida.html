@@ -1,0 +1,23 @@
+<div class="bienvenida-container">
+  <div class="bienvenida-content">
+    <h1 class="titulo">¡Bienvenido a tu TFG!</h1>
+    <p class="subtitulo">Gestiona tu proyecto de forma sencilla</p>
+
+    <div class="botones-container">
+      <button class="btn btn-primary" (click)="irALogin()">
+        <span class="btn-icon">🔐</span>
+        Iniciar Sesión
+      </button>
+
+      <button class="btn btn-secondary" (click)="irARegistro()">
+        <span class="btn-icon">✨</span>
+        Registrarse
+      </button>
+    </div>
+
+    <div class="info">
+      <p>¿Primera vez aquí? <a (click)="irARegistro()" class="link">Crea una cuenta</a></p>
+      <p>¿Ya tienes cuenta? <a (click)="irALogin()" class="link">Inicia sesión</a></p>
+    </div>
+  </div>
+</div>
