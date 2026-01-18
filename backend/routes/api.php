@@ -10,8 +10,11 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-//Ruta pra el registro
+//Ruta para el registro
 Route::post('/register', [AuthController::class, 'register']);
+
+//Ruta para el login
+Route::post('/login', [AuthController::class, 'login']);
 
 //Ruta para ver todos los usuarios
 Route::get('/ver-usuarios', function () {
