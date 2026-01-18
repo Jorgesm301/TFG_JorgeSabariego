@@ -1,23 +1,59 @@
-<div class="bienvenida-container">
-  <div class="bienvenida-content">
-    <h1 class="titulo">¡Bienvenido a tu TFG!</h1>
-    <p class="subtitulo">Gestiona tu proyecto de forma sencilla</p>
+<div class="page">
 
-    <div class="botones-container">
-      <button class="btn btn-primary" (click)="irALogin()">
-        <span class="btn-icon">🔐</span>
-        Iniciar Sesión
-      </button>
+  <!-- HEADER a ancho completo -->
+  <header class="header">
+    <div class="header-inner">
+      <a routerLink="/" class="brand">
+        <span class="logo" aria-hidden="true">🏟️</span>
+        <div class="brand-text">
+          <div class="brand-name">Polideportivo Municipal</div>
+          <div class="brand-sub">Reservas · Partidos · Nivel ERO</div>
+        </div>
+      </a>
 
-      <button class="btn btn-secondary" (click)="irARegistro()">
-        <span class="btn-icon">✨</span>
-        Registrarse
-      </button>
+      <div class="actions">
+        <button class="btn btn-ghost" (click)="irALogin()">Iniciar sesión</button>
+        <button class="btn btn-solid" (click)="irARegistro()">Registrarse</button>
+      </div>
     </div>
+  </header>
 
-    <div class="info">
-      <p>¿Primera vez aquí? <a (click)="irARegistro()" class="link">Crea una cuenta</a></p>
-      <p>¿Ya tienes cuenta? <a (click)="irALogin()" class="link">Inicia sesión</a></p>
-    </div>
-  </div>
+  <!-- CONTENIDO centrado -->
+  <main class="content">
+
+    <!-- SLIDER -->
+    <section class="slider" aria-label="Galería de deportes">
+      <div class="slider-frame">
+        <img
+          class="slide-image"
+          [src]="slides[currentIndex].imageUrl"
+          [alt]="slides[currentIndex].title"
+        />
+
+        <div class="slide-overlay">
+          <div class="slide-title">{{ slides[currentIndex].title }}</div>
+          <div class="slide-sub">{{ slides[currentIndex].subtitle }}</div>
+        </div>
+
+        <button class="nav-arrow left" (click)="prevSlide()" aria-label="Anterior">‹</button>
+        <button class="nav-arrow right" (click)="nextSlide()" aria-label="Siguiente">›</button>
+      </div>
+
+      <div class="dots" role="tablist" aria-label="Seleccionar imagen">
+        <button
+          class="dot"
+          *ngFor="let s of slides; let i = index"
+          [class.active]="i === currentIndex"
+          (click)="goTo(i)"
+          [attr.aria-label]="'Ir a ' + s.title"
+        ></button>
+      </div>
+
+      <div class="slide-actions-bottom">
+        <button class="btn btn-solid btn-lg" (click)="reservarAhora()">Reserva ahora</button>
+        <button class="btn btn-ghost btn-lg" (click)="irARegistro()">Crear cuenta</button>
+      </div>
+    </section>
+
+  </main>
 </div>

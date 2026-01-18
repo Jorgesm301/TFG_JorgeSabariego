@@ -1,51 +1,221 @@
+/* ====== Base ====== */
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background:
+    repeating-linear-gradient(90deg, rgba(34,197,94,0.03) 0px, transparent 2px, transparent 80px),
+    repeating-linear-gradient(0deg, rgba(34,197,94,0.03) 0px, transparent 2px, transparent 80px),
+    linear-gradient(135deg, rgba(34,197,94,0.15) 0%, transparent 50%),
+    linear-gradient(225deg, rgba(59,130,246,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 20%, rgba(245,158,11,0.08), transparent 60%),
+    linear-gradient(180deg, #0a1018 0%, #141d2b 50%, #0a1018 100%);
+  padding: 0;
+  color: #fff;
+}
+
+/* ====== Header ====== */
+.header {
+  width: 100%;
+  background: rgba(10, 16, 32, 0.72);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+
+.header-inner {
+  max-width: 100%;
+  margin: 0;
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.brand:hover {
+  opacity: 0.85;
+}
+
+.brand-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+  font-size: 20px;
+}
+
+.brand-name {
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  color: #ffffff;
+}
+
+.brand-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.72);
+  font-weight: 700;
+}
+
 .registro-container {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    background-color: #f9f9f9;
-    font-family: Arial, sans-serif;
+  width: 100%;
+  max-width: 440px;
+  margin: auto;
+  padding: 20px;
 }
 
-h2 {
-    text-align: center;
-    color: #333;
+.registro-card {
+  padding: 40px 32px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
-div {
-    margin-bottom: 15px;
+/* ====== Header ====== */
+.card-header {
+  text-align: center;
+  margin-bottom: 32px;
 }
 
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+.logo {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 32px;
 }
 
-input {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box; /* Para que el padding no ensanche el input */
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.title {
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.3px;
 }
 
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+.subtitle {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+  margin: 0;
 }
 
-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+/* ====== Form ====== */
+.form-group {
+  margin-bottom: 20px;
 }
 
-small {
-    color: red;
+.label {
+  display: block;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.input:focus {
+  outline: none;
+  border-color: rgba(34, 197, 94, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+.error {
+  display: block;
+  color: rgba(239, 68, 68, 1);
+  font-size: 12px;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+/* ====== Button ====== */
+.btn {
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-solid {
+  background: linear-gradient(135deg, #22c55e 0%, #f59e0b 100%);
+  color: #071018;
+  box-shadow: 0 14px 34px rgba(245,158,11,0.18);
+}
+
+.btn-solid:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(34,197,94,0.18);
+}
+
+.btn-solid:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-full {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* ====== Footer ====== */
+.card-footer {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+}
+
+.footer-text {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+  margin: 0;
+}
+
+.link {
+  color: #22c55e;
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: #f59e0b;
 }

@@ -1,30 +1,76 @@
-<div class="registro-container">
-  <h2>Crear Cuenta - Proyecto ERO</h2>
-  <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
-
-    <div>
-      <label>Nombre:</label>
-      <input type="text" formControlName="name">
+<div class="page">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <a routerLink="/" class="brand">
+        <span class="brand-logo">🏟️</span>
+        <div class="brand-text">
+          <div class="brand-name">Polideportivo Municipal</div>
+          <div class="brand-sub">Reservas · Partidos · Nivel ERO</div>
+        </div>
+      </a>
     </div>
+  </header>
 
-    <div>
-      <label>Apellidos:</label>
-      <input type="text" formControlName="last_name">
+  <div class="registro-container">
+    <div class="registro-card">
+      <div class="card-header">
+        <div class="logo">🏃</div>
+        <h1 class="title">Crear Cuenta</h1>
+        <p class="subtitle">Únete a la comunidad ERO</p>
+      </div>
+
+      <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label class="label">Nombre</label>
+          <input
+            type="text"
+            formControlName="name"
+            class="input"
+            placeholder="Tu nombre">
+        </div>
+
+        <div class="form-group">
+          <label class="label">Apellidos</label>
+          <input
+            type="text"
+            formControlName="last_name"
+            class="input"
+            placeholder="Tus apellidos">
+        </div>
+
+        <div class="form-group">
+          <label class="label">Email</label>
+          <input
+            type="email"
+            formControlName="email"
+            class="input"
+            placeholder="tu@email.com">
+          <small class="error" *ngIf="registroForm.get('email')?.errors?.['email'] && registroForm.get('email')?.touched">
+            El formato del email no es válido.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Contraseña</label>
+          <input
+            type="password"
+            formControlName="password"
+            class="input"
+            placeholder="Mínimo 8 caracteres">
+        </div>
+
+        <button type="submit" [disabled]="registroForm.invalid" class="btn btn-solid btn-full">
+          Registrar Atleta
+        </button>
+      </form>
+
+      <div class="card-footer">
+        <p class="footer-text">
+          ¿Ya tienes cuenta?
+          <a routerLink="/login" class="link">Inicia sesión</a>
+        </p>
+      </div>
     </div>
-
-    <div>
-      <label>Email:</label>
-      <input type="email" formControlName="email">
-      <small *ngIf="registroForm.get('email')?.errors?.['email'] && registroForm.get('email')?.touched">
-        El formato del email no es válido.
-      </small>
-    </div>a
-
-    <div>
-      <label>Contraseña (mín. 8 caracteres):</label>
-      <input type="password" formControlName="password">
-    </div>
-
-    <button type="submit" [disabled]="registroForm.invalid">Registrar Atleta</button>
-  </form>
+  </div>
 </div>
