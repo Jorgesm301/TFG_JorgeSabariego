@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth'; // Verifica que la ruta al servicio sea correcta
 
 @Component({
@@ -14,7 +14,11 @@ import { AuthService } from '../../services/auth'; // Verifica que la ruta al se
 export class Registro { // Dejamos el nombre "Registro" como en tu imagen
   registroForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.registroForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       last_name: ['', [Validators.required]],
@@ -29,6 +33,8 @@ export class Registro { // Dejamos el nombre "Registro" como en tu imagen
         next: (res) => {
           alert('¡Usuario creado con éxito!');
           this.registroForm.reset();
+          // Redirigir a la página principal
+          this.router.navigate(['/principal']);
         },
         error: (err) => {
           alert('Error al conectar con Laravel. Revisa la consola.');

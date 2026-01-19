@@ -29,9 +29,9 @@ export class Login {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (res) => {
-          alert('¡Bienvenido de nuevo!');
           console.log('Token:', res.access_token);
-          // Aquí más adelante guardaremos el token y redirigiremos al Home
+          // Guardar token y redirigir a la página principal
+          this.router.navigate(['/principal']);
         },
         error: (err) => {
           alert('Error: Credenciales incorrectas');

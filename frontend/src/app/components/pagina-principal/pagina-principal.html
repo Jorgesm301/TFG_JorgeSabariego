@@ -1,0 +1,162 @@
+<div class="page">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <a routerLink="/" class="brand">
+        <span class="brand-logo">🏟️</span>
+        <div class="brand-text">
+          <div class="brand-name">Polideportivo Municipal</div>
+          <div class="brand-sub">Reservas · Partidos · Nivel ERO</div>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <div class="user-info">
+          <span class="user-icon">👤</span>
+          <span class="user-name">{{ usuarioNombre }}</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" (click)="cerrarSesion()">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+
+      <!-- BIENVENIDA -->
+      <section class="welcome-section">
+        <h1 class="page-title">¡Bienvenido, {{ usuarioNombre }}! 👋</h1>
+        <p class="page-subtitle">Gestiona tus reservas y encuentra partidos</p>
+      </section>
+
+      <!-- GRID PRINCIPAL -->
+      <div class="content-grid">
+
+        <!-- COLUMNA IZQUIERDA: Calendario y Deportes -->
+        <div class="left-column">
+
+          <!-- SELECTOR DE DEPORTES -->
+          <div class="card deportes-card">
+            <h2 class="card-title">Selecciona un deporte</h2>
+            <div class="deportes-grid">
+              <button
+                *ngFor="let deporte of deportes"
+                class="deporte-btn"
+                [class.active]="deporteSeleccionado === deporte.nombre"
+                [style.--deporte-color]="deporte.color"
+                (click)="seleccionarDeporte(deporte.nombre)"
+              >
+                <span class="deporte-icon">{{ deporte.icon }}</span>
+                <span class="deporte-name">{{ deporte.nombre }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- CALENDARIO -->
+          <div class="card calendario-card">
+            <div class="card-header-row">
+              <h2 class="card-title">Calendario</h2>
+              <span class="mes-actual">{{ mesActual }}</span>
+            </div>
+
+            <div class="calendario">
+              <div class="dias-grid">
+                <button
+                  *ngFor="let dia of dias"
+                  class="dia-btn"
+                  [class.hoy]="dia.esHoy"
+                  [class.seleccionado]="dia.esSeleccionado"
+                  [class.deshabilitado]="!dia.tieneFecha"
+                  (click)="seleccionarDia(dia)"
+                  [disabled]="!dia.tieneFecha"
+                >
+                  <span class="dia-nombre">{{ dia.nombre }}</span>
+                  <span class="dia-numero">{{ dia.numero }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- HORARIOS DISPONIBLES -->
+          <div class="card horarios-card">
+            <h2 class="card-title">Horarios disponibles</h2>
+            <p class="card-subtitle">{{ deporteSeleccionado }} - Día {{ diaSeleccionado }}</p>
+
+            <div class="horarios-grid">
+              <button
+                *ngFor="let horario of horariosDisponibles"
+                class="horario-btn"
+                [class.disponible]="horario.disponible"
+                [class.ocupado]="!horario.disponible"
+                (click)="reservarHorario(horario)"
+                [disabled]="!horario.disponible"
+              >
+                <span class="horario-hora">{{ horario.hora }}</span>
+                <span class="horario-pista">{{ horario.pista }}</span>
+                <span class="horario-estado">
+                  {{ horario.disponible ? '✓ Disponible' : '✗ Ocupado' }}
+                </span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- COLUMNA DERECHA: Mis Reservas -->
+        <div class="right-column">
+          <div class="card reservas-card">
+            <h2 class="card-title">Mis Reservas</h2>
+
+            <div class="reservas-list">
+              <div
+                *ngFor="let reserva of misReservas"
+                class="reserva-item"
+                [class.confirmada]="reserva.estado === 'confirmada'"
+                [class.pendiente]="reserva.estado === 'pendiente'"
+                [class.cancelada]="reserva.estado === 'cancelada'"
+              >
+                <div class="reserva-header">
+                  <span class="reserva-deporte">{{ reserva.deporte }}</span>
+                  <span class="reserva-badge" [class]="reserva.estado">
+                    {{ reserva.estado }}
+                  </span>
+                </div>
+
+                <div class="reserva-info">
+                  <div class="info-row">
+                    <span class="info-icon">📅</span>
+                    <span class="info-text">{{ reserva.fecha }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-icon">🕐</span>
+                    <span class="info-text">{{ reserva.hora }}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-icon">🏟️</span>
+                    <span class="info-text">{{ reserva.pista }}</span>
+                  </div>
+                </div>
+
+                <div class="reserva-actions" *ngIf="reserva.estado !== 'cancelada'">
+                  <button class="btn-action btn-cancel" (click)="cancelarReserva(reserva)">
+                    Cancelar
+                  </button>
+                  <button class="btn-action btn-details">
+                    Ver detalles
+                  </button>
+                </div>
+              </div>
+
+              <div *ngIf="misReservas.length === 0" class="empty-state">
+                <span class="empty-icon">📋</span>
+                <p class="empty-text">No tienes reservas activas</p>
+                <p class="empty-subtext">Selecciona un horario para crear una</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
