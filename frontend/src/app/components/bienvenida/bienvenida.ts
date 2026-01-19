@@ -20,19 +20,39 @@ export class Bienvenida implements OnInit, OnDestroy {
 
   slides: Slide[] = [
     {
-      title: 'Pádel',
-      subtitle: 'Reserva pista y encuentra partido',
-      imageUrl: 'https://images.pexels.com/photos/32897040/pexels-photo-32897040.jpeg'
-    },
-    {
       title: 'Fútbol',
       subtitle: 'Únete a pachangas y completa equipos',
       imageUrl: 'https://images.pexels.com/photos/8941651/pexels-photo-8941651.jpeg'
     },
     {
-      title: 'Basket',
+      title: 'Baloncesto',
       subtitle: 'Organiza partidos rápidos con tu nivel',
       imageUrl: 'https://images.pexels.com/photos/28776236/pexels-photo-28776236.jpeg'
+    },
+    {
+      title: 'Pádel',
+      subtitle: 'Reserva pista y encuentra partido',
+      imageUrl: 'https://images.pexels.com/photos/32897040/pexels-photo-32897040.jpeg'
+    },
+    {
+      title: 'Tenis',
+      subtitle: 'Encuentra rivales de tu nivel',
+      imageUrl: 'https://images.pexels.com/photos/34015718/pexels-photo-34015718.jpeg'
+    },
+    {
+      title: 'Voleibol',
+      subtitle: 'Completa equipos y juega en red',
+      imageUrl: 'https://images.pexels.com/photos/30307748/pexels-photo-30307748.jpeg'
+    },
+    {
+      title: 'Natación',
+      subtitle: 'Reserva carriles para entrenar',
+      imageUrl: 'https://images.pexels.com/photos/8688137/pexels-photo-8688137.jpeg'
+    },
+    {
+      title: 'Atletismo',
+      subtitle: 'Acceso a pista y entrenamiento grupal',
+      imageUrl: 'https://images.pexels.com/photos/34523833/pexels-photo-34523833.jpeg'
     }
   ];
 
