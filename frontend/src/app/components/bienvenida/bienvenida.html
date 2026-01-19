@@ -28,6 +28,8 @@
           class="slide-image"
           [src]="slides[currentIndex].imageUrl"
           [alt]="slides[currentIndex].title"
+          (error)="onImageError($event)"
+          loading="eager"
         />
 
         <div class="slide-overlay">

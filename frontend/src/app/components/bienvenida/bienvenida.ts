@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -22,32 +22,45 @@ export class Bienvenida implements OnInit, OnDestroy {
     {
       title: 'Pádel',
       subtitle: 'Reserva pista y encuentra partido',
-      imageUrl: 'https://images.unsplash.com/photo-1620761151994-9a4a3f2e9f77?auto=format&fit=crop&w=1400&q=80'
+      imageUrl: 'https://images.pexels.com/photos/32897040/pexels-photo-32897040.jpeg'
     },
     {
       title: 'Fútbol',
       subtitle: 'Únete a pachangas y completa equipos',
-      imageUrl: 'https://images.unsplash.com/photo-1521412644187-c49fa049e84d?auto=format&fit=crop&w=1400&q=80'
+      imageUrl: 'https://images.pexels.com/photos/8941651/pexels-photo-8941651.jpeg'
     },
     {
       title: 'Basket',
       subtitle: 'Organiza partidos rápidos con tu nivel',
-      imageUrl: 'https://images.unsplash.com/photo-1519861155730-0b5fbf0dd889?auto=format&fit=crop&w=1400&q=80'
+      imageUrl: 'https://images.pexels.com/photos/28776236/pexels-photo-28776236.jpeg'
     }
   ];
 
   currentIndex = 0;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
-    this.timerId = setInterval(() => {
-      this.nextSlide();
-    }, 4500); // cambia cada 4.5s
+    this.startAutoSlide();
   }
 
   ngOnDestroy(): void {
-    if (this.timerId) clearInterval(this.timerId);
+    this.stopAutoSlide();
+  }
+
+  private startAutoSlide(): void {
+    this.stopAutoSlide();
+    this.timerId = setInterval(() => {
+      this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+      this.cdr.detectChanges(); // <--- Forzamos actualización de la vista
+    }, 3000);
+  }
+
+  private stopAutoSlide(): void {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+      this.timerId = null;
+    }
   }
 
   irALogin() {
@@ -59,19 +72,28 @@ export class Bienvenida implements OnInit, OnDestroy {
   }
 
   reservarAhora() {
-    // si todavía no tienes /reservas, lo normal es enviar al login
     this.router.navigate(['/login']);
   }
 
   nextSlide() {
+    this.stopAutoSlide();
     this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+    this.startAutoSlide();
   }
 
   prevSlide() {
+    this.stopAutoSlide();
     this.currentIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+    this.startAutoSlide();
   }
 
   goTo(i: number) {
+    this.stopAutoSlide();
     this.currentIndex = i;
+    this.startAutoSlide();
+  }
+
+  onImageError(event: any) {
+    event.target.style.display = 'none';
   }
 }
