@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DeporteController;
 use App\Models\User;
 
 
@@ -20,3 +21,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/ver-usuarios', function () {
     return User::all();
 });
+
+// Rutas públicas para deportes (sin autenticación)
+Route::get('/deportes', [DeporteController::class, 'index']);
+Route::get('/deportes/{id}', [DeporteController::class, 'show']);

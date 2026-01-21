@@ -1,0 +1,92 @@
+<div class="perfil-page">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <button class="btn-back" (click)="volverInicio()">
+        <span class="arrow-back">←</span> Volver al inicio
+      </button>
+      <h1 class="page-title">Mi Perfil</h1>
+      <div></div>
+    </div>
+  </header>
+
+  <!-- Contenido del perfil -->
+  <div class="perfil-content">
+
+    <!-- Card del usuario -->
+    <div class="perfil-card">
+      <div class="perfil-avatar">
+        <span class="avatar-icon">👤</span>
+      </div>
+
+      <div class="perfil-info">
+        <h2 class="perfil-nombre">{{ usuario?.name }} {{ usuario?.last_name }}</h2>
+        <p class="perfil-email">{{ usuario?.email }}</p>
+        <p class="perfil-fecha">Miembro desde {{ usuario?.created_at | date:'MMMM yyyy' }}</p>
+      </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+          <div class="stat-value">0</div>
+          <div class="stat-label">Reservas totales</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">⚽</div>
+        <div class="stat-info">
+          <div class="stat-value">0</div>
+          <div class="stat-label">Partidos jugados</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-info">
+          <div class="stat-value">ERO 0</div>
+          <div class="stat-label">Nivel actual</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Opciones -->
+    <div class="opciones-grid">
+      <button class="opcion-card" routerLink="/">
+        <span class="opcion-icon">🏠</span>
+        <div class="opcion-info">
+          <div class="opcion-title">Inicio</div>
+          <div class="opcion-desc">Volver a la página principal</div>
+        </div>
+      </button>
+
+      <button class="opcion-card">
+        <span class="opcion-icon">📋</span>
+        <div class="opcion-info">
+          <div class="opcion-title">Mis Reservas</div>
+          <div class="opcion-desc">Ver mis reservas activas</div>
+        </div>
+      </button>
+
+      <button class="opcion-card">
+        <span class="opcion-icon">⚙️</span>
+        <div class="opcion-info">
+          <div class="opcion-title">Configuración</div>
+          <div class="opcion-desc">Ajustes de la cuenta</div>
+        </div>
+      </button>
+
+      <button class="opcion-card danger" (click)="logout()">
+        <span class="opcion-icon">🚪</span>
+        <div class="opcion-info">
+          <div class="opcion-title">Cerrar Sesión</div>
+          <div class="opcion-desc">Salir de tu cuenta</div>
+        </div>
+      </button>
+    </div>
+
+  </div>
+</div>

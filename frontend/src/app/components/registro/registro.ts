@@ -32,9 +32,18 @@ export class Registro { // Dejamos el nombre "Registro" como en tu imagen
       this.authService.registrar(this.registroForm.value).subscribe({
         next: (res) => {
           alert('¡Usuario creado con éxito!');
-          this.registroForm.reset();
-          // Redirigir a la página principal
-          this.router.navigate(['/principal']);
+          // Hacer login automático después del registro
+          this.authService.login({
+            email: this.registroForm.value.email,
+            password: this.registroForm.value.password
+          }).subscribe({
+            next: () => {
+              this.router.navigate(['/']); // Ir a bienvenida
+            },
+            error: () => {
+              this.router.navigate(['/login']); // Si falla, ir a login
+            }
+          });
         },
         error: (err) => {
           alert('Error al conectar con Laravel. Revisa la consola.');

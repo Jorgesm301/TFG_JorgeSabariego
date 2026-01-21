@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth';
 
 type Slide = {
   title: string;
@@ -70,7 +71,21 @@ export class Bienvenida implements OnInit, OnDestroy {
 
   currentIndex = 0;
 
-  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
+  ) {}
+
+  // Verificar si el usuario está logueado
+  get estaLogueado(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
+  // Obtener el nombre del usuario logueado
+  get nombreUsuario(): string {
+    return this.authService.getUserData()?.name || '';
+  }
 
   ngOnInit(): void {
     this.startAutoSlide();
@@ -101,6 +116,10 @@ export class Bienvenida implements OnInit, OnDestroy {
 
   irARegistro() {
     this.router.navigate(['/registro']);
+  }
+
+  irAPerfil() {
+    this.router.navigate(['/perfil']);
   }
 
   reservarAhora() {
