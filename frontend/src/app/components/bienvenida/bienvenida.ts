@@ -126,8 +126,12 @@ export class Bienvenida implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
-  toggleMenuReservar() {
-    this.menuReservarAbierto = !this.menuReservarAbierto;
+  abrirMenuReservar() {
+    this.menuReservarAbierto = true;
+  }
+
+  cerrarMenuReservar() {
+    this.menuReservarAbierto = false;
   }
 
   cerrarMenus() {
@@ -137,14 +141,6 @@ export class Bienvenida implements OnInit, OnDestroy {
   navegarADeporte(ruta: string) {
     this.cerrarMenus();
     this.router.navigate([ruta]);
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (!target.closest('.menu-item')) {
-      this.cerrarMenus();
-    }
   }
 
   nextSlide() {

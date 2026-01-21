@@ -35,7 +35,7 @@ export class Login {
       this.authService.login(this.loginForm.value).subscribe({
         next: (res) => {
           console.log('Login exitoso, token guardado');
-          // Redirigir a la página donde estaba o a /principal
+          // Redirigir a la página donde estaba o a la bienvenida
           this.router.navigateByUrl(this.returnUrl);
         },
         error: (err) => {

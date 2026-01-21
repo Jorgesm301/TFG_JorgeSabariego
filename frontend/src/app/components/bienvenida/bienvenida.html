@@ -30,12 +30,11 @@
   <nav class="subheader">
     <div class="subheader-inner">
       <!-- Menú Reservar -->
-      <div class="menu-item" [class.active]="menuReservarAbierto">
-        <button class="menu-btn" (click)="toggleMenuReservar()">
+      <div class="menu-item" [class.active]="menuReservarAbierto" (mouseenter)="abrirMenuReservar()" (mouseleave)="cerrarMenuReservar()">
+        <button class="menu-btn">
           <span>Reservar</span>
-          <span class="arrow">▼</span>
         </button>
-        <div class="dropdown" *ngIf="menuReservarAbierto" (click)="cerrarMenus()">
+        <div class="dropdown" *ngIf="menuReservarAbierto">
           <a
             *ngFor="let deporte of deportesMenu"
             class="dropdown-item"
@@ -61,12 +60,6 @@
         </button>
       </a>
 
-      <!-- Menú Mi Perfil -->
-      <a routerLink="/perfil" class="menu-item">
-        <button class="menu-btn">
-          <span>Mi Perfil</span>
-        </button>
-      </a>
     </div>
   </nav>
 

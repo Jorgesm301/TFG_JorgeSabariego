@@ -1,0 +1,55 @@
+<div class="reservas-page">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <button class="btn-back" (click)="volverInicio()">
+        <span class="arrow-back">←</span> Volver al inicio
+      </button>
+      <h1 class="page-title">Mis Reservas</h1>
+      <div></div>
+    </div>
+  </header>
+
+  <!-- Contenido -->
+  <div class="reservas-content">
+
+    <!-- Estado vacío -->
+    <div class="empty-state" *ngIf="reservas.length === 0">
+      <div class="empty-icon">📅</div>
+      <h2 class="empty-title">No tienes reservas</h2>
+      <p class="empty-text">Aún no has realizado ninguna reserva. ¡Explora nuestras instalaciones y reserva tu pista!</p>
+      <button class="btn-primary" routerLink="/">
+        Explorar instalaciones
+      </button>
+    </div>
+
+    <!-- Lista de reservas (se mostrará cuando haya datos) -->
+    <div class="reservas-grid" *ngIf="reservas.length > 0">
+      <div class="reserva-card" *ngFor="let reserva of reservas">
+        <div class="reserva-header">
+          <span class="reserva-deporte">{{ reserva.deporte }}</span>
+          <span class="reserva-estado" [class]="reserva.estado">{{ reserva.estado }}</span>
+        </div>
+        <div class="reserva-info">
+          <div class="info-item">
+            <span class="info-icon">📅</span>
+            <span>{{ reserva.fecha }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">⏰</span>
+            <span>{{ reserva.hora }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-icon">📍</span>
+            <span>{{ reserva.pista }}</span>
+          </div>
+        </div>
+        <div class="reserva-actions">
+          <button class="btn-small btn-outline">Ver detalles</button>
+          <button class="btn-small btn-danger">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
