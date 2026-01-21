@@ -28,6 +28,7 @@ type Dia = {
 })
 export class PaginaPrincipal implements OnInit {
   usuarioNombre = 'Jorge'; // Aquí después vendrá del servicio de autenticación
+  menuReservarAbierto = false;
 
   mesActual = 'Enero 2026';
   diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
@@ -36,10 +37,15 @@ export class PaginaPrincipal implements OnInit {
   diaSeleccionado = 19;
 
   deportes = [
-    { id: 1, nombre: 'Pádel', icon: '🎾', color: '#22c55e' },
-    { id: 2, nombre: 'Fútbol', icon: '⚽', color: '#3b82f6' },
-    { id: 3, nombre: 'Basket', icon: '🏀', color: '#f59e0b' },
-    { id: 4, nombre: 'Tenis', icon: '🎾', color: '#ec4899' }
+
+    { id: 1, nombre: 'Fútbol', icon: '⚽', color: '#3b82f6' },
+    { id: 2, nombre: 'Basket', icon: '🏀', color: '#f59e0b' },
+    { id: 3, nombre: 'Tenis', icon: '🎾', color: '#ec4899' },
+    { id: 4, nombre: 'Pádel', icon: '🎾', color: '#22c55e' },
+    { id: 5, nombre: 'Voleibol', icon: '🏐', color: '#f97316' },
+    { id: 6, nombre: 'Natación', icon: '🏊', color: '#3b82f6' },
+    { id: 7, nombre: 'Atletismo', icon: '🏃', color: '#b529c2' }
+
   ];
 
   deporteSeleccionado = 'Pádel';
@@ -111,6 +117,19 @@ export class PaginaPrincipal implements OnInit {
 
   seleccionarDeporte(deporte: string): void {
     this.deporteSeleccionado = deporte;
+  }
+
+  abrirMenuReservar(): void {
+    this.menuReservarAbierto = true;
+  }
+
+  cerrarMenuReservar(): void {
+    this.menuReservarAbierto = false;
+  }
+
+  seleccionarDeporteMenu(deporte: string): void {
+    this.seleccionarDeporte(deporte);
+    this.cerrarMenuReservar();
   }
 
   reservarHorario(horario: any): void {

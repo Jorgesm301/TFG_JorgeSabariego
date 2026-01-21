@@ -15,10 +15,53 @@
           <span class="user-icon">👤</span>
           <span class="user-name">{{ usuarioNombre }}</span>
         </div>
-        <button class="btn btn-ghost btn-sm" (click)="cerrarSesion()">Salir</button>
       </div>
     </div>
   </header>
+
+  <!-- SUBCABECERA con menús desplegables -->
+  <nav class="subheader">
+    <div class="subheader-inner">
+      <!-- Menú Reservar -->
+      <div class="menu-item" (mouseenter)="abrirMenuReservar()" (mouseleave)="cerrarMenuReservar()">
+        <button class="menu-btn">
+          <span>Reservar</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="dropdown" *ngIf="menuReservarAbierto">
+          <a
+            *ngFor="let deporte of deportes"
+            class="dropdown-item"
+            (click)="seleccionarDeporteMenu(deporte.nombre)"
+          >
+            <span class="dropdown-icon">{{ deporte.icon }}</span>
+            <span>{{ deporte.nombre }}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Menú Mis Reservas -->
+      <a class="menu-item menu-link">
+        <button class="menu-btn">
+          <span>Mis Reservas</span>
+        </button>
+      </a>
+
+       <!-- Menú Niveles de ERO -->
+      <a class="menu-item menu-link">
+        <button class="menu-btn">
+          <span>Niveles de ERO</span>
+        </button>
+      </a>
+
+      <!-- Menú Mi Perfil -->
+      <a class="menu-item menu-link">
+        <button class="menu-btn">
+          <span>Mi Perfil</span>
+        </button>
+      </a>
+    </div>
+  </nav>
 
   <main class="main-content">
     <div class="container">

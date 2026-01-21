@@ -9,7 +9,7 @@ class Deporte extends Model
 {
     use HasFactory;
 
-    protected $table = 'deportes'; // Opcional, pero ayuda si el plural es complejo
+    protected $table = 'deportes';
 
     protected $fillable = [
         'nombre',

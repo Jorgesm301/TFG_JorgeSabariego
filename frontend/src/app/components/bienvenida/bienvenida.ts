@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -17,6 +17,18 @@ type Slide = {
 })
 export class Bienvenida implements OnInit, OnDestroy {
   private timerId: any;
+  menuReservarAbierto = false;
+
+  deportesMenu = [
+
+    { nombre: 'Fútbol', icon: '⚽', ruta: '/reservar/futbol'},
+    { nombre: 'Baloncesto', icon: '🏀', ruta: '/reservar/baloncesto' },
+    { nombre: 'Tenis', icon: '🎾', ruta: '/reservar/tenis' },
+    { nombre: 'Pádel', icon: '🎾', ruta: '/reservar/padel' },
+    { nombre: 'Voleibol', icon: '🏐', ruta: '/reservar/voleibol' },
+    { nombre: 'Natación', icon: '🏊', ruta: '/reservar/natacion' },
+    { nombre: 'Atletismo', icon: '🏃', ruta: '/reservar/atletismo' }
+  ];
 
   slides: Slide[] = [
     {
@@ -93,6 +105,27 @@ export class Bienvenida implements OnInit, OnDestroy {
 
   reservarAhora() {
     this.router.navigate(['/login']);
+  }
+
+  toggleMenuReservar() {
+    this.menuReservarAbierto = !this.menuReservarAbierto;
+  }
+
+  cerrarMenus() {
+    this.menuReservarAbierto = false;
+  }
+
+  navegarADeporte(ruta: string) {
+    this.cerrarMenus();
+    this.router.navigate([ruta]);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.menu-item')) {
+      this.cerrarMenus();
+    }
   }
 
   nextSlide() {
