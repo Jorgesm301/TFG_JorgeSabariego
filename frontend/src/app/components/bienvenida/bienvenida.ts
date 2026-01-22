@@ -23,6 +23,7 @@ export class Bienvenida implements OnInit, OnDestroy {
   deportesMenu = [
 
     { nombre: 'Fútbol', icon: '⚽', ruta: '/reservar/futbol'},
+    { nombre: 'Fútbol Sala', icon: '⚽', ruta: '/reservar/futbol-sala'},
     { nombre: 'Baloncesto', icon: '🏀', ruta: '/reservar/baloncesto' },
     { nombre: 'Tenis', icon: '🎾', ruta: '/reservar/tenis' },
     { nombre: 'Pádel', icon: '🎾', ruta: '/reservar/padel' },
@@ -36,6 +37,11 @@ export class Bienvenida implements OnInit, OnDestroy {
       title: 'Fútbol',
       subtitle: 'Únete a pachangas y completa equipos',
       imageUrl: 'https://images.pexels.com/photos/8941651/pexels-photo-8941651.jpeg'
+    },
+    {
+      title: 'Fútbol Sala',
+      subtitle: 'Partidos en pista cubierta',
+      imageUrl: 'https://images.pexels.com/photos/16378321/pexels-photo-16378321.jpeg'
     },
     {
       title: 'Baloncesto',

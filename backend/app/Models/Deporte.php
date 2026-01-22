@@ -15,5 +15,14 @@ class Deporte extends Model
         'nombre',
         'max_jugadores',
         'descripcion',
+        'duracion_minutos',
     ];
+
+    /**
+     * Relación: Un deporte tiene muchas reservas
+     */
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

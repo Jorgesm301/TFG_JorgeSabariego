@@ -30,4 +30,22 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Relación: Un usuario tiene muchas reservas creadas
+     */
+    public function bookingsCreadas()
+    {
+        return $this->hasMany(Booking::class, 'creador_id');
+    }
+
+    /**
+     * Relación: Un usuario puede estar en muchas reservas
+     */
+    public function bookings()
+    {
+        return $this->belongsToMany(Booking::class, 'booking_user')
+                    ->withPivot('es_creador')
+                    ->withTimestamps();
+    }
 }

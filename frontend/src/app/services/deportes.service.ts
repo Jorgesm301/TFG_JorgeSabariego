@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 export interface Deporte {
   id: number;
   nombre: string;
+  max_jugadores: number;
+  duracion_minutos: number;
   descripcion?: string;
   icon?: string;
   color?: string;
@@ -21,8 +23,13 @@ export class DeportesService {
   constructor(private http: HttpClient) { }
 
   // Obtener todos los deportes (público)
-  getDeportes(): Observable<Deporte[]> {
+  getAllDeportes(): Observable<Deporte[]> {
     return this.http.get<Deporte[]>(`${this.API_URL}/deportes`);
+  }
+
+  // Obtener todos los deportes (alias para compatibilidad)
+  getDeportes(): Observable<Deporte[]> {
+    return this.getAllDeportes();
   }
 
   // Obtener un deporte específico (público)

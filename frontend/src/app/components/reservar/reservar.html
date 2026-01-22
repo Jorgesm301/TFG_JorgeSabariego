@@ -1,0 +1,129 @@
+<div class="reservar-container" *ngIf="deporte">
+  <div class="header">
+    <button class="btn-volver" (click)="volver()">← Volver</button>
+    <h1>{{ deporte.nombre }}</h1>
+    <p class="info">Duración: {{ deporte.duracion_minutos }} minutos | Jugadores: {{ deporte.max_jugadores }}</p>
+  </div>
+
+  <!-- Selector de modo -->
+  <div class="modo-selector">
+    <button
+      [class.activo]="modo === 'crear'"
+      (click)="cambiarModo('crear')"
+      class="btn-modo"
+    >
+      Crear Partido
+    </button>
+    <button
+      [class.activo]="modo === 'unirse'"
+      (click)="cambiarModo('unirse')"
+      class="btn-modo"
+    >
+      Unirse a Partido
+    </button>
+  </div>
+
+  <!-- Modo: Crear Partido -->
+  <div class="contenido" *ngIf="modo === 'crear'">
+    <div class="selector-fecha">
+      <label for="fecha">Selecciona la fecha:</label>
+      <input
+        type="date"
+        id="fecha"
+        [(ngModel)]="fechaSeleccionada"
+        [min]="fechaSeleccionada"
+        (change)="onFechaChange()"
+      />
+    </div>
+
+    <div class="horarios-section">
+      <h3>Horarios disponibles</h3>
+      <div class="horarios-grid">
+        <button
+          *ngFor="let hora of horariosDisponibles"
+          class="horario-btn"
+          [class.ocupado]="estaOcupado(hora)"
+          [class.seleccionado]="horaSeleccionada === hora"
+          [disabled]="estaOcupado(hora)"
+          (click)="horaSeleccionada = hora"
+        >
+          <span class="hora">{{ hora }} - {{ calcularHoraFin(hora) }}</span>
+          <span class="estado" *ngIf="estaOcupado(hora)">Ocupado</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="resumen" *ngIf="horaSeleccionada && !estaOcupado(horaSeleccionada)">
+      <h3>Resumen de tu reserva</h3>
+      <div class="resumen-content">
+        <p><strong>Deporte:</strong> {{ deporte.nombre }}</p>
+        <p><strong>Fecha:</strong> {{ fechaSeleccionada }}</p>
+        <p><strong>Hora:</strong> {{ horaSeleccionada }} - {{ calcularHoraFin(horaSeleccionada) }}</p>
+        <p><strong>Duración:</strong> {{ deporte.duracion_minutos }} minutos</p>
+        <p><strong>Jugadores máximos:</strong> {{ deporte.max_jugadores }}</p>
+      </div>
+
+      <button class="btn-reservar" (click)="crearReserva()" [disabled]="cargando">
+        {{ cargando ? 'Creando...' : 'Confirmar Reserva' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Modo: Unirse a Partido -->
+  <div class="contenido" *ngIf="modo === 'unirse'">
+    <h3>Partidos disponibles</h3>
+
+    <div class="partidos-disponibles" *ngIf="reservasDisponibles.length > 0">
+      <div class="partido-card" *ngFor="let reserva of reservasDisponibles">
+        <div class="partido-info">
+          <div class="partido-header">
+            <h4>{{ reserva.fecha }} - {{ reserva.hora_inicio }}</h4>
+            <span class="badge" [class.completo]="reserva.estado === 'completo'">
+              {{ reserva.jugadores_actuales }}/{{ reserva.max_jugadores }}
+            </span>
+          </div>
+
+          <p class="creador">Creado por: {{ reserva.creador?.name }}</p>
+          <p class="horario">{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</p>
+          <p class="pista">📍 {{ reserva.pista }}</p>
+
+          <div class="jugadores" *ngIf="reserva.usuarios && reserva.usuarios.length > 0">
+            <p class="jugadores-titulo">Jugadores:</p>
+            <div class="jugadores-lista">
+              <span class="jugador" *ngFor="let usuario of reserva.usuarios">
+                {{ usuario.name }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="btn-unirse"
+          (click)="unirseAReserva(reserva)"
+          [disabled]="cargando || reserva.estado === 'completo'"
+        >
+          {{ reserva.estado === 'completo' ? 'Completo' : 'Unirse' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="no-partidos" *ngIf="reservasDisponibles.length === 0 && !cargando">
+      <p>No hay partidos disponibles para este deporte</p>
+      <p class="sugerencia">¿Por qué no creas uno?</p>
+      <button class="btn-crear" (click)="cambiarModo('crear')">Crear Partido</button>
+    </div>
+  </div>
+
+  <!-- Mensaje de feedback -->
+  <div class="mensaje" *ngIf="mensaje"
+       [class.error]="mensajeTipo === 'error'"
+       [class.success]="mensajeTipo === 'success'"
+       [class.info]="mensajeTipo === 'info'">
+    {{ mensaje }}
+  </div>
+
+  <!-- Loader -->
+  <div class="loader" *ngIf="cargando">
+    <div class="spinner"></div>
+  </div>
+</div>
