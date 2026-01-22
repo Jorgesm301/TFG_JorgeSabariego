@@ -158,6 +158,21 @@
   text-transform: uppercase;
 }
 
+.reserva-estado.abierto {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.reserva-estado.completo {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.reserva-estado.cancelado {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
 .reserva-estado.confirmada {
   background: rgba(34, 197, 94, 0.2);
   color: #22c55e;
@@ -227,6 +242,58 @@
 
 .btn-danger:hover {
   background: rgba(239, 68, 68, 0.25);
+}
+
+/* Loader */
+.loading {
+  text-align: center;
+  padding: 80px 20px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid #22c55e;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Error message */
+.error-message {
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(239, 68, 68, 0.15);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.error-message p {
+  color: #ef4444;
+  font-size: 16px;
+  margin: 0 0 20px 0;
+  font-weight: 600;
 }
 
 /* Responsive */
