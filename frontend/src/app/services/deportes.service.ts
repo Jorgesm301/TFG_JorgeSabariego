@@ -24,6 +24,7 @@ export class DeportesService {
 
   // Obtener todos los deportes (público)
   getAllDeportes(): Observable<Deporte[]> {
+    console.log('DeportesService: Haciendo petición a', `${this.API_URL}/deportes`);
     return this.http.get<Deporte[]>(`${this.API_URL}/deportes`);
   }
 

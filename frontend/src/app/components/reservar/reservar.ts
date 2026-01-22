@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -37,16 +37,29 @@ export class Reservar implements OnInit {
     private router: Router,
     private bookingService: BookingService,
     private deporteService: DeportesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.deporteSlug = this.route.snapshot.params['deporte'];
+    console.log('=== INICIO ngOnInit ===');
+    console.log('Slug del deporte:', this.deporteSlug);
+
     this.cargarDeporte();
 
     // Establecer fecha mínima como hoy
     const hoy = new Date();
     this.fechaSeleccionada = hoy.toISOString().split('T')[0];
+
+    // Timeout de seguridad
+    setTimeout(() => {
+      if (this.cargando && !this.deporte) {
+        console.error('TIMEOUT: La carga del deporte tardó demasiado');
+        this.cargando = false;
+        this.mostrarMensaje('Error: La carga del deporte tardó demasiado. Por favor, recarga la página.', 'error');
+      }
+    }, 10000); // 10 segundos
   }
 
   // Normalizar texto quitando tildes y caracteres especiales
@@ -62,6 +75,13 @@ export class Reservar implements OnInit {
     this.cargando = true;
     this.deporteService.getAllDeportes().subscribe({
       next: (deportes) => {
+        console.log('Deportes recibidos del backend:', deportes);
+        console.log('Buscando slug:', this.deporteSlug);
+        console.log('Deportes normalizados:', deportes.map(d => ({
+          original: d.nombre,
+          normalizado: this.normalizar(d.nombre)
+        })));
+
         // Buscar el deporte por el slug (nombre en la URL)
         this.deporte = deportes.find(d =>
           this.normalizar(d.nombre) === this.deporteSlug
@@ -70,18 +90,25 @@ export class Reservar implements OnInit {
         if (!this.deporte) {
           console.error('Deporte no encontrado:', this.deporteSlug);
           console.log('Deportes disponibles:', deportes.map(d => this.normalizar(d.nombre)));
-          this.router.navigate(['/']);
+          this.cargando = false;
+          // No redirigir, mostrar mensaje de error
           return;
         }
 
+        console.log('Deporte encontrado:', this.deporte);
         this.generarHorarios();
         this.cargarReservasDisponibles();
+
+        // Asegurarse de que el flag de cargando se actualice y forzar detección de cambios
         this.cargando = false;
+        this.cdr.detectChanges();
+        console.log('Cargando deporte completado, cargando =', this.cargando);
       },
       error: (error) => {
-        console.error('Error al cargar deporte:', error);
+        console.error('Error al cargar deportes:', error);
         this.cargando = false;
-        this.router.navigate(['/']);
+        this.cdr.detectChanges();
+        this.mostrarMensaje('Error al cargar los deportes', 'error');
       }
     });
   }
@@ -175,8 +202,15 @@ export class Reservar implements OnInit {
   }
 
   crearReserva() {
+    console.log('=== CREAR RESERVA ===');
+    console.log('Autenticado:', this.authService.isAuthenticated());
+
     if (!this.authService.isAuthenticated()) {
-      this.router.navigate(['/login']);
+      console.log('Usuario no autenticado, redirigiendo a login');
+      this.mostrarMensaje('Debes iniciar sesión para crear una reserva', 'error');
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 1500);
       return;
     }
 
@@ -197,18 +231,27 @@ export class Reservar implements OnInit {
       pista: 'Pista 1'
     };
 
+    console.log('Creando reserva con datos:', reserva);
     this.cargando = true;
+    this.cdr.detectChanges();
+
     this.bookingService.crearReserva(reserva).subscribe({
       next: (response) => {
+        console.log('Reserva creada exitosamente:', response);
         this.mostrarMensaje('¡Reserva creada con éxito!', 'success');
         this.horaSeleccionada = '';
         this.cargarReservasDelDia();
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
+        console.error('Error al crear reserva:', error);
+        console.error('Status:', error.status);
+        console.error('Error completo:', error);
         const mensaje = error.error?.message || 'Error al crear la reserva';
         this.mostrarMensaje(mensaje, 'error');
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }

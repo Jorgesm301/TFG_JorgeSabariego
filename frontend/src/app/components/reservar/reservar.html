@@ -1,3 +1,16 @@
+<!-- Mensaje de carga -->
+<div class="loader-inicial" *ngIf="cargando && !deporte">
+  <div class="spinner"></div>
+  <p>Cargando deporte...</p>
+</div>
+
+<!-- Mensaje de error si no se encuentra el deporte -->
+<div class="error-container" *ngIf="!cargando && !deporte">
+  <h2>Deporte no encontrado</h2>
+  <p>El deporte "{{ deporteSlug }}" no está disponible.</p>
+  <button class="btn-volver" (click)="volver()">Volver al inicio</button>
+</div>
+
 <div class="reservar-container" *ngIf="deporte">
   <div class="header">
     <button class="btn-volver" (click)="volver()">← Volver</button>

@@ -13,8 +13,20 @@
   <!-- Contenido -->
   <div class="reservas-content">
 
+    <!-- Loader -->
+    <div class="loading" *ngIf="cargando">
+      <div class="spinner"></div>
+      <p>Cargando tus reservas...</p>
+    </div>
+
+    <!-- Error -->
+    <div class="error-message" *ngIf="error && !cargando">
+      <p>{{ error }}</p>
+      <button class="btn-primary" (click)="cargarReservas()">Reintentar</button>
+    </div>
+
     <!-- Estado vacío -->
-    <div class="empty-state" *ngIf="reservas.length === 0">
+    <div class="empty-state" *ngIf="!cargando && !error && reservas.length === 0">
       <div class="empty-icon">📅</div>
       <h2 class="empty-title">No tienes reservas</h2>
       <p class="empty-text">Aún no has realizado ninguna reserva. ¡Explora nuestras instalaciones y reserva tu pista!</p>
@@ -23,12 +35,14 @@
       </button>
     </div>
 
-    <!-- Lista de reservas (se mostrará cuando haya datos) -->
-    <div class="reservas-grid" *ngIf="reservas.length > 0">
+    <!-- Lista de reservas -->
+    <div class="reservas-grid" *ngIf="!cargando && reservas.length > 0">
       <div class="reserva-card" *ngFor="let reserva of reservas">
         <div class="reserva-header">
-          <span class="reserva-deporte">{{ reserva.deporte }}</span>
-          <span class="reserva-estado" [class]="reserva.estado">{{ reserva.estado }}</span>
+          <span class="reserva-deporte">{{ reserva.deporte?.nombre || 'Deporte' }}</span>
+          <span class="reserva-estado" [class]="reserva.estado">
+            {{ reserva.estado === 'abierto' ? 'Abierto' : reserva.estado === 'completo' ? 'Completo' : 'Cancelado' }}
+          </span>
         </div>
         <div class="reserva-info">
           <div class="info-item">
@@ -37,16 +51,26 @@
           </div>
           <div class="info-item">
             <span class="info-icon">⏰</span>
-            <span>{{ reserva.hora }}</span>
+            <span>{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</span>
           </div>
           <div class="info-item">
             <span class="info-icon">📍</span>
             <span>{{ reserva.pista }}</span>
           </div>
+          <div class="info-item">
+            <span class="info-icon">👥</span>
+            <span>{{ reserva.jugadores_actuales }}/{{ reserva.max_jugadores }} jugadores</span>
+          </div>
+          <div class="info-item" *ngIf="reserva.creador">
+            <span class="info-icon">👤</span>
+            <span>Creada por: {{ reserva.creador.name }}</span>
+          </div>
         </div>
         <div class="reserva-actions">
-          <button class="btn-small btn-outline">Ver detalles</button>
-          <button class="btn-small btn-danger">Cancelar</button>
+          <button class="btn-small btn-danger" (click)="salirseDeReserva(reserva)"
+                  *ngIf="reserva.estado !== 'cancelado'">
+            Salir de la reserva
+          </button>
         </div>
       </div>
     </div>
