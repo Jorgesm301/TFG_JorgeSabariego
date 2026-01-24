@@ -222,19 +222,22 @@ class BookingController extends Controller
 
     /**
      * Obtener las reservas del usuario autenticado
+     * Solo muestra reservas de hoy en adelante
      */
     public function misReservas()
     {
         try {
             $userId = Auth::id();
+            $hoy = Carbon::today()->format('Y-m-d');
 
             $reservas = Booking::whereHas('usuarios', function ($query) use ($userId) {
                     $query->where('user_id', $userId);
                 })
                 ->where('estado', '!=', 'cancelado')
+                ->where('fecha', '>=', $hoy)
                 ->with(['deporte:id,nombre,duracion_minutos', 'creador:id,name', 'usuarios:id,name'])
-                ->orderBy('fecha', 'desc')
-                ->orderBy('hora_inicio', 'desc')
+                ->orderBy('fecha', 'asc')
+                ->orderBy('hora_inicio', 'asc')
                 ->get();
 
             return response()->json($reservas);

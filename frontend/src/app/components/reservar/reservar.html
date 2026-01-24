@@ -45,6 +45,7 @@
         id="fecha"
         [(ngModel)]="fechaSeleccionada"
         [min]="fechaSeleccionada"
+        [max]="fechaMaxima"
         (change)="onFechaChange()"
       />
     </div>

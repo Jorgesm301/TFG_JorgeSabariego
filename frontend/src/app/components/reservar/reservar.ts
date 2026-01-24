@@ -21,6 +21,7 @@ export class Reservar implements OnInit {
 
   // Para crear reserva
   fechaSeleccionada: string = '';
+  fechaMaxima: string = '';
   horaSeleccionada: string = '';
   reservasDelDia: IBooking[] = [];
   horariosDisponibles: string[] = [];
@@ -51,6 +52,11 @@ export class Reservar implements OnInit {
     // Establecer fecha mínima como hoy
     const hoy = new Date();
     this.fechaSeleccionada = hoy.toISOString().split('T')[0];
+
+    // Establecer fecha máxima como 1 mes desde hoy
+    const fechaMax = new Date();
+    fechaMax.setMonth(fechaMax.getMonth() + 1);
+    this.fechaMaxima = fechaMax.toISOString().split('T')[0];
 
     // Timeout de seguridad
     setTimeout(() => {
@@ -115,12 +121,24 @@ export class Reservar implements OnInit {
 
   generarHorarios() {
     this.horariosDisponibles = [];
-    // Generar horarios de 8:00 a 22:00 cada 30 minutos
-    for (let hora = 8; hora <= 22; hora++) {
-      for (let minuto = 0; minuto < 60; minuto += 30) {
-        const horaStr = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}`;
-        this.horariosDisponibles.push(horaStr);
-      }
+
+    if (!this.deporte) return;
+
+    // Generar horarios desde las 9:00 hasta las 00:00
+    // Los horarios se generan según la duración del deporte
+    const duracionMinutos = this.deporte.duracion_minutos;
+    const horaInicio = 9 * 60; // 9:00 en minutos
+    const horaFin = 24 * 60; // 00:00 (medianoche) en minutos
+
+    let minutoActual = horaInicio;
+
+    while (minutoActual + duracionMinutos <= horaFin) {
+      const hora = Math.floor(minutoActual / 60);
+      const minuto = minutoActual % 60;
+      const horaStr = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}`;
+      this.horariosDisponibles.push(horaStr);
+
+      minutoActual += duracionMinutos;
     }
   }
 
@@ -182,12 +200,9 @@ export class Reservar implements OnInit {
       const inicioReserva = hInicio * 60 + mInicio;
       const finReserva = hFin * 60 + mFin;
 
-      // Verificar solapamiento
-      return (
-        (minutosSolicitud >= inicioReserva && minutosSolicitud < finReserva) ||
-        (finSolicitud > inicioReserva && finSolicitud <= finReserva) ||
-        (minutosSolicitud <= inicioReserva && finSolicitud >= finReserva)
-      );
+      // Verificar solapamiento: dos intervalos se solapan si uno empieza antes de que termine el otro
+      // Solapamiento ocurre si: inicio1 < fin2 Y fin1 > inicio2
+      return minutosSolicitud < finReserva && finSolicitud > inicioReserva;
     });
   }
 

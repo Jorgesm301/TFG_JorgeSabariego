@@ -53,6 +53,7 @@ class Booking extends Model
 
     /**
      * Verificar si un horario está disponible
+     * Detecta cualquier tipo de solapamiento entre reservas
      */
     public static function estaDisponible($deporteId, $fecha, $horaInicio, $horaFin)
     {
@@ -60,12 +61,12 @@ class Booking extends Model
             ->where('fecha', $fecha)
             ->where('estado', '!=', 'cancelado')
             ->where(function ($query) use ($horaInicio, $horaFin) {
-                $query->whereBetween('hora_inicio', [$horaInicio, $horaFin])
-                      ->orWhereBetween('hora_fin', [$horaInicio, $horaFin])
-                      ->orWhere(function ($q) use ($horaInicio, $horaFin) {
-                          $q->where('hora_inicio', '<=', $horaInicio)
-                            ->where('hora_fin', '>=', $horaFin);
-                      });
+                // Solapamiento: Nueva reserva comienza antes de que termine una existente
+                // Y termina después de que comience una existente
+                $query->where(function ($q) use ($horaInicio, $horaFin) {
+                    $q->where('hora_inicio', '<', $horaFin)
+                      ->where('hora_fin', '>', $horaInicio);
+                });
             })
             ->exists();
     }
