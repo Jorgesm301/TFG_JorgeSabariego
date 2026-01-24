@@ -256,19 +256,21 @@ class BookingController extends Controller
     {
         try {
             $hoy = Carbon::today()->format('Y-m-d');
+            $horaActual = Carbon::now()->format('H:i');
 
             $reservas = Booking::where('deporte_id', $deporteId)
                 ->where('estado', 'abierto')
-                ->where(function($query) use ($hoy) {
+                ->where(function($query) use ($hoy, $horaActual) {
                     $query->where('fecha', '>', $hoy)
-                          ->orWhere(function($q) use ($hoy) {
+                          ->orWhere(function($q) use ($hoy, $horaActual) {
                               $q->where('fecha', '=', $hoy)
-                                ->where('hora_inicio', '>=', Carbon::now()->format('H:i'));
+                                ->where('hora_inicio', '>', $horaActual);
                           });
                 })
-                ->with(['creador:id,name', 'usuarios:id,name'])
-                ->orderBy('fecha')
-                ->orderBy('hora_inicio')
+                ->with(['creador:id,name'])
+                ->select('id', 'deporte_id', 'creador_id', 'fecha', 'hora_inicio', 'hora_fin', 'pista', 'max_jugadores', 'jugadores_actuales', 'estado')
+                ->orderBy('fecha', 'asc')
+                ->orderBy('hora_inicio', 'asc')
                 ->get();
 
             return response()->json($reservas);

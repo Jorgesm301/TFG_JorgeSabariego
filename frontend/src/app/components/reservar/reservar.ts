@@ -190,15 +190,31 @@ export class Reservar implements OnInit {
   }
 
   cargarReservasDisponibles() {
-    if (!this.deporte) return;
+    console.log('=== CARGAR RESERVAS DISPONIBLES ===');
+    console.log('Deporte:', this.deporte);
+
+    if (!this.deporte) {
+      console.log('NO hay deporte, saliendo...');
+      return;
+    }
+
+    console.log('Cargando reservas para deporte ID:', this.deporte.id);
+    this.cargando = true;
+    this.cdr.detectChanges();
 
     this.bookingService.getReservasDisponibles(this.deporte.id)
       .subscribe({
         next: (reservas) => {
+          console.log('Reservas recibidas:', reservas);
           this.reservasDisponibles = reservas;
+          this.cargando = false;
+          this.cdr.detectChanges();
+          console.log('Cargando completado, cargando =', this.cargando);
         },
         error: (error) => {
           console.error('Error al cargar reservas disponibles:', error);
+          this.cargando = false;
+          this.cdr.detectChanges();
         }
       });
   }
@@ -300,6 +316,8 @@ export class Reservar implements OnInit {
     }
 
     this.cargando = true;
+    this.cdr.detectChanges();
+
     this.bookingService.unirseAReserva(booking.id!).subscribe({
       next: (response) => {
         this.mostrarMensaje('¡Te has unido a la reserva!', 'success');
@@ -311,11 +329,13 @@ export class Reservar implements OnInit {
         }
 
         this.cargando = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         const mensaje = error.error?.message || 'Error al unirse a la reserva';
         this.mostrarMensaje(mensaje, 'error');
         this.cargando = false;
+        this.cdr.detectChanges();
       }
     });
   }
