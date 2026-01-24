@@ -103,7 +103,10 @@ export class Reservar implements OnInit {
 
         console.log('Deporte encontrado:', this.deporte);
         this.generarHorarios();
-        this.cargarReservasDisponibles();
+        // Solo cargar reservas disponibles si estamos en modo "unirse"
+        if (this.modo === 'unirse') {
+          this.cargarReservasDisponibles();
+        }
 
         // Asegurarse de que el flag de cargando se actualice y forzar detección de cambios
         this.cargando = false;
@@ -130,13 +133,27 @@ export class Reservar implements OnInit {
     const horaInicio = 9 * 60; // 9:00 en minutos
     const horaFin = 24 * 60; // 00:00 (medianoche) en minutos
 
+    // Verificar si la fecha seleccionada es hoy
+    const hoy = new Date();
+    const fechaHoy = hoy.toISOString().split('T')[0];
+    const esHoy = this.fechaSeleccionada === fechaHoy;
+
+    // Obtener hora actual en minutos
+    let horaActualMinutos = 0;
+    if (esHoy) {
+      horaActualMinutos = hoy.getHours() * 60 + hoy.getMinutes();
+    }
+
     let minutoActual = horaInicio;
 
     while (minutoActual + duracionMinutos <= horaFin) {
-      const hora = Math.floor(minutoActual / 60);
-      const minuto = minutoActual % 60;
-      const horaStr = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}`;
-      this.horariosDisponibles.push(horaStr);
+      // Si es hoy, solo mostrar horarios futuros
+      if (!esHoy || minutoActual > horaActualMinutos) {
+        const hora = Math.floor(minutoActual / 60);
+        const minuto = minutoActual % 60;
+        const horaStr = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}`;
+        this.horariosDisponibles.push(horaStr);
+      }
 
       minutoActual += duracionMinutos;
     }
@@ -255,7 +272,12 @@ export class Reservar implements OnInit {
         console.log('Reserva creada exitosamente:', response);
         this.mostrarMensaje('¡Reserva creada con éxito!', 'success');
         this.horaSeleccionada = '';
-        this.cargarReservasDelDia();
+
+        // Agregar la reserva directamente al array en lugar de hacer otra petición
+        if (response.booking) {
+          this.reservasDelDia.push(response.booking);
+        }
+
         this.cargando = false;
         this.cdr.detectChanges();
       },
@@ -281,7 +303,13 @@ export class Reservar implements OnInit {
     this.bookingService.unirseAReserva(booking.id!).subscribe({
       next: (response) => {
         this.mostrarMensaje('¡Te has unido a la reserva!', 'success');
-        this.cargarReservasDisponibles();
+
+        // Actualizar directamente la reserva en el array en lugar de recargar todo
+        const index = this.reservasDisponibles.findIndex(r => r.id === booking.id);
+        if (index !== -1 && response.booking) {
+          this.reservasDisponibles[index] = response.booking;
+        }
+
         this.cargando = false;
       },
       error: (error) => {
