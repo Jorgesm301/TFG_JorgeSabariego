@@ -18,7 +18,7 @@ class BookingController extends Controller
     {
         try {
             $reservas = Booking::where('deporte_id', $deporteId)
-                ->where('fecha', $fecha)
+                ->whereDate('fecha', $fecha)  // Usar whereDate en lugar de where
                 ->where('estado', '!=', 'cancelado')
                 ->with(['creador:id,name', 'usuarios:id,name'])
                 ->orderBy('hora_inicio')

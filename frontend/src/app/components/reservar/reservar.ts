@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BookingService, IBooking } from '../../services/booking';
 import { DeportesService, Deporte } from '../../services/deportes.service';
@@ -8,7 +8,7 @@ import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-reservar',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './reservar.html',
   styleUrl: './reservar.css',
 })
@@ -33,6 +33,19 @@ export class Reservar implements OnInit {
   mensajeTipo: 'success' | 'error' | 'info' = 'info';
   cargando: boolean = false;
 
+  // Para el header y menú
+  menuReservarAbierto = false;
+  deportesMenu = [
+    { nombre: 'Fútbol', icon: '⚽', ruta: '/reservar/futbol'},
+    { nombre: 'Fútbol Sala', icon: '⚽', ruta: '/reservar/futbol-sala'},
+    { nombre: 'Baloncesto', icon: '🏀', ruta: '/reservar/baloncesto' },
+    { nombre: 'Tenis', icon: '🎾', ruta: '/reservar/tenis' },
+    { nombre: 'Pádel', icon: '🎾', ruta: '/reservar/padel' },
+    { nombre: 'Voleibol', icon: '🏐', ruta: '/reservar/voleibol' },
+    { nombre: 'Natación', icon: '🏊', ruta: '/reservar/natacion' },
+    { nombre: 'Atletismo', icon: '🏃', ruta: '/reservar/atletismo' }
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -44,9 +57,6 @@ export class Reservar implements OnInit {
 
   ngOnInit() {
     this.deporteSlug = this.route.snapshot.params['deporte'];
-    console.log('=== INICIO ngOnInit ===');
-    console.log('Slug del deporte:', this.deporteSlug);
-
     this.cargarDeporte();
 
     // Establecer fecha mínima como hoy
@@ -61,7 +71,6 @@ export class Reservar implements OnInit {
     // Timeout de seguridad
     setTimeout(() => {
       if (this.cargando && !this.deporte) {
-        console.error('TIMEOUT: La carga del deporte tardó demasiado');
         this.cargando = false;
         this.mostrarMensaje('Error: La carga del deporte tardó demasiado. Por favor, recarga la página.', 'error');
       }
@@ -81,37 +90,29 @@ export class Reservar implements OnInit {
     this.cargando = true;
     this.deporteService.getAllDeportes().subscribe({
       next: (deportes) => {
-        console.log('Deportes recibidos del backend:', deportes);
-        console.log('Buscando slug:', this.deporteSlug);
-        console.log('Deportes normalizados:', deportes.map(d => ({
-          original: d.nombre,
-          normalizado: this.normalizar(d.nombre)
-        })));
-
         // Buscar el deporte por el slug (nombre en la URL)
         this.deporte = deportes.find(d =>
           this.normalizar(d.nombre) === this.deporteSlug
         ) || null;
 
         if (!this.deporte) {
-          console.error('Deporte no encontrado:', this.deporteSlug);
-          console.log('Deportes disponibles:', deportes.map(d => this.normalizar(d.nombre)));
           this.cargando = false;
           // No redirigir, mostrar mensaje de error
           return;
         }
 
-        console.log('Deporte encontrado:', this.deporte);
         this.generarHorarios();
-        // Solo cargar reservas disponibles si estamos en modo "unirse"
-        if (this.modo === 'unirse') {
+        
+        // Cargar reservas según el modo
+        if (this.modo === 'crear') {
+          this.cargarReservasDelDia();
+        } else if (this.modo === 'unirse') {
           this.cargarReservasDisponibles();
         }
 
         // Asegurarse de que el flag de cargando se actualice y forzar detección de cambios
         this.cargando = false;
         this.cdr.detectChanges();
-        console.log('Cargando deporte completado, cargando =', this.cargando);
       },
       error: (error) => {
         console.error('Error al cargar deportes:', error);
@@ -182,6 +183,7 @@ export class Reservar implements OnInit {
       .subscribe({
         next: (reservas) => {
           this.reservasDelDia = reservas;
+          this.cdr.detectChanges();
         },
         error: (error) => {
           console.error('Error al cargar reservas:', error);
@@ -190,26 +192,19 @@ export class Reservar implements OnInit {
   }
 
   cargarReservasDisponibles() {
-    console.log('=== CARGAR RESERVAS DISPONIBLES ===');
-    console.log('Deporte:', this.deporte);
-
     if (!this.deporte) {
-      console.log('NO hay deporte, saliendo...');
       return;
     }
 
-    console.log('Cargando reservas para deporte ID:', this.deporte.id);
     this.cargando = true;
     this.cdr.detectChanges();
 
     this.bookingService.getReservasDisponibles(this.deporte.id)
       .subscribe({
         next: (reservas) => {
-          console.log('Reservas recibidas:', reservas);
           this.reservasDisponibles = reservas;
           this.cargando = false;
           this.cdr.detectChanges();
-          console.log('Cargando completado, cargando =', this.cargando);
         },
         error: (error) => {
           console.error('Error al cargar reservas disponibles:', error);
@@ -226,7 +221,7 @@ export class Reservar implements OnInit {
     const minutosSolicitud = h * 60 + m;
     const finSolicitud = minutosSolicitud + this.deporte.duracion_minutos;
 
-    return this.reservasDelDia.some(reserva => {
+    const ocupado = this.reservasDelDia.some(reserva => {
       const [hInicio, mInicio] = reserva.hora_inicio.split(':').map(Number);
       const [hFin, mFin] = reserva.hora_fin.split(':').map(Number);
 
@@ -237,6 +232,8 @@ export class Reservar implements OnInit {
       // Solapamiento ocurre si: inicio1 < fin2 Y fin1 > inicio2
       return minutosSolicitud < finReserva && finSolicitud > inicioReserva;
     });
+
+    return ocupado;
   }
 
   calcularHoraFin(horaInicio: string): string {
@@ -250,14 +247,13 @@ export class Reservar implements OnInit {
   }
 
   crearReserva() {
-    console.log('=== CREAR RESERVA ===');
-    console.log('Autenticado:', this.authService.isAuthenticated());
-
     if (!this.authService.isAuthenticated()) {
-      console.log('Usuario no autenticado, redirigiendo a login');
       this.mostrarMensaje('Debes iniciar sesión para crear una reserva', 'error');
       setTimeout(() => {
-        this.router.navigate(['/login']);
+        // Guardar la URL actual para volver después del login
+        this.router.navigate(['/login'], { 
+          queryParams: { returnUrl: this.router.url } 
+        });
       }, 1500);
       return;
     }
@@ -279,13 +275,11 @@ export class Reservar implements OnInit {
       pista: 'Pista 1'
     };
 
-    console.log('Creando reserva con datos:', reserva);
     this.cargando = true;
     this.cdr.detectChanges();
 
     this.bookingService.crearReserva(reserva).subscribe({
       next: (response) => {
-        console.log('Reserva creada exitosamente:', response);
         this.mostrarMensaje('¡Reserva creada con éxito!', 'success');
         this.horaSeleccionada = '';
 
@@ -298,9 +292,6 @@ export class Reservar implements OnInit {
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error al crear reserva:', error);
-        console.error('Status:', error.status);
-        console.error('Error completo:', error);
         const mensaje = error.error?.message || 'Error al crear la reserva';
         this.mostrarMensaje(mensaje, 'error');
         this.cargando = false;
@@ -311,7 +302,13 @@ export class Reservar implements OnInit {
 
   unirseAReserva(booking: IBooking) {
     if (!this.authService.isAuthenticated()) {
-      this.router.navigate(['/login']);
+      this.mostrarMensaje('Debes iniciar sesión para unirte a un partido', 'error');
+      setTimeout(() => {
+        // Guardar la URL actual para volver después del login
+        this.router.navigate(['/login'], { 
+          queryParams: { returnUrl: this.router.url } 
+        });
+      }, 1500);
       return;
     }
 
@@ -351,4 +348,37 @@ export class Reservar implements OnInit {
   volver() {
     this.router.navigate(['/']);
   }
-}
+
+  // Métodos para el header
+  get estaLogueado(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
+  get nombreUsuario(): string {
+    return this.authService.getUserData()?.name || '';
+  }
+
+  irALogin() {
+    this.router.navigate(['/login']);
+  }
+
+  irARegistro() {
+    this.router.navigate(['/registro']);
+  }
+
+  irAPerfil() {
+    this.router.navigate(['/perfil']);
+  }
+
+  abrirMenuReservar() {
+    this.menuReservarAbierto = true;
+  }
+
+  cerrarMenuReservar() {
+    this.menuReservarAbierto = false;
+  }
+
+  navegarADeporte(ruta: string) {
+    this.router.navigate([ruta]);
+    this.menuReservarAbierto = false;
+  }}

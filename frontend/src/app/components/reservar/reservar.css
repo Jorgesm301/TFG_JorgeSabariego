@@ -1,7 +1,4 @@
-.reservar-container {
-  max-width: 100%;
-  margin: 0;
-  padding: 20px;
+.page {
   min-height: 100vh;
   background:
     repeating-linear-gradient(90deg, rgba(34,197,94,0.03) 0px, transparent 2px, transparent 80px),
@@ -13,8 +10,218 @@
   color: #fff;
 }
 
-/* Header */
+/* HEADER FULL WIDTH */
 .header {
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(10, 16, 32, 0.72);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+
+.header-inner {
+  max-width: 100%;
+  margin: 0;
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+}
+
+.brand:hover {
+  opacity: 0.85;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+  font-size: 20px;
+}
+
+.brand-name {
+  font-weight: 900;
+  letter-spacing: 0.3px;
+}
+
+.brand-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.72);
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  letter-spacing: 0.2px;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: rgba(255,255,255,0.92);
+  border: 1px solid rgba(255,255,255,0.16);
+}
+
+.btn-ghost:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.26);
+}
+
+.btn-solid {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #071018;
+  box-shadow: 0 6px 18px rgba(34,197,94,0.35);
+}
+
+.btn-solid:hover {
+  box-shadow: 0 8px 22px rgba(34,197,94,0.45);
+  transform: translateY(-1px);
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-profile:hover {
+  background: rgba(255,255,255,0.16);
+}
+
+.user-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* SUBCABECERA */
+.subheader {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  position: sticky;
+  top: 72px;
+  z-index: 9;
+}
+
+.subheader-inner {
+  max-width: 100%;
+  padding: 0 32px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.menu-item {
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+}
+
+.menu-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.82);
+  padding: 18px 22px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.3px;
+}
+
+.menu-btn:hover {
+  color: #22c55e;
+  background: rgba(34,197,94,0.08);
+}
+
+.menu-item.active .menu-btn {
+  color: #22c55e;
+  background: rgba(34,197,94,0.08);
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: rgba(10, 16, 32, 0.96);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  min-width: 220px;
+  box-shadow: 0 12px 42px rgba(0,0,0,0.55);
+  padding: 8px;
+  margin-top: 4px;
+  z-index: 20;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: rgba(255,255,255,0.82);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.dropdown-item:hover {
+  background: rgba(34,197,94,0.14);
+  color: #22c55e;
+}
+
+.dropdown-icon {
+  font-size: 20px;
+}
+
+.reservar-container {
+  max-width: 100%;
+  margin: 0;
+  padding: 20px;
+}
+
+/* Header del deporte */
+.reservar-container .header {
   text-align: center;
   margin-bottom: 30px;
   padding: 20px;
@@ -22,6 +229,11 @@
   backdrop-filter: blur(15px);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
+  width: auto;
+  position: static;
+  top: auto;
+  z-index: auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .btn-volver {
@@ -45,7 +257,7 @@
   transform: translateX(-2px);
 }
 
-.header h1 {
+.reservar-container .header h1 {
   font-size: 2.5rem;
   font-weight: 900;
   margin-bottom: 10px;
