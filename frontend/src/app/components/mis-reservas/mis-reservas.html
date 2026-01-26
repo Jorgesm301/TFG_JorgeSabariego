@@ -1,14 +1,34 @@
 <div class="reservas-page">
-  <!-- Header -->
+  <!-- HEADER a ancho completo -->
   <header class="header">
     <div class="header-inner">
-      <button class="btn-back" (click)="volverInicio()">
-        <span class="arrow-back">←</span> Volver al inicio
-      </button>
-      <h1 class="page-title">Mis Reservas</h1>
-      <div></div>
+      <a routerLink="/" class="brand">
+        <span class="logo" aria-hidden="true">🏟️</span>
+        <div class="brand-text">
+          <div class="brand-name">Polideportivo Municipal</div>
+          <div class="brand-sub">Reservas · Partidos · Nivel ERO</div>
+        </div>
+      </a>
+
+      <div class="actions">
+        <!-- Mostrar cuando NO está logueado -->
+        <ng-container *ngIf="!estaLogueado">
+          <button class="btn btn-ghost" (click)="irALogin()">Iniciar sesión</button>
+          <button class="btn btn-solid" (click)="irARegistro()">Registrarse</button>
+        </ng-container>
+
+        <!-- Mostrar cuando SÍ está logueado -->
+        <div *ngIf="estaLogueado" class="user-profile" (click)="irAPerfil()">
+          <span class="user-name">👤 {{ nombreUsuario }}</span>
+        </div>
+      </div>
     </div>
   </header>
+
+  <!-- Título de la sección -->
+  <div class="page-header">
+    <h1 class="page-title">Mis Reservas</h1>
+  </div>
 
   <!-- Contenido -->
   <div class="reservas-content">

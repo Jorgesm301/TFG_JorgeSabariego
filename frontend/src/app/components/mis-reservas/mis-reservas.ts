@@ -84,4 +84,25 @@ export class MisReservas implements OnInit {
   volverInicio() {
     this.router.navigate(['/']);
   }
+
+  // Métodos para el header
+  get estaLogueado(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
+  get nombreUsuario(): string {
+    return this.authService.getUserData()?.name || '';
+  }
+
+  irALogin() {
+    this.router.navigate(['/login']);
+  }
+
+  irARegistro() {
+    this.router.navigate(['/registro']);
+  }
+
+  irAPerfil() {
+    this.router.navigate(['/perfil']);
+  }
 }
