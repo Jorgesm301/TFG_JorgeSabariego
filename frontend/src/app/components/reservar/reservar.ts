@@ -21,6 +21,7 @@ export class Reservar implements OnInit {
 
   // Para crear reserva
   fechaSeleccionada: string = '';
+  fechaMinima: string = '';
   fechaMaxima: string = '';
   horaSeleccionada: string = '';
   reservasDelDia: IBooking[] = [];
@@ -61,7 +62,8 @@ export class Reservar implements OnInit {
 
     // Establecer fecha mínima como hoy
     const hoy = new Date();
-    this.fechaSeleccionada = hoy.toISOString().split('T')[0];
+    this.fechaMinima = hoy.toISOString().split('T')[0];
+    this.fechaSeleccionada = this.fechaMinima;
 
     // Establecer fecha máxima como 1 mes desde hoy
     const fechaMax = new Date();
@@ -173,6 +175,7 @@ export class Reservar implements OnInit {
 
   onFechaChange() {
     this.horaSeleccionada = '';
+    this.generarHorarios();
     this.cargarReservasDelDia();
   }
 

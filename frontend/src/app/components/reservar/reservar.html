@@ -71,7 +71,7 @@
         type="date"
         id="fecha"
         [(ngModel)]="fechaSeleccionada"
-        [min]="fechaSeleccionada"
+        [min]="fechaMinima"
         [max]="fechaMaxima"
         (change)="onFechaChange()"
       />
