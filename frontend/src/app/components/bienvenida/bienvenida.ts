@@ -128,10 +128,6 @@ export class Bienvenida implements OnInit, OnDestroy {
     this.router.navigate(['/perfil']);
   }
 
-  reservarAhora() {
-    this.router.navigate(['/login']);
-  }
-
   abrirMenuReservar() {
     this.menuReservarAbierto = true;
   }
