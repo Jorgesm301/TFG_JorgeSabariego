@@ -25,4 +25,11 @@ class Deporte extends Model
     {
         return $this->hasMany(Booking::class);
     }
+
+    public function users(){
+        return $this->belongsToMany(User::class, 'sport_user', 'sport_id', 'user_id')
+                    ->withPivot('ero', 'matches_played')
+                    ->withTimestamps();
+    }
+
 }

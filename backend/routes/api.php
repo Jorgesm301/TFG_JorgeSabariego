@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DeporteController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\EroController;
 use App\Models\User;
 
 
@@ -37,4 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/bookings/{bookingId}/unirse', [BookingController::class, 'unirseAReserva']);
     Route::delete('/bookings/{bookingId}/salir', [BookingController::class, 'salirseDeReserva']);
     Route::get('/mis-bookings', [BookingController::class, 'misReservas']);
+
+    // Para probar el ERO
+    Route::get('/me/ero', [EroController::class, 'myEro']);
 });

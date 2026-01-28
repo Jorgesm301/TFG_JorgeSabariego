@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { EroService } from '../../services/ero.service';
 
 @Component({
   selector: 'app-perfil',
@@ -12,10 +13,14 @@ import { AuthService } from '../../services/auth';
 })
 export class Perfil implements OnInit {
   usuario: any = null;
+  deportesEro: any[] = [];
+  cargandoEro = false;
+  totalPartidos = 0;
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private eroService: EroService
   ) {}
 
   ngOnInit(): void {
@@ -24,7 +29,24 @@ export class Perfil implements OnInit {
     // Si no hay usuario, redirigir a login
     if (!this.usuario) {
       this.router.navigate(['/login']);
+    } else {
+      this.cargarEro();
     }
+  }
+
+  cargarEro(): void {
+    this.cargandoEro = true;
+    this.eroService.getMyEro().subscribe({
+      next: (data) => {
+        this.deportesEro = data.sports;
+        this.totalPartidos = data.sports.reduce((sum: number, sport: any) => sum + sport.matches_played, 0);
+        this.cargandoEro = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar ERO:', err);
+        this.cargandoEro = false;
+      }
+    });
   }
 
   logout() {

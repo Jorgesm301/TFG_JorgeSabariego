@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Deporte;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,7 @@ class BookingController extends Controller
     {
         try {
             $reservas = Booking::where('deporte_id', $deporteId)
-                ->whereDate('fecha', $fecha)  // Usar whereDate en lugar de where
+                ->whereDate('fecha', $fecha)
                 ->where('estado', '!=', 'cancelado')
                 ->with(['creador:id,name', 'usuarios:id,name'])
                 ->orderBy('hora_inicio')
@@ -43,6 +44,11 @@ class BookingController extends Controller
             ]);
 
             $userId = Auth::id();
+
+            // ✅ NUEVO: Inicializar ERO del usuario en este deporte si no existe
+            /** @var User $user */
+            $user = Auth::user();
+            $user->initSportEro((int) $request->deporte_id);
 
             // Obtener información del deporte
             $deporte = Deporte::findOrFail($request->deporte_id);
@@ -128,6 +134,11 @@ class BookingController extends Controller
             if ($booking->tieneUsuario($userId)) {
                 return response()->json(['message' => 'Ya estás en esta reserva'], 400);
             }
+
+            // ✅ NUEVO: Inicializar ERO del usuario en el deporte de la reserva si no existe
+            /** @var User $user */
+            $user = Auth::user();
+            $user->initSportEro((int) $booking->deporte_id);
 
             DB::beginTransaction();
 

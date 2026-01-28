@@ -7,6 +7,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens; // <-- AÑADIR
 
+/**
+ * @method void initSportEro(int $deporteId)
+ */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable; // <-- AÑADIR HasApiTokens
@@ -48,4 +51,27 @@ class User extends Authenticatable
                     ->withPivot('es_creador')
                     ->withTimestamps();
     }
+
+
+    public function sports(){
+        return $this->belongsToMany(Deporte::class, 'sport_user', 'user_id', 'sport_id')
+                    ->withPivot('ero', 'matches_played')
+                    ->withTimestamps();
+    }
+
+
+    public function initSportEro(int $deporteId)
+    {
+        // Verificar si ya existe la relación
+        $exists = $this->sports()->wherePivot('sport_id', $deporteId)->exists();
+
+        if (!$exists) {
+            $this->sports()->attach($deporteId, [
+                'ero' => 1000,
+                'matches_played' => 0
+            ]);
+        }
+    }
+
+
 }

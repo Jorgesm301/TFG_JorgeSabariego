@@ -31,15 +31,15 @@
       <div class="stat-card">
         <div class="stat-icon">📅</div>
         <div class="stat-info">
-          <div class="stat-value">0</div>
-          <div class="stat-label">Reservas totales</div>
+          <div class="stat-value">{{ deportesEro.length }}</div>
+          <div class="stat-label">Deportes activos</div>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-icon">⚽</div>
         <div class="stat-info">
-          <div class="stat-value">0</div>
+          <div class="stat-value">{{ totalPartidos }}</div>
           <div class="stat-label">Partidos jugados</div>
         </div>
       </div>
@@ -47,9 +47,37 @@
       <div class="stat-card">
         <div class="stat-icon">🏆</div>
         <div class="stat-info">
-          <div class="stat-value">ERO 0</div>
-          <div class="stat-label">Nivel actual</div>
+          <div class="stat-value" *ngIf="!cargandoEro && deportesEro.length > 0">
+            ERO {{ deportesEro[0]?.ero || 0 }}
+          </div>
+          <div class="stat-value" *ngIf="cargandoEro">...</div>
+          <div class="stat-value" *ngIf="!cargandoEro && deportesEro.length === 0">Sin datos</div>
+          <div class="stat-label">Nivel promedio</div>
         </div>
+      </div>
+    </div>
+
+    <!-- Niveles ERO por deporte -->
+    <div class="ero-section" *ngIf="deportesEro.length > 0">
+      <h3 class="section-title">📊 Tus niveles ERO</h3>
+      <div class="ero-grid">
+        <div class="ero-card" *ngFor="let deporte of deportesEro">
+          <div class="ero-header">
+            <span class="ero-deporte">{{ deporte.sport_name }}</span>
+            <span class="ero-badge">{{ deporte.ero }}</span>
+          </div>
+          <div class="ero-stats">
+            <span class="ero-partidos">{{ deporte.matches_played }} partidos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ero-section" *ngIf="!cargandoEro && deportesEro.length === 0">
+      <div class="empty-state">
+        <span class="empty-icon">🎯</span>
+        <p class="empty-text">Aún no tienes nivel ERO en ningún deporte</p>
+        <p class="empty-hint">Crea tu primera reserva para comenzar</p>
       </div>
     </div>
 
