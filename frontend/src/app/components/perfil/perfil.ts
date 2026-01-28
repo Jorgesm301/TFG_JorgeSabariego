@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
@@ -20,7 +20,8 @@ export class Perfil implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private eroService: EroService
+    private eroService: EroService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +42,7 @@ export class Perfil implements OnInit {
         this.deportesEro = data.sports;
         this.totalPartidos = data.sports.reduce((sum: number, sport: any) => sum + sport.matches_played, 0);
         this.cargandoEro = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar ERO:', err);
