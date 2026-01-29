@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DeporteController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\EroController;
+use App\Http\Controllers\MatchController;
 use App\Models\User;
 
 
@@ -38,6 +39,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/bookings/{bookingId}/unirse', [BookingController::class, 'unirseAReserva']);
     Route::delete('/bookings/{bookingId}/salir', [BookingController::class, 'salirseDeReserva']);
     Route::get('/mis-bookings', [BookingController::class, 'misReservas']);
+
+    // Rutas para gestión de partidos y equipos
+    Route::post('/matches/{bookingId}/generar-equipos', [MatchController::class, 'generarEquipos']);
+    Route::get('/matches/{bookingId}/equipos', [MatchController::class, 'obtenerEquipos']);
+    Route::post('/matches/{bookingId}/resultado', [MatchController::class, 'registrarResultado']);
+    Route::get('/mis-partidos', [MatchController::class, 'historialPartidos']);
 
     // Para probar el ERO
     Route::get('/me/ero', [EroController::class, 'myEro']);

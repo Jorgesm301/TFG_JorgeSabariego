@@ -12,7 +12,10 @@ export interface IBooking {
   pista: string;
   max_jugadores: number;
   jugadores_actuales: number;
-  estado: 'abierto' | 'completo' | 'cancelado';
+  estado: 'abierto' | 'completo' | 'jugado' | 'cancelado';
+  team_1_score?: number | null;
+  team_2_score?: number | null;
+  winner_team?: number | null;
   creador?: { id: number; name: string };
   usuarios?: { id: number; name: string }[];
   deporte?: { id: number; nombre: string; duracion_minutos: number };

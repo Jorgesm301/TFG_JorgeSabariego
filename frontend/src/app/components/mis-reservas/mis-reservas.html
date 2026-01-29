@@ -61,7 +61,9 @@
         <div class="reserva-header">
           <span class="reserva-deporte">{{ reserva.deporte?.nombre || 'Deporte' }}</span>
           <span class="reserva-estado" [class]="reserva.estado">
-            {{ reserva.estado === 'abierto' ? 'Abierto' : reserva.estado === 'completo' ? 'Completo' : 'Cancelado' }}
+            {{ reserva.estado === 'abierto' ? 'Abierto' : 
+               reserva.estado === 'completo' ? 'Completo' : 
+               reserva.estado === 'jugado' ? 'Jugado' : 'Cancelado' }}
           </span>
         </div>
         <div class="reserva-info">
@@ -87,8 +89,12 @@
           </div>
         </div>
         <div class="reserva-actions">
+          <button class="btn-small btn-primary" [routerLink]="['/partido', reserva.id]"
+                  *ngIf="reserva.estado === 'completo' || reserva.estado === 'jugado'">
+            Ver Partido
+          </button>
           <button class="btn-small btn-danger" (click)="salirseDeReserva(reserva)"
-                  *ngIf="reserva.estado !== 'cancelado'">
+                  *ngIf="reserva.estado !== 'cancelado' && reserva.estado !== 'jugado'">
             Salir de la reserva
           </button>
         </div>

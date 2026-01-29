@@ -6,6 +6,7 @@ import { Perfil } from './components/perfil/perfil';
 import { MisReservas } from './components/mis-reservas/mis-reservas';
 import { Reservar } from './components/reservar/reservar';
 import { Ero } from './components/ero/ero';
+import { PartidoDetalle } from './components/partido-detalle/partido-detalle';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -29,6 +30,11 @@ export const routes: Routes = [
   {
     path: 'ero',
     component: Ero,
+    canActivate: [authGuard] // Protegido - requiere autenticación
+  },
+  {
+    path: 'partido/:id',
+    component: PartidoDetalle,
     canActivate: [authGuard] // Protegido - requiere autenticación
   },
   { path: '**', redirectTo: '' } // Cualquier ruta no encontrada va a bienvenida
