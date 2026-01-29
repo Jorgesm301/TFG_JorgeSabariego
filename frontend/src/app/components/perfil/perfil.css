@@ -137,9 +137,19 @@
   transition: all 0.2s ease;
 }
 
+.stat-card.clickable {
+  cursor: pointer;
+}
+
 .stat-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(34, 197, 94, 0.15);
+}
+
+.stat-card.clickable:hover {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.25);
 }
 
 .stat-icon {

@@ -1,0 +1,49 @@
+<div class="ero-page">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <button class="back-button" (click)="volverPerfil()">
+        <span class="back-icon">←</span>
+      </button>
+      <h1 class="page-title">Mis Niveles ERO</h1>
+      <div></div>
+    </div>
+  </header>
+
+  <!-- Contenido -->
+  <div class="ero-content">
+    <!-- Loading state -->
+    <div class="loading-state" *ngIf="cargandoEro">
+      <div class="spinner"></div>
+      <p>Cargando tus niveles...</p>
+    </div>
+
+    <!-- Deportes con ERO -->
+    <div class="deportes-grid" *ngIf="!cargandoEro && deportesEro.length > 0">
+      <div class="deporte-card" *ngFor="let deporte of deportesEro">
+        <div class="deporte-header">
+          <div class="deporte-icon">🏅</div>
+          <div class="deporte-titulo">
+            <h3 class="deporte-nombre">{{ deporte.sport_name }}</h3>
+            <p class="deporte-partidos">{{ deporte.matches_played }} partidos jugados</p>
+          </div>
+        </div>
+        <div class="deporte-ero">
+          <div class="ero-badge-large">{{ deporte.ero }}</div>
+          <div class="ero-label">Nivel ERO</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" *ngIf="!cargandoEro && deportesEro.length === 0">
+      <span class="empty-icon">🎯</span>
+      <h2 class="empty-title">Sin niveles ERO</h2>
+      <p class="empty-text">Aún no tienes nivel ERO en ningún deporte</p>
+      <p class="empty-hint">Crea tu primera reserva y juega un partido para obtener tu nivel inicial</p>
+      <button class="primary-button" routerLink="/">
+        Explorar Deportes
+      </button>
+    </div>
+  </div>
+</div>
