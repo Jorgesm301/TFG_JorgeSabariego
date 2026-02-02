@@ -5,14 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; // <-- AÑADIR
+use Laravel\Sanctum\HasApiTokens;
 
-/**
- * @method void initSportEro(int $deporteId)
- */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable; // <-- AÑADIR HasApiTokens
+    use HasApiTokens, HasFactory, Notifiable; 
 
     protected $fillable = [
         'name',
@@ -34,17 +31,14 @@ class User extends Authenticatable
         ];
     }
 
-    /**
-     * Relación: Un usuario tiene muchas reservas creadas
-     */
+    //Un usuario tiene muchas reservas creadas. Reservas creadas por el usuario.
     public function bookingsCreadas()
     {
         return $this->hasMany(Booking::class, 'creador_id');
     }
 
-    /**
-     * Relación: Un usuario puede estar en muchas reservas
-     */
+
+    //Un usuario pertenece a muchas reservas. Reservas en las que participa el usuario. Aqui usamos la tabla pivote booking_user.
     public function bookings()
     {
         return $this->belongsToMany(Booking::class, 'booking_user')
@@ -53,16 +47,17 @@ class User extends Authenticatable
     }
 
 
+    //Un usuario juega a varios deportes. Aqui usamos la tabla pivote sport_user.
     public function sports(){
         return $this->belongsToMany(Deporte::class, 'sport_user', 'user_id', 'sport_id')
                     ->withPivot('ero', 'matches_played')
                     ->withTimestamps();
     }
 
-
+    //Inicializa el ERO de un deporte para el usuario si no existe ya.
     public function initSportEro(int $deporteId)
     {
-        // Verificar si ya existe la relación
+        
         $exists = $this->sports()->wherePivot('sport_id', $deporteId)->exists();
 
         if (!$exists) {
