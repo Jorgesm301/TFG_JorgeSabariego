@@ -18,14 +18,13 @@ class Deporte extends Model
         'duracion_minutos',
     ];
 
-    /**
-     * Relación: Un deporte tiene muchas reservas
-     */
+    //Un deporte esta en muchas reservas.
     public function bookings()
     {
         return $this->hasMany(Booking::class);
     }
 
+    //Un deporte tiene muchos usuarios que juegan a el. Aqui usamos la tabla pivote sport_user.
     public function users(){
         return $this->belongsToMany(User::class, 'sport_user', 'sport_id', 'user_id')
                     ->withPivot('ero', 'matches_played')
