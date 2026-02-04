@@ -90,10 +90,10 @@ export class Reservar implements OnInit {
 
   cargarDeporte() {
     this.cargando = true;
-    this.deporteService.getAllDeportes().subscribe({
-      next: (deportes) => {
+    this.deporteService.getDeportes().subscribe({
+      next: (deportes: Deporte[]) => {
         // Buscar el deporte por el slug (nombre en la URL)
-        this.deporte = deportes.find(d =>
+        this.deporte = deportes.find((d: Deporte) =>
           this.normalizar(d.nombre) === this.deporteSlug
         ) || null;
 
@@ -104,7 +104,7 @@ export class Reservar implements OnInit {
         }
 
         this.generarHorarios();
-        
+
         // Cargar reservas según el modo
         if (this.modo === 'crear') {
           this.cargarReservasDelDia();
@@ -116,7 +116,7 @@ export class Reservar implements OnInit {
         this.cargando = false;
         this.cdr.detectChanges();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error al cargar deportes:', error);
         this.cargando = false;
         this.cdr.detectChanges();
@@ -254,8 +254,8 @@ export class Reservar implements OnInit {
       this.mostrarMensaje('Debes iniciar sesión para crear una reserva', 'error');
       setTimeout(() => {
         // Guardar la URL actual para volver después del login
-        this.router.navigate(['/login'], { 
-          queryParams: { returnUrl: this.router.url } 
+        this.router.navigate(['/login'], {
+          queryParams: { returnUrl: this.router.url }
         });
       }, 1500);
       return;
@@ -308,8 +308,8 @@ export class Reservar implements OnInit {
       this.mostrarMensaje('Debes iniciar sesión para unirte a un partido', 'error');
       setTimeout(() => {
         // Guardar la URL actual para volver después del login
-        this.router.navigate(['/login'], { 
-          queryParams: { returnUrl: this.router.url } 
+        this.router.navigate(['/login'], {
+          queryParams: { returnUrl: this.router.url }
         });
       }, 1500);
       return;

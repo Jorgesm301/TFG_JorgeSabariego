@@ -10,19 +10,24 @@ import { PartidoDetalle } from './components/partido-detalle/partido-detalle';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: Bienvenida }, // Página principal - se adapta según autenticación
-  { path: 'login', component: Login }, // Login público
-  { path: 'registro', component: Registro }, // Registro público
+
+  //Pagina principal, login y registro, endpoints publicos.
+  { path: '', component: Bienvenida },
+  { path: 'login', component: Login },
+  { path: 'registro', component: Registro },
+
   {
     path: 'perfil',
     component: Perfil,
-    canActivate: [authGuard] // Protegido - requiere autenticación
+    canActivate: [authGuard]
   },
+
   {
     path: 'mis-reservas',
     component: MisReservas,
-    canActivate: [authGuard] // Protegido - requiere autenticación
+    canActivate: [authGuard]
   },
+
   {
     path: 'reservar/:deporte',
     component: Reservar
@@ -30,12 +35,15 @@ export const routes: Routes = [
   {
     path: 'ero',
     component: Ero,
-    canActivate: [authGuard] // Protegido - requiere autenticación
+    canActivate: [authGuard]
   },
+
   {
     path: 'partido/:id',
     component: PartidoDetalle,
-    canActivate: [authGuard] // Protegido - requiere autenticación
+    canActivate: [authGuard]
   },
-  { path: '**', redirectTo: '' } // Cualquier ruta no encontrada va a bienvenida
+
+  // Cualquier ruta no encontrada va a la pagina de bienvenida
+  { path: '**', redirectTo: '' }
 ];

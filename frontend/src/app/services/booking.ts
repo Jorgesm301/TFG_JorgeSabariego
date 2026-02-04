@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { AuthService } from './auth';
 
 export interface IBooking {
   id?: number;
@@ -12,58 +13,90 @@ export interface IBooking {
   pista: string;
   max_jugadores: number;
   jugadores_actuales: number;
-  estado: 'abierto' | 'completo' | 'jugado' | 'cancelado';
-  team_1_score?: number | null;
-  team_2_score?: number | null;
-  winner_team?: number | null;
+  estado: 'abierto' | 'completo' | 'cancelado' | 'jugado';
   creador?: { id: number; name: string };
   usuarios?: { id: number; name: string }[];
   deporte?: { id: number; nombre: string; duracion_minutos: number };
+  team_1_score?: number | null;
+  team_2_score?: number | null;
+  winner_team?: number | null;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class BookingService {
   private apiUrl = 'http://localhost:8000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private auth: AuthService) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+  private authHeadersOrNull(): HttpHeaders | null {
+    const token = this.auth.getToken();
+    if (!token) return null;
+
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
     });
   }
 
-  // Obtener reservas de un deporte en una fecha específica
+  private requireAuthHeaders(): HttpHeaders {
+    const headers = this.authHeadersOrNull();
+    if (!headers) {
+      // error controlable desde el subscribe()
+      throw new Error('Debes iniciar sesión.');
+    }
+    return headers;
+  }
+
+  // Endpoints públicos
   getReservasPorDeporteYFecha(deporteId: number, fecha: string): Observable<IBooking[]> {
-    return this.http.get<IBooking[]>(`${this.apiUrl}/bookings/deporte/${deporteId}/fecha/${fecha}`);
+    return this.http.get<IBooking[]>(
+      `${this.apiUrl}/bookings/deporte/${deporteId}/fecha/${fecha}`
+    );
   }
 
-  // Obtener reservas disponibles (abiertas) de un deporte
   getReservasDisponibles(deporteId: number): Observable<IBooking[]> {
-    return this.http.get<IBooking[]>(`${this.apiUrl}/bookings/disponibles/${deporteId}`);
+    return this.http.get<IBooking[]>(
+      `${this.apiUrl}/bookings/disponibles/${deporteId}`
+    );
   }
 
-  // Crear una nueva reserva
+  // Endpoints protegidos
   crearReserva(reserva: Partial<IBooking>): Observable<any> {
-    return this.http.post(`${this.apiUrl}/bookings`, reserva, { headers: this.getHeaders() });
+    let headers: HttpHeaders;
+    try {
+      headers = this.requireAuthHeaders();
+    } catch (e: any) {
+      return throwError(() => e);
+    }
+    return this.http.post(`${this.apiUrl}/bookings`, reserva, { headers });
   }
 
-  // Unirse a una reserva existente
   unirseAReserva(bookingId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/bookings/${bookingId}/unirse`, {}, { headers: this.getHeaders() });
+    let headers: HttpHeaders;
+    try {
+      headers = this.requireAuthHeaders();
+    } catch (e: any) {
+      return throwError(() => e);
+    }
+    return this.http.post(`${this.apiUrl}/bookings/${bookingId}/unirse`, {}, { headers });
   }
 
-  // Salirse de una reserva
   salirseDeReserva(bookingId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/bookings/${bookingId}/salir`, { headers: this.getHeaders() });
+    let headers: HttpHeaders;
+    try {
+      headers = this.requireAuthHeaders();
+    } catch (e: any) {
+      return throwError(() => e);
+    }
+    return this.http.delete(`${this.apiUrl}/bookings/${bookingId}/salir`, { headers });
   }
 
-  // Obtener mis reservas
   getMisReservas(): Observable<IBooking[]> {
-    return this.http.get<IBooking[]>(`${this.apiUrl}/mis-bookings`, { headers: this.getHeaders() });
+    let headers: HttpHeaders;
+    try {
+      headers = this.requireAuthHeaders();
+    } catch (e: any) {
+      return throwError(() => e);
+    }
+    return this.http.get<IBooking[]>(`${this.apiUrl}/mis-bookings`, { headers });
   }
 }

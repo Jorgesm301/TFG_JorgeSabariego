@@ -10,9 +10,7 @@ export class EroService {
 
   constructor(private http: HttpClient) { }
 
-  /**
-   * Obtener el ERO del usuario autenticado
-   */
+
   getMyEro(): Observable<any> {
     return this.http.get(`${this.API_URL}/me/ero`);
   }

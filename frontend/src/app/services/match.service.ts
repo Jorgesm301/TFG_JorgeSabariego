@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { AuthService } from './auth';
 
 export interface IEquipo {
   id: number;
@@ -25,6 +26,15 @@ export interface IGenerarEquiposResponse {
   ero_promedio_equipo_2: number;
 }
 
+export interface ICambioEro {
+  id: number;
+  name: string;
+  team: number;
+  nuevo_ero: number;
+  partidos_jugados: number;
+  gano: boolean;
+}
+
 export interface IResultadoResponse {
   message: string;
   resultado: {
@@ -33,15 +43,6 @@ export interface IResultadoResponse {
     winner_team: number | null;
   };
   cambios_ero: ICambioEro[];
-}
-
-export interface ICambioEro {
-  id: number;
-  name: string;
-  team: number;
-  nuevo_ero: number;
-  partidos_jugados: number;
-  gano: boolean;
 }
 
 export interface IPartidoHistorial {
@@ -55,56 +56,61 @@ export interface IPartidoHistorial {
   empate: boolean;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class MatchService {
   private apiUrl = 'http://localhost:8000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private auth: AuthService) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+  private headersOrThrow(): HttpHeaders {
+    const token = this.auth.getToken(); // ✅ usa auth_token
+    if (!token) throw new Error('Debes iniciar sesión.');
+
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
     });
   }
 
-  // Generar equipos equilibrados para un partido
   generarEquipos(bookingId: number): Observable<IGenerarEquiposResponse> {
+    let headers: HttpHeaders;
+    try { headers = this.headersOrThrow(); } catch (e: any) { return throwError(() => e); }
+
     return this.http.post<IGenerarEquiposResponse>(
       `${this.apiUrl}/matches/${bookingId}/generar-equipos`,
       {},
-      { headers: this.getHeaders() }
+      { headers }
     );
   }
 
-  // Obtener los equipos de un partido
   obtenerEquipos(bookingId: number): Observable<IEquiposResponse> {
+    let headers: HttpHeaders;
+    try { headers = this.headersOrThrow(); } catch (e: any) { return throwError(() => e); }
+
     return this.http.get<IEquiposResponse>(
       `${this.apiUrl}/matches/${bookingId}/equipos`,
-      { headers: this.getHeaders() }
+      { headers }
     );
   }
 
-  // Registrar resultado de un partido
   registrarResultado(bookingId: number, team1Score: number, team2Score: number): Observable<IResultadoResponse> {
+    let headers: HttpHeaders;
+    try { headers = this.headersOrThrow(); } catch (e: any) { return throwError(() => e); }
+
     return this.http.post<IResultadoResponse>(
       `${this.apiUrl}/matches/${bookingId}/resultado`,
-      {
-        team_1_score: team1Score,
-        team_2_score: team2Score
-      },
-      { headers: this.getHeaders() }
+      { team_1_score: team1Score, team_2_score: team2Score },
+      { headers }
     );
   }
 
-  // Obtener historial de partidos jugados
   getHistorialPartidos(): Observable<IPartidoHistorial[]> {
+    let headers: HttpHeaders;
+    try { headers = this.headersOrThrow(); } catch (e: any) { return throwError(() => e); }
+
     return this.http.get<IPartidoHistorial[]>(
       `${this.apiUrl}/mis-partidos`,
-      { headers: this.getHeaders() }
+      { headers }
     );
   }
 }

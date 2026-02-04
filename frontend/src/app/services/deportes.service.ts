@@ -22,18 +22,10 @@ export class DeportesService {
 
   constructor(private http: HttpClient) { }
 
-  // Obtener todos los deportes (público)
-  getAllDeportes(): Observable<Deporte[]> {
-    console.log('DeportesService: Haciendo petición a', `${this.API_URL}/deportes`);
+  getDeportes(): Observable<Deporte[]> {
     return this.http.get<Deporte[]>(`${this.API_URL}/deportes`);
   }
 
-  // Obtener todos los deportes (alias para compatibilidad)
-  getDeportes(): Observable<Deporte[]> {
-    return this.getAllDeportes();
-  }
-
-  // Obtener un deporte específico (público)
   getDeporte(id: number): Observable<Deporte> {
     return this.http.get<Deporte>(`${this.API_URL}/deportes/${id}`);
   }
