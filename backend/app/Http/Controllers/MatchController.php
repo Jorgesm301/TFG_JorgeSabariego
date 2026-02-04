@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class MatchController extends Controller
 {
-    /**
-     * Generar equipos equilibrados para un partido completo
-     */
+    ///Funcion que genera equipos equilibrados una vez el partido esta completo.
     public function generarEquipos($bookingId)
     {
         try {
@@ -20,14 +18,13 @@ class MatchController extends Controller
                 $query->where('sport_id', $booking->deporte_id);
             }])->findOrFail($bookingId);
 
-            // Verificar que el partido esté completo
             if (!$booking->estaCompleta()) {
                 return response()->json([
                     'message' => 'El partido aún no está completo'
                 ], 400);
             }
 
-            // Verificar que no se hayan generado equipos ya
+            //Verificamos que no haya equipos ya.
             $equiposYaGenerados = $booking->usuarios()
                 ->wherePivotNotNull('team')
                 ->exists();
@@ -38,11 +35,11 @@ class MatchController extends Controller
                 ], 400);
             }
 
-            // Generar equipos
+
             DB::beginTransaction();
-            
+
             $resultado = $booking->generarEquiposEquilibrados();
-            
+
             if (!$resultado) {
                 DB::rollBack();
                 return response()->json([
@@ -52,7 +49,7 @@ class MatchController extends Controller
 
             DB::commit();
 
-            // Cargar los equipos generados
+            //Cargamos los equipos generados
             $equipo1 = $booking->usuarios()
                 ->wherePivot('team', 1)
                 ->with(['sports' => function($query) use ($booking) {
@@ -100,9 +97,7 @@ class MatchController extends Controller
         }
     }
 
-    /**
-     * Obtener los equipos de un partido
-     */
+    //Funcion para obtener los equipos de un partido.
     public function obtenerEquipos($bookingId)
     {
         try {
@@ -110,7 +105,6 @@ class MatchController extends Controller
                 $query->wherePivotNotNull('team');
             }])->findOrFail($bookingId);
 
-            // Verificar que los equipos hayan sido generados
             if ($booking->usuarios->isEmpty()) {
                 return response()->json([
                     'message' => 'Los equipos aún no han sido generados'
@@ -164,9 +158,7 @@ class MatchController extends Controller
         }
     }
 
-    /**
-     * Registrar el resultado de un partido
-     */
+    //Funcion para registrar el resultado de un partido
     public function registrarResultado(Request $request, $bookingId)
     {
         try {
@@ -177,7 +169,7 @@ class MatchController extends Controller
 
             $booking = Booking::findOrFail($bookingId);
 
-            // Verificar que los equipos hayan sido generados
+
             $equiposGenerados = $booking->usuarios()
                 ->wherePivotNotNull('team')
                 ->exists();
@@ -188,7 +180,7 @@ class MatchController extends Controller
                 ], 400);
             }
 
-            // Verificar que no esté ya jugado
+
             if ($booking->estado === 'jugado') {
                 return response()->json([
                     'message' => 'Este partido ya ha sido jugado'
@@ -197,7 +189,7 @@ class MatchController extends Controller
 
             DB::beginTransaction();
 
-            // Registrar resultado y actualizar ERO
+            //Registramos el resultado y actualizamos el ERO
             $booking->registrarResultado(
                 $request->team_1_score,
                 $request->team_2_score
@@ -205,7 +197,7 @@ class MatchController extends Controller
 
             DB::commit();
 
-            // Obtener cambios de ERO
+
             $cambiosEro = $this->obtenerCambiosEro($booking);
 
             return response()->json([
@@ -232,9 +224,7 @@ class MatchController extends Controller
         }
     }
 
-    /**
-     * Obtener los cambios de ERO después de un partido
-     */
+    //Funcion para obtener los cambios de ERO de un partido
     private function obtenerCambiosEro($booking)
     {
         $jugadores = $booking->usuarios()
@@ -256,9 +246,7 @@ class MatchController extends Controller
         });
     }
 
-    /**
-     * Obtener historial de partidos jugados de un usuario
-     */
+    //Funcion que nos devuelve el historial de partidos jugados por un usuario
     public function historialPartidos()
     {
         try {

@@ -6,9 +6,7 @@ use Illuminate\Http\Request;
 
 class EroController extends Controller
 {
-    /**
-     * Devuelve el ERO del usuario autenticado por deporte
-     */
+    //Devuelve el ERO del usuario
     public function myEro(Request $request)
     {
         $user = $request->user();

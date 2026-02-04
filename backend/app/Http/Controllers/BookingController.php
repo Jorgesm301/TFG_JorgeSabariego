@@ -12,9 +12,7 @@ use Carbon\Carbon;
 
 class BookingController extends Controller
 {
-    /**
-     * Obtener reservas por deporte y fecha
-     */
+    //Obtenemos las reservas de un deporte por una fecha concreta. Endpoint publico.
     public function getReservasPorDeporteYFecha($deporteId, $fecha)
     {
         try {
@@ -31,9 +29,7 @@ class BookingController extends Controller
         }
     }
 
-    /**
-     * Crear una nueva reserva
-     */
+    //Funcion para crear una nueva reserva
     public function crearReserva(Request $request)
     {
         try {
@@ -45,19 +41,16 @@ class BookingController extends Controller
 
             $userId = Auth::id();
 
-            // ✅ NUEVO: Inicializar ERO del usuario en este deporte si no existe
+            //Inicializamos el ERO del usuario en este deporte si no existe
             /** @var User $user */
             $user = Auth::user();
             $user->initSportEro((int) $request->deporte_id);
 
-            // Obtener información del deporte
+            //Obtenemos la informacion del deporte y calculamos su duracion.
             $deporte = Deporte::findOrFail($request->deporte_id);
-
-            // Calcular hora de fin según duración del deporte
             $horaInicio = Carbon::createFromFormat('H:i', $request->hora_inicio);
             $horaFin = $horaInicio->copy()->addMinutes($deporte->duracion_minutos);
 
-            // Verificar disponibilidad
             if (!Booking::estaDisponible(
                 $request->deporte_id,
                 $request->fecha,
@@ -84,12 +77,11 @@ class BookingController extends Controller
                 'estado' => 'abierto',
             ]);
 
-            // Añadir al creador como jugador
+            //Añadimos al creador en booking_user
             $booking->usuarios()->attach($userId, ['es_creador' => true]);
 
             DB::commit();
 
-            // Cargar relaciones para la respuesta
             $booking->load(['creador:id,name', 'deporte:id,nombre', 'usuarios:id,name']);
 
             return response()->json([
@@ -111,44 +103,39 @@ class BookingController extends Controller
         }
     }
 
-    /**
-     * Unirse a una reserva existente
-     */
+    //Funcion para unirse a una reserva
     public function unirseAReserva($bookingId)
     {
         try {
             $userId = Auth::id();
             $booking = Booking::findOrFail($bookingId);
 
-            // Verificar que no esté cancelado
+            //Verficamos que no este cancelado
             if ($booking->estado === 'cancelado') {
                 return response()->json(['message' => 'Esta reserva ha sido cancelada'], 400);
             }
 
-            // Verificar que no esté completo
+            // Verificamos que no esté completo
             if ($booking->estaCompleta()) {
                 return response()->json(['message' => 'Esta reserva ya está completa'], 400);
             }
 
-            // Verificar que el usuario no esté ya en la reserva
+            // Verificamos que el usuario no esté ya en la reserva
             if ($booking->tieneUsuario($userId)) {
                 return response()->json(['message' => 'Ya estás en esta reserva'], 400);
             }
 
-            // ✅ NUEVO: Inicializar ERO del usuario en el deporte de la reserva si no existe
+            //Inicializamos el ERO del usuario en el deporte de la reserva si no existe
             /** @var User $user */
             $user = Auth::user();
             $user->initSportEro((int) $booking->deporte_id);
 
             DB::beginTransaction();
 
-            // Añadir usuario a la reserva
             $booking->usuarios()->attach($userId, ['es_creador' => false]);
-
-            // Incrementar contador de jugadores
             $booking->increment('jugadores_actuales');
 
-            // Si está completo, cambiar estado
+            // Si está completo, cambiamos el estado a completo
             if ($booking->jugadores_actuales >= $booking->max_jugadores) {
                 $booking->update(['estado' => 'completo']);
             }
@@ -171,21 +158,18 @@ class BookingController extends Controller
         }
     }
 
-    /**
-     * Salirse de una reserva
-     */
+    //Funcion para salirse de una reserva
     public function salirseDeReserva($bookingId)
     {
         try {
             $userId = Auth::id();
             $booking = Booking::findOrFail($bookingId);
 
-            // Verificar que el usuario esté en la reserva
+
             if (!$booking->tieneUsuario($userId)) {
                 return response()->json(['message' => 'No estás en esta reserva'], 400);
             }
 
-            // Verificar si es el creador
             $esCreador = $booking->usuarios()
                 ->where('user_id', $userId)
                 ->wherePivot('es_creador', true)
@@ -194,9 +178,9 @@ class BookingController extends Controller
             DB::beginTransaction();
 
             if ($esCreador) {
-                // Si es el creador, cancelar toda la reserva
+                //Si es el creador cancelamos la reserva
                 $booking->update(['estado' => 'cancelado']);
-                $booking->usuarios()->detach(); // Quitar a todos los usuarios
+                $booking->usuarios()->detach();
 
                 DB::commit();
 
@@ -205,11 +189,10 @@ class BookingController extends Controller
                     'cancelado' => true
                 ]);
             } else {
-                // Si no es el creador, solo quitarlo
+                //En caso de no ser creador, solo quitamos dicho usuario de la reserva
                 $booking->usuarios()->detach($userId);
                 $booking->decrement('jugadores_actuales');
 
-                // Si estaba completo, volver a abierto
                 if ($booking->estado === 'completo') {
                     $booking->update(['estado' => 'abierto']);
                 }
@@ -231,10 +214,7 @@ class BookingController extends Controller
         }
     }
 
-    /**
-     * Obtener las reservas del usuario autenticado
-     * Solo muestra reservas de hoy en adelante
-     */
+    //Funcion para obtener las reservas del usuario autenticado
     public function misReservas()
     {
         try {
@@ -260,12 +240,11 @@ class BookingController extends Controller
         }
     }
 
-    /**
-     * Obtener todas las reservas disponibles (abiertas) de un deporte
-     */
+    //Funcion que nos devuelve las reservas disponibles de un deporte
     public function reservasDisponibles($deporteId)
     {
         try {
+
             $hoy = Carbon::today()->format('Y-m-d');
             $horaActual = Carbon::now()->format('H:i');
 

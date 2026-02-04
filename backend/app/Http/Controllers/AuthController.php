@@ -49,17 +49,17 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
-        // Buscar usuario por email
+        //Buscamos usuario por email.
         $user = User::where('email', $request->email)->first();
 
-        // Verificar si el usuario existe y la contraseña es correcta
+        //Verficamos si el usuario existe y la contraseña es correcta.
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'message' => 'Credenciales incorrectas'
             ], 401);
         }
 
-        // Crear token de acceso usando Sanctum
+        //Creamos el token de acceso con Sanctum.
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
