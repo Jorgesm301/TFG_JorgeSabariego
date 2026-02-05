@@ -9,7 +9,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const token = authService.getToken();
 
-  // Clonar la petición y añadir el token si existe
   if (token) {
     req = req.clone({
       setHeaders: {
@@ -18,11 +17,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-  // Manejar errores de autenticación
+
   return next(req).pipe(
     catchError((error) => {
       if (error.status === 401) {
-        // Token inválido o expirado
+        //Si el token ha expirado o es inválido, se cierra la sesión y se redirige al login
         authService.logout();
         router.navigate(['/login']);
       }
