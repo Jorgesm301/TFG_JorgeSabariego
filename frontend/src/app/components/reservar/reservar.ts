@@ -16,10 +16,10 @@ export class Reservar implements OnInit {
   deporteSlug: string = '';
   deporte: Deporte | null = null;
 
-  // Modo: 'crear' o 'unirse'
+
   modo: 'crear' | 'unirse' = 'crear';
 
-  // Para crear reserva
+  //Variables para crear reserva
   fechaSeleccionada: string = '';
   fechaMinima: string = '';
   fechaMaxima: string = '';
@@ -27,14 +27,13 @@ export class Reservar implements OnInit {
   reservasDelDia: IBooking[] = [];
   horariosDisponibles: string[] = [];
 
-  // Para unirse a reserva
+  // Variables para unirse a reserva
   reservasDisponibles: IBooking[] = [];
 
   mensaje: string = '';
   mensajeTipo: 'success' | 'error' | 'info' = 'info';
   cargando: boolean = false;
 
-  // Para el header y menú
   menuReservarAbierto = false;
   deportesMenu = [
     { nombre: 'Fútbol', icon: '⚽', ruta: '/reservar/futbol'},
@@ -60,26 +59,24 @@ export class Reservar implements OnInit {
     this.deporteSlug = this.route.snapshot.params['deporte'];
     this.cargarDeporte();
 
-    // Establecer fecha mínima como hoy
+    //Establecemos la fecha minima como hoy para no permitir reservas en el pasado y la fecha maxima como un mes desde hoy
     const hoy = new Date();
     this.fechaMinima = hoy.toISOString().split('T')[0];
     this.fechaSeleccionada = this.fechaMinima;
 
-    // Establecer fecha máxima como 1 mes desde hoy
     const fechaMax = new Date();
     fechaMax.setMonth(fechaMax.getMonth() + 1);
     this.fechaMaxima = fechaMax.toISOString().split('T')[0];
 
-    // Timeout de seguridad
     setTimeout(() => {
       if (this.cargando && !this.deporte) {
         this.cargando = false;
         this.mostrarMensaje('Error: La carga del deporte tardó demasiado. Por favor, recarga la página.', 'error');
       }
-    }, 10000); // 10 segundos
+    }, 10000);
   }
 
-  // Normalizar texto quitando tildes y caracteres especiales
+  // Normalizamos el texto quitandole tildes y caracteres especiales. Esto es para comparar el nombre del deporte con el slug de la URL.
   normalizar(texto: string): string {
     return texto
       .normalize('NFD')
@@ -92,27 +89,24 @@ export class Reservar implements OnInit {
     this.cargando = true;
     this.deporteService.getDeportes().subscribe({
       next: (deportes: Deporte[]) => {
-        // Buscar el deporte por el slug (nombre en la URL)
+
         this.deporte = deportes.find((d: Deporte) =>
           this.normalizar(d.nombre) === this.deporteSlug
         ) || null;
 
         if (!this.deporte) {
           this.cargando = false;
-          // No redirigir, mostrar mensaje de error
           return;
         }
 
         this.generarHorarios();
 
-        // Cargar reservas según el modo
         if (this.modo === 'crear') {
           this.cargarReservasDelDia();
         } else if (this.modo === 'unirse') {
           this.cargarReservasDisponibles();
         }
 
-        // Asegurarse de que el flag de cargando se actualice y forzar detección de cambios
         this.cargando = false;
         this.cdr.detectChanges();
       },
@@ -130,18 +124,17 @@ export class Reservar implements OnInit {
 
     if (!this.deporte) return;
 
-    // Generar horarios desde las 9:00 hasta las 00:00
-    // Los horarios se generan según la duración del deporte
+    //Generamos los horarios desde las 9:00 hasta las 00:00 con la duracion de cada deporte.
     const duracionMinutos = this.deporte.duracion_minutos;
-    const horaInicio = 9 * 60; // 9:00 en minutos
-    const horaFin = 24 * 60; // 00:00 (medianoche) en minutos
+    const horaInicio = 9 * 60;
+    const horaFin = 24 * 60;
 
-    // Verificar si la fecha seleccionada es hoy
+
     const hoy = new Date();
     const fechaHoy = hoy.toISOString().split('T')[0];
     const esHoy = this.fechaSeleccionada === fechaHoy;
 
-    // Obtener hora actual en minutos
+    //Obtenemos la hora actual en minutos
     let horaActualMinutos = 0;
     if (esHoy) {
       horaActualMinutos = hoy.getHours() * 60 + hoy.getMinutes();
@@ -150,7 +143,7 @@ export class Reservar implements OnInit {
     let minutoActual = horaInicio;
 
     while (minutoActual + duracionMinutos <= horaFin) {
-      // Si es hoy, solo mostrar horarios futuros
+      //Si el dia es hoy, mostramos fechas desde este mismo momento hacia delante
       if (!esHoy || minutoActual > horaActualMinutos) {
         const hora = Math.floor(minutoActual / 60);
         const minuto = minutoActual % 60;
@@ -180,7 +173,8 @@ export class Reservar implements OnInit {
   }
 
   cargarReservasDelDia() {
-    if (!this.deporte || !this.fechaSeleccionada) return;
+    if (!this.deporte || !this.fechaSeleccionada)
+     return;
 
     this.bookingService.getReservasPorDeporteYFecha(this.deporte.id, this.fechaSeleccionada)
       .subscribe({
@@ -231,8 +225,7 @@ export class Reservar implements OnInit {
       const inicioReserva = hInicio * 60 + mInicio;
       const finReserva = hFin * 60 + mFin;
 
-      // Verificar solapamiento: dos intervalos se solapan si uno empieza antes de que termine el otro
-      // Solapamiento ocurre si: inicio1 < fin2 Y fin1 > inicio2
+      //Verificamos si se solapan los horarios, se solapan si el inicio de uno acaba despues del inicio del otro y antes del fin del otro.
       return minutosSolicitud < finReserva && finSolicitud > inicioReserva;
     });
 
@@ -240,7 +233,8 @@ export class Reservar implements OnInit {
   }
 
   calcularHoraFin(horaInicio: string): string {
-    if (!this.deporte) return horaInicio;
+    if (!this.deporte)
+      return horaInicio;
 
     const [h, m] = horaInicio.split(':').map(Number);
     const totalMinutos = h * 60 + m + this.deporte.duracion_minutos;
@@ -253,7 +247,7 @@ export class Reservar implements OnInit {
     if (!this.authService.isAuthenticated()) {
       this.mostrarMensaje('Debes iniciar sesión para crear una reserva', 'error');
       setTimeout(() => {
-        // Guardar la URL actual para volver después del login
+        //Guardamos el URL actual para volver después del login
         this.router.navigate(['/login'], {
           queryParams: { returnUrl: this.router.url }
         });
@@ -286,7 +280,7 @@ export class Reservar implements OnInit {
         this.mostrarMensaje('¡Reserva creada con éxito!', 'success');
         this.horaSeleccionada = '';
 
-        // Agregar la reserva directamente al array en lugar de hacer otra petición
+
         if (response.booking) {
           this.reservasDelDia.push(response.booking);
         }
@@ -307,7 +301,7 @@ export class Reservar implements OnInit {
     if (!this.authService.isAuthenticated()) {
       this.mostrarMensaje('Debes iniciar sesión para unirte a un partido', 'error');
       setTimeout(() => {
-        // Guardar la URL actual para volver después del login
+        //Guardamos el URL actual para volver después del login
         this.router.navigate(['/login'], {
           queryParams: { returnUrl: this.router.url }
         });
@@ -352,7 +346,6 @@ export class Reservar implements OnInit {
     this.router.navigate(['/']);
   }
 
-  // Métodos para el header
   get estaLogueado(): boolean {
     return this.authService.isAuthenticated();
   }

@@ -26,7 +26,7 @@ export class Login {
       password: ['', [Validators.required]]
     });
 
-    // Obtener la URL a la que quería acceder el usuario
+    //Volvemos a donde estabamos antes de ir al login, o a la bienvenida si no hay returnUrl
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
@@ -35,7 +35,6 @@ export class Login {
       this.authService.login(this.loginForm.value).subscribe({
         next: (res) => {
           console.log('Login exitoso, token guardado');
-          // Redirigir a la página donde estaba o a la bienvenida
           this.router.navigateByUrl(this.returnUrl);
         },
         error: (err) => {

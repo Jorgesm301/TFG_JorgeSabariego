@@ -2,16 +2,16 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { AuthService } from '../../services/auth'; // Verifica que la ruta al servicio sea correcta
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './registro.html', // He quitado el .component para que coincida con tus archivos
+  templateUrl: './registro.html',
   styleUrl: './registro.css'
 })
-export class Registro { // Dejamos el nombre "Registro" como en tu imagen
+export class Registro {
   registroForm: FormGroup;
 
   constructor(
@@ -31,17 +31,18 @@ export class Registro { // Dejamos el nombre "Registro" como en tu imagen
     if (this.registroForm.valid) {
       this.authService.registrar(this.registroForm.value).subscribe({
         next: (res) => {
-          alert('¡Usuario creado con éxito!');
-          // Hacer login automático después del registro
+          alert('¡Usuario creado con exito!');
+
+          //Para que el usuario no tenga que meter otra vez los datos
           this.authService.login({
             email: this.registroForm.value.email,
             password: this.registroForm.value.password
           }).subscribe({
             next: () => {
-              this.router.navigate(['/']); // Ir a bienvenida
+              this.router.navigate(['/']);
             },
             error: () => {
-              this.router.navigate(['/login']); // Si falla, ir a login
+              this.router.navigate(['/login']);
             }
           });
         },

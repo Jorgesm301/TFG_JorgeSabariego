@@ -27,7 +27,7 @@ export class Perfil implements OnInit {
   ngOnInit(): void {
     this.usuario = this.authService.getUserData();
 
-    // Si no hay usuario, redirigir a login
+    //Si no esta registrado el usuario, redirigimos al login
     if (!this.usuario) {
       this.router.navigate(['/login']);
     } else {

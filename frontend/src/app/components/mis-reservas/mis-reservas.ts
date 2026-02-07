@@ -27,7 +27,7 @@ export class MisReservas implements OnInit {
   ngOnInit(): void {
     this.usuario = this.authService.getUserData();
 
-    // Si no hay usuario, redirigir a login
+    //Si no hay usuario, redirigir a login
     if (!this.usuario) {
       this.router.navigate(['/login']);
       return;
@@ -37,25 +37,17 @@ export class MisReservas implements OnInit {
   }
 
   cargarReservas() {
-    console.log('=== CARGANDO MIS RESERVAS ===');
-    console.log('Usuario:', this.usuario);
-    console.log('Token:', localStorage.getItem('token'));
 
     this.cargando = true;
     this.error = '';
 
     this.bookingService.getMisReservas().subscribe({
       next: (reservas) => {
-        console.log('Reservas recibidas:', reservas);
         this.reservas = reservas;
         this.cargando = false;
         this.cdr.detectChanges();
-        console.log('Cargando actualizado, cargando =', this.cargando);
       },
       error: (error) => {
-        console.error('Error al cargar reservas:', error);
-        console.error('Status:', error.status);
-        console.error('Error completo:', error);
         this.error = error.error?.message || 'Error al cargar tus reservas';
         this.cargando = false;
         this.cdr.detectChanges();
@@ -70,9 +62,8 @@ export class MisReservas implements OnInit {
 
     this.bookingService.salirseDeReserva(booking.id!).subscribe({
       next: (response) => {
-        console.log('Salida exitosa:', response);
         alert(response.message || 'Has salido de la reserva exitosamente');
-        this.cargarReservas(); // Recargar lista
+        this.cargarReservas();
       },
       error: (error) => {
         console.error('Error al salir de la reserva:', error);
@@ -85,7 +76,6 @@ export class MisReservas implements OnInit {
     this.router.navigate(['/']);
   }
 
-  // Métodos para el header
   get estaLogueado(): boolean {
     return this.authService.isAuthenticated();
   }

@@ -21,12 +21,10 @@ export class PartidoDetalle implements OnInit {
   error = '';
   generandoEquipos = false;
   registrandoResultado = false;
-  
-  // Formulario de resultado
   scoreEquipo1: number = 0;
   scoreEquipo2: number = 0;
-  
-  // Cambios de ERO después de registrar resultado
+
+  //Para actualizar el ERO despues del resultado
   cambiosEro: ICambioEro[] = [];
   resultadoRegistrado = false;
 
@@ -49,21 +47,21 @@ export class PartidoDetalle implements OnInit {
   }
 
   cargarDetalles(): void {
-    if (!this.bookingId) return;
-    
+    if (!this.bookingId)
+       return;
+
     this.cargando = true;
     this.error = '';
 
-    // Cargar detalles de la reserva desde mis reservas
     this.bookingService.getMisReservas().subscribe({
       next: (reservas) => {
         this.booking = reservas.find(r => r.id === this.bookingId) || null;
-        
+
         if (this.booking && this.booking.estado !== 'abierto') {
-          // Si el partido está completo o jugado, intentar cargar equipos
+          //Si esta completo el partido, generamos los equipos
           this.cargarEquipos();
         }
-        
+
         this.cargando = false;
         this.cdr.detectChanges();
       },
@@ -76,7 +74,8 @@ export class PartidoDetalle implements OnInit {
   }
 
   cargarEquipos(): void {
-    if (!this.bookingId) return;
+    if (!this.bookingId)
+       return;
 
     this.matchService.obtenerEquipos(this.bookingId).subscribe({
       next: (equipos) => {
@@ -84,7 +83,7 @@ export class PartidoDetalle implements OnInit {
         this.cdr.detectChanges();
       },
       error: (error) => {
-        // Si no hay equipos generados aún, no es un error crítico
+        //Error por si no hay equipos generados.
         if (error.status !== 400) {
           console.error('Error al cargar equipos:', error);
         }
@@ -93,7 +92,8 @@ export class PartidoDetalle implements OnInit {
   }
 
   generarEquipos(): void {
-    if (!this.bookingId || this.generandoEquipos) return;
+    if (!this.bookingId || this.generandoEquipos)
+       return;
 
     if (!confirm('¿Generar equipos equilibrados para este partido?')) {
       return;
@@ -120,7 +120,8 @@ export class PartidoDetalle implements OnInit {
   }
 
   registrarResultado(): void {
-    if (!this.bookingId || this.registrandoResultado) return;
+    if (!this.bookingId || this.registrandoResultado)
+      return;
 
     if (this.scoreEquipo1 < 0 || this.scoreEquipo2 < 0) {
       alert('Los marcadores no pueden ser negativos');
@@ -139,15 +140,15 @@ export class PartidoDetalle implements OnInit {
         console.log('Resultado registrado:', response);
         this.cambiosEro = response.cambios_ero;
         this.resultadoRegistrado = true;
-        
-        // Actualizar el booking con los nuevos datos
+
+        // Actualizamos el booking con los nuevos datos
         if (this.booking) {
           this.booking.team_1_score = response.resultado.team_1_score;
           this.booking.team_2_score = response.resultado.team_2_score;
           this.booking.winner_team = response.resultado.winner_team;
           this.booking.estado = 'jugado';
         }
-        
+
         this.registrandoResultado = false;
         this.cdr.detectChanges();
       },
@@ -177,8 +178,11 @@ export class PartidoDetalle implements OnInit {
   }
 
   calcularEroPromedio(equipo: any[]): number {
-    if (!equipo || equipo.length === 0) return 1000;
+    if (!equipo || equipo.length === 0)
+     return 1000;
+
     const suma = equipo.reduce((acc, j) => acc + (j.ero || 1000), 0);
+
     return Math.round(suma / equipo.length);
   }
 }
