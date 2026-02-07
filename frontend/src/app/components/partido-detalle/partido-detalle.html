@@ -29,8 +29,8 @@
       <!-- Info del partido -->
       <div class="info-card">
         <div class="info-header">
-          <h2>{{ booking.deporte?.nombre }}</h2>
-          <span class="estado-badge" [class.completo]="booking.estado === 'completo'" 
+          <h2>{{ booking.sport?.nombre }}</h2>
+          <span class="estado-badge" [class.completo]="booking.estado === 'completo'"
                 [class.jugado]="booking.estado === 'jugado'"
                 [class.abierto]="booking.estado === 'abierto'">
             {{ booking.estado }}
@@ -68,7 +68,7 @@
       <!-- Equipos generados -->
       <div class="equipos-section" *ngIf="equipos">
         <h3 class="section-title">⚔️ Equipos</h3>
-        
+
         <div class="equipos-grid">
           <!-- Equipo 1 -->
           <div class="equipo-card equipo-1">

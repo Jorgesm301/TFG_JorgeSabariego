@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
-use App\Models\Deporte;
+use App\Models\Sport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,10 +13,10 @@ use Carbon\Carbon;
 class BookingController extends Controller
 {
     //Obtenemos las reservas de un deporte por una fecha concreta. Endpoint publico.
-    public function getReservasPorDeporteYFecha($deporteId, $fecha)
+    public function getReservasPorSportYFecha($sportId, $fecha)
     {
         try {
-            $reservas = Booking::where('deporte_id', $deporteId)
+            $reservas = Booking::where('deporte_id', $sportId)
                 ->whereDate('fecha', $fecha)
                 ->where('estado', '!=', 'cancelado')
                 ->with(['creador:id,name', 'usuarios:id,name'])
@@ -34,7 +34,7 @@ class BookingController extends Controller
     {
         try {
             $request->validate([
-                'deporte_id' => 'required|exists:deportes,id',
+                'deporte_id' => 'required|exists:sports,id',
                 'fecha' => 'required|date|after_or_equal:today',
                 'hora_inicio' => 'required|date_format:H:i',
             ]);
@@ -47,9 +47,9 @@ class BookingController extends Controller
             $user->initSportEro((int) $request->deporte_id);
 
             //Obtenemos la informacion del deporte y calculamos su duracion.
-            $deporte = Deporte::findOrFail($request->deporte_id);
+            $sport = Sport::findOrFail($request->deporte_id);
             $horaInicio = Carbon::createFromFormat('H:i', $request->hora_inicio);
-            $horaFin = $horaInicio->copy()->addMinutes($deporte->duracion_minutos);
+            $horaFin = $horaInicio->copy()->addMinutes($sport->duracion_minutos);
 
             if (!Booking::estaDisponible(
                 $request->deporte_id,
@@ -72,7 +72,7 @@ class BookingController extends Controller
                 'hora_inicio' => $request->hora_inicio,
                 'hora_fin' => $horaFin->format('H:i'),
                 'pista' => $request->pista ?? 'Pista 1',
-                'max_jugadores' => $deporte->max_jugadores,
+                'max_jugadores' => $sport->max_jugadores,
                 'jugadores_actuales' => 1,
                 'estado' => 'abierto',
             ]);
@@ -82,7 +82,7 @@ class BookingController extends Controller
 
             DB::commit();
 
-            $booking->load(['creador:id,name', 'deporte:id,nombre', 'usuarios:id,name']);
+            $booking->load(['creador:id,name', 'sport:id,nombre', 'usuarios:id,name']);
 
             return response()->json([
                 'message' => 'Reserva creada exitosamente',
@@ -226,7 +226,7 @@ class BookingController extends Controller
                 })
                 ->where('estado', '!=', 'cancelado')
                 ->where('fecha', '>=', $hoy)
-                ->with(['deporte:id,nombre,duracion_minutos', 'creador:id,name', 'usuarios:id,name'])
+                ->with(['sport:id,nombre,duracion_minutos', 'creador:id,name', 'usuarios:id,name'])
                 ->orderBy('fecha', 'asc')
                 ->orderBy('hora_inicio', 'asc')
                 ->get();
@@ -241,14 +241,14 @@ class BookingController extends Controller
     }
 
     //Funcion que nos devuelve las reservas disponibles de un deporte
-    public function reservasDisponibles($deporteId)
+    public function reservasDisponibles($sportId)
     {
         try {
 
             $hoy = Carbon::today()->format('Y-m-d');
             $horaActual = Carbon::now()->format('H:i');
 
-            $reservas = Booking::where('deporte_id', $deporteId)
+            $reservas = Booking::where('deporte_id', $sportId)
                 ->where('estado', 'abierto')
                 ->where(function($query) use ($hoy, $horaActual) {
                     $query->where('fecha', '>', $hoy)

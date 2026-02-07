@@ -256,7 +256,7 @@ class MatchController extends Controller
                     $query->where('user_id', $userId);
                 })
                 ->where('estado', 'jugado')
-                ->with(['deporte:id,nombre', 'usuarios' => function($query) {
+                ->with(['sport:id,nombre', 'usuarios' => function($query) {
                     $query->wherePivotNotNull('team');
                 }])
                 ->orderBy('fecha', 'desc')
@@ -271,7 +271,7 @@ class MatchController extends Controller
 
                     return [
                         'id' => $partido->id,
-                        'deporte' => $partido->deporte->nombre,
+                        'deporte' => $partido->sport->nombre,
                         'fecha' => $partido->fecha->format('Y-m-d'),
                         'hora' => $partido->hora_inicio,
                         'mi_equipo' => $miEquipo,

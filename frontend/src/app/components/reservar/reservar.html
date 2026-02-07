@@ -27,22 +27,22 @@
   </header>
 
   <!-- Mensaje de carga -->
-  <div class="loader-inicial" *ngIf="cargando && !deporte">
+  <div class="loader-inicial" *ngIf="cargando && !sport">
     <div class="spinner"></div>
     <p>Cargando deporte...</p>
   </div>
 
   <!-- Mensaje de error si no se encuentra el deporte -->
-  <div class="error-container" *ngIf="!cargando && !deporte">
+  <div class="error-container" *ngIf="!cargando && !sport">
     <h2>Deporte no encontrado</h2>
-    <p>El deporte "{{ deporteSlug }}" no está disponible.</p>
+    <p>El deporte "{{ sportSlug }}" no está disponible.</p>
     <button class="btn-volver" (click)="volver()">Volver al inicio</button>
   </div>
 
-  <div class="reservar-container" *ngIf="deporte">
+  <div class="reservar-container" *ngIf="sport">
   <div class="header">
-    <h1>{{ deporte.nombre }}</h1>
-    <p class="info">Duración: {{ deporte.duracion_minutos }} minutos | Jugadores: {{ deporte.max_jugadores }}</p>
+    <h1>{{ sport.nombre }}</h1>
+    <p class="info">Duración: {{ sport.duracion_minutos }} minutos | Jugadores: {{ sport.max_jugadores }}</p>
   </div>
 
   <!-- Selector de modo -->
@@ -97,11 +97,11 @@
     <div class="resumen" *ngIf="horaSeleccionada && !estaOcupado(horaSeleccionada)">
       <h3>Resumen de tu reserva</h3>
       <div class="resumen-content">
-        <p><strong>Deporte:</strong> {{ deporte.nombre }}</p>
+        <p><strong>Deporte:</strong> {{ sport.nombre }}</p>
         <p><strong>Fecha:</strong> {{ fechaSeleccionada }}</p>
         <p><strong>Hora:</strong> {{ horaSeleccionada }} - {{ calcularHoraFin(horaSeleccionada) }}</p>
-        <p><strong>Duración:</strong> {{ deporte.duracion_minutos }} minutos</p>
-        <p><strong>Jugadores máximos:</strong> {{ deporte.max_jugadores }}</p>
+        <p><strong>Duración:</strong> {{ sport.duracion_minutos }} minutos</p>
+        <p><strong>Jugadores máximos:</strong> {{ sport.max_jugadores }}</p>
       </div>
 
       <button class="btn-reservar" (click)="crearReserva()" [disabled]="cargando">

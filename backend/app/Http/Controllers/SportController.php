@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Deporte;
+use App\Models\Sport;
 use Illuminate\Http\Request;
 
-class DeporteController extends Controller
+class SportController extends Controller
 {
     //Obtenemos todos los deportes en un endpoint público.
     public function index()
     {
-        $deportes = Deporte::all();
-        return response()->json($deportes, 200);
+        $sports = Sport::all();
+        return response()->json($sports, 200);
     }
 
     //Mostramos un deporte en específico.
     public function show($id)
     {
-        $deporte = Deporte::find($id);
+        $sport = Sport::find($id);
 
-        if (!$deporte) {
+        if (!$sport) {
             return response()->json([
                 'message' => 'Deporte no encontrado'
             ], 404);
         }
 
-        return response()->json($deporte, 200);
+        return response()->json($sport, 200);
     }
 }

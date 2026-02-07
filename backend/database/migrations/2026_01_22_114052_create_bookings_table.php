@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('deporte_id')->constrained('deportes')->onDelete('cascade');
+            $table->foreignId('deporte_id')->constrained('sports')->onDelete('cascade');
             $table->foreignId('creador_id')->constrained('users')->onDelete('cascade');
             $table->date('fecha');
             $table->time('hora_inicio');

@@ -16,7 +16,7 @@ return new class extends Migration
                   ->onDelete('cascade');
 
             $table->foreignId('sport_id')
-                  ->constrained('deportes')
+                  ->constrained('sports')
                   ->onDelete('cascade');
 
             $table->integer('ero')->default(1000);

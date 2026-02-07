@@ -16,7 +16,7 @@ export interface IBooking {
   estado: 'abierto' | 'completo' | 'cancelado' | 'jugado';
   creador?: { id: number; name: string };
   usuarios?: { id: number; name: string }[];
-  deporte?: { id: number; nombre: string; duracion_minutos: number };
+  sport?: { id: number; nombre: string; duracion_minutos: number };
   team_1_score?: number | null;
   team_2_score?: number | null;
   winner_team?: number | null;
@@ -47,15 +47,15 @@ export class BookingService {
   }
 
   // Endpoints públicos
-  getReservasPorDeporteYFecha(deporteId: number, fecha: string): Observable<IBooking[]> {
+  getReservasPorSportYFecha(sportId: number, fecha: string): Observable<IBooking[]> {
     return this.http.get<IBooking[]>(
-      `${this.apiUrl}/bookings/deporte/${deporteId}/fecha/${fecha}`
+      `${this.apiUrl}/bookings/sport/${sportId}/fecha/${fecha}`
     );
   }
 
-  getReservasDisponibles(deporteId: number): Observable<IBooking[]> {
+  getReservasDisponibles(sportId: number): Observable<IBooking[]> {
     return this.http.get<IBooking[]>(
-      `${this.apiUrl}/bookings/disponibles/${deporteId}`
+      `${this.apiUrl}/bookings/disponibles/${sportId}`
     );
   }
 

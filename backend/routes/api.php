@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DeporteController;
+use App\Http\Controllers\SportController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\EroController;
 use App\Http\Controllers\MatchController;
@@ -26,12 +26,12 @@ Route::get('/ver-usuarios', function () {
 });
 
 // Rutas públicas para deportes (sin autenticación)
-Route::get('/deportes', [DeporteController::class, 'index']);
-Route::get('/deportes/{id}', [DeporteController::class, 'show']);
+Route::get('/sports', [SportController::class, 'index']);
+Route::get('/sports/{id}', [SportController::class, 'show']);
 
 // Rutas públicas para reservas (ver reservas disponibles)
-Route::get('/bookings/deporte/{deporteId}/fecha/{fecha}', [BookingController::class, 'getReservasPorDeporteYFecha']);
-Route::get('/bookings/disponibles/{deporteId}', [BookingController::class, 'reservasDisponibles']);
+Route::get('/bookings/sport/{sportId}/fecha/{fecha}', [BookingController::class, 'getReservasPorSportYFecha']);
+Route::get('/bookings/disponibles/{sportId}', [BookingController::class, 'reservasDisponibles']);
 
 // Rutas protegidas para reservas (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {

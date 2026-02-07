@@ -59,10 +59,10 @@
     <div class="reservas-grid" *ngIf="!cargando && reservas.length > 0">
       <div class="reserva-card" *ngFor="let reserva of reservas">
         <div class="reserva-header">
-          <span class="reserva-deporte">{{ reserva.deporte?.nombre || 'Deporte' }}</span>
+          <span class="reserva-deporte">{{ reserva.sport?.nombre || 'Deporte' }}</span>
           <span class="reserva-estado" [class]="reserva.estado">
-            {{ reserva.estado === 'abierto' ? 'Abierto' : 
-               reserva.estado === 'completo' ? 'Completo' : 
+            {{ reserva.estado === 'abierto' ? 'Abierto' :
+               reserva.estado === 'completo' ? 'Completo' :
                reserva.estado === 'jugado' ? 'Jugado' : 'Cancelado' }}
           </span>
         </div>

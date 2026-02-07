@@ -29,9 +29,9 @@ class Booking extends Model
     ];
 
     //Una reserva pertenece a un deporte
-    public function deporte()
+    public function sport()
     {
-        return $this->belongsTo(Deporte::class);
+        return $this->belongsTo(Sport::class, 'deporte_id');
     }
 
     //Una reserva pertenee a un usuario, el creador
@@ -56,7 +56,7 @@ class Booking extends Model
             ->where('fecha', $fecha)
             ->where('estado', '!=', 'cancelado')
             ->where(function ($query) use ($horaInicio, $horaFin) {
-                
+
                 $query->where(function ($q) use ($horaInicio, $horaFin) {
                     $q->where('hora_inicio', '<', $horaFin)
                     ->where('hora_fin', '>', $horaInicio);
@@ -65,7 +65,7 @@ class Booking extends Model
             ->exists();
     }
 
-    
+
     public function estaCompleta()
     {
         return $this->jugadores_actuales >= $this->max_jugadores;
@@ -80,12 +80,12 @@ class Booking extends Model
     //Funcion para generear los equipos equilibrados.
     public function generarEquiposEquilibrados()
     {
-        
+
         if (!$this->estaCompleta()) {
             return false;
         }
 
-        
+
         $jugadores = $this->usuarios()
             ->with(['sports' => function($query) {
                 $query->where('sport_id', $this->deporte_id);
@@ -101,18 +101,18 @@ class Booking extends Model
         //Usamos algoritmo serpentina para repartir los jugadores.
         $equipo1 = [];
         $equipo2 = [];
-        
+
         foreach ($jugadoresOrdenados as $index => $jugador) {
             $grupo = floor($index / 2);
             if ($grupo % 2 == 0) {
-                
+
                 if ($index % 2 == 0) {
                     $equipo1[] = $jugador->id;
                 } else {
                     $equipo2[] = $jugador->id;
                 }
             } else {
-    
+
                 if ($index % 2 == 0) {
                     $equipo2[] = $jugador->id;
                 } else {
@@ -135,20 +135,20 @@ class Booking extends Model
     //Funcion que registra el resultado del partido.
     public function registrarResultado($scoreTeam1, $scoreTeam2)
     {
-        
+
         $this->team_1_score = $scoreTeam1;
         $this->team_2_score = $scoreTeam2;
-        
-        
+
+
         if ($scoreTeam1 > $scoreTeam2) {
             $this->winner_team = 1;
         } elseif ($scoreTeam2 > $scoreTeam1) {
             $this->winner_team = 2;
         } else {
             //Empate
-            $this->winner_team = null; 
+            $this->winner_team = null;
         }
-        
+
         $this->estado = 'jugado';
         $this->save();
 
@@ -160,11 +160,11 @@ class Booking extends Model
     //Actualizamos el ERO de los jugadores.
     private function actualizarEroJugadores()
     {
-        
+
         $jugadoresEquipo1 = $this->usuarios()->wherePivot('team', 1)->get();
         $jugadoresEquipo2 = $this->usuarios()->wherePivot('team', 2)->get();
 
-        
+
         $eroPromedioEquipo1 = $jugadoresEquipo1->avg(function($jugador) {
             return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->ero ?? 1000;
         });
@@ -173,7 +173,7 @@ class Booking extends Model
             return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->ero ?? 1000;
         });
 
-        
+
         $probabilidadEquipo1 = 1 / (1 + pow(10, ($eroPromedioEquipo2 - $eroPromedioEquipo1) / 400));
         $probabilidadEquipo2 = 1 - $probabilidadEquipo1;
 
@@ -181,7 +181,7 @@ class Booking extends Model
         $resultadoEquipo1 = $this->winner_team == 1 ? 1 : ($this->winner_team == 2 ? 0 : 0.5);
         $resultadoEquipo2 = 1 - $resultadoEquipo1;
 
-        
+
         $kFactor = 32;
 
         //Actualizamos el ERO de los jugadores del equipo 1
@@ -189,15 +189,15 @@ class Booking extends Model
             $sportPivot = $jugador->sports()->where('sport_id', $this->deporte_id)->first();
             $eroActual = $sportPivot->pivot->ero;
             $partidosJugados = $sportPivot->pivot->matches_played;
-            
+
             // Ajustamos el kFactor segun la experiencia.
             $kAjustado = $partidosJugados < 10 ? 40 : ($partidosJugados < 30 ? 32 : 24);
-            
-            
+
+
             $cambioEro = round($kAjustado * ($resultadoEquipo1 - $probabilidadEquipo1));
-            $nuevoEro = max(100, $eroActual + $cambioEro); 
-            
-            
+            $nuevoEro = max(100, $eroActual + $cambioEro);
+
+
             $jugador->sports()->updateExistingPivot($this->deporte_id, [
                 'ero' => $nuevoEro,
                 'matches_played' => $partidosJugados + 1
@@ -209,12 +209,12 @@ class Booking extends Model
             $sportPivot = $jugador->sports()->where('sport_id', $this->deporte_id)->first();
             $eroActual = $sportPivot->pivot->ero;
             $partidosJugados = $sportPivot->pivot->matches_played;
-            
+
             $kAjustado = $partidosJugados < 10 ? 40 : ($partidosJugados < 30 ? 32 : 24);
-            
+
             $cambioEro = round($kAjustado * ($resultadoEquipo2 - $probabilidadEquipo2));
             $nuevoEro = max(100, $eroActual + $cambioEro);
-            
+
             $jugador->sports()->updateExistingPivot($this->deporte_id, [
                 'ero' => $nuevoEro,
                 'matches_played' => $partidosJugados + 1

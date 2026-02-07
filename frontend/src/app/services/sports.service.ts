@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface Deporte {
+export interface Sport {
   id: number;
   nombre: string;
   max_jugadores: number;
@@ -17,16 +17,16 @@ export interface Deporte {
 @Injectable({
   providedIn: 'root'
 })
-export class DeportesService {
+export class SportsService {
   private API_URL = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) { }
 
-  getDeportes(): Observable<Deporte[]> {
-    return this.http.get<Deporte[]>(`${this.API_URL}/deportes`);
+  getSports(): Observable<Sport[]> {
+    return this.http.get<Sport[]>(`${this.API_URL}/sports`);
   }
 
-  getDeporte(id: number): Observable<Deporte> {
-    return this.http.get<Deporte>(`${this.API_URL}/deportes/${id}`);
+  getSport(id: number): Observable<Sport> {
+    return this.http.get<Sport>(`${this.API_URL}/sports/${id}`);
   }
 }

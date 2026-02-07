@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BookingService, IBooking } from '../../services/booking';
-import { DeportesService, Deporte } from '../../services/deportes.service';
+import { SportsService, Sport } from '../../services/sports.service';
 import { AuthService } from '../../services/auth';
 
 @Component({
@@ -13,8 +13,8 @@ import { AuthService } from '../../services/auth';
   styleUrl: './reservar.css',
 })
 export class Reservar implements OnInit {
-  deporteSlug: string = '';
-  deporte: Deporte | null = null;
+  sportSlug: string = '';
+  sport: Sport | null = null;
 
 
   modo: 'crear' | 'unirse' = 'crear';
@@ -50,14 +50,14 @@ export class Reservar implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private bookingService: BookingService,
-    private deporteService: DeportesService,
+    private sportService: SportsService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.deporteSlug = this.route.snapshot.params['deporte'];
-    this.cargarDeporte();
+    this.sportSlug = this.route.snapshot.params['deporte'];
+    this.cargarSport();
 
     //Establecemos la fecha minima como hoy para no permitir reservas en el pasado y la fecha maxima como un mes desde hoy
     const hoy = new Date();
@@ -69,7 +69,7 @@ export class Reservar implements OnInit {
     this.fechaMaxima = fechaMax.toISOString().split('T')[0];
 
     setTimeout(() => {
-      if (this.cargando && !this.deporte) {
+      if (this.cargando && !this.sport) {
         this.cargando = false;
         this.mostrarMensaje('Error: La carga del deporte tardó demasiado. Por favor, recarga la página.', 'error');
       }
@@ -85,16 +85,16 @@ export class Reservar implements OnInit {
       .replace(/\s+/g, '-');
   }
 
-  cargarDeporte() {
+  cargarSport() {
     this.cargando = true;
-    this.deporteService.getDeportes().subscribe({
-      next: (deportes: Deporte[]) => {
+    this.sportService.getSports().subscribe({
+      next: (sports: Sport[]) => {
 
-        this.deporte = deportes.find((d: Deporte) =>
-          this.normalizar(d.nombre) === this.deporteSlug
+        this.sport = sports.find((d: Sport) =>
+          this.normalizar(d.nombre) === this.sportSlug
         ) || null;
 
-        if (!this.deporte) {
+        if (!this.sport) {
           this.cargando = false;
           return;
         }
@@ -122,10 +122,10 @@ export class Reservar implements OnInit {
   generarHorarios() {
     this.horariosDisponibles = [];
 
-    if (!this.deporte) return;
+    if (!this.sport) return;
 
     //Generamos los horarios desde las 9:00 hasta las 00:00 con la duracion de cada deporte.
-    const duracionMinutos = this.deporte.duracion_minutos;
+    const duracionMinutos = this.sport.duracion_minutos;
     const horaInicio = 9 * 60;
     const horaFin = 24 * 60;
 
@@ -173,10 +173,10 @@ export class Reservar implements OnInit {
   }
 
   cargarReservasDelDia() {
-    if (!this.deporte || !this.fechaSeleccionada)
+    if (!this.sport || !this.fechaSeleccionada)
      return;
 
-    this.bookingService.getReservasPorDeporteYFecha(this.deporte.id, this.fechaSeleccionada)
+    this.bookingService.getReservasPorSportYFecha(this.sport.id, this.fechaSeleccionada)
       .subscribe({
         next: (reservas) => {
           this.reservasDelDia = reservas;
@@ -189,14 +189,14 @@ export class Reservar implements OnInit {
   }
 
   cargarReservasDisponibles() {
-    if (!this.deporte) {
+    if (!this.sport) {
       return;
     }
 
     this.cargando = true;
     this.cdr.detectChanges();
 
-    this.bookingService.getReservasDisponibles(this.deporte.id)
+    this.bookingService.getReservasDisponibles(this.sport.id)
       .subscribe({
         next: (reservas) => {
           this.reservasDisponibles = reservas;
@@ -212,11 +212,11 @@ export class Reservar implements OnInit {
   }
 
   estaOcupado(hora: string): boolean {
-    if (!this.deporte) return false;
+    if (!this.sport) return false;
 
     const [h, m] = hora.split(':').map(Number);
     const minutosSolicitud = h * 60 + m;
-    const finSolicitud = minutosSolicitud + this.deporte.duracion_minutos;
+    const finSolicitud = minutosSolicitud + this.sport.duracion_minutos;
 
     const ocupado = this.reservasDelDia.some(reserva => {
       const [hInicio, mInicio] = reserva.hora_inicio.split(':').map(Number);
@@ -233,11 +233,11 @@ export class Reservar implements OnInit {
   }
 
   calcularHoraFin(horaInicio: string): string {
-    if (!this.deporte)
+    if (!this.sport)
       return horaInicio;
 
     const [h, m] = horaInicio.split(':').map(Number);
-    const totalMinutos = h * 60 + m + this.deporte.duracion_minutos;
+    const totalMinutos = h * 60 + m + this.sport.duracion_minutos;
     const horaFin = Math.floor(totalMinutos / 60);
     const minutosFin = totalMinutos % 60;
     return `${horaFin.toString().padStart(2, '0')}:${minutosFin.toString().padStart(2, '0')}`;
@@ -255,7 +255,7 @@ export class Reservar implements OnInit {
       return;
     }
 
-    if (!this.deporte || !this.horaSeleccionada) {
+    if (!this.sport || !this.horaSeleccionada) {
       this.mostrarMensaje('Por favor selecciona una hora', 'error');
       return;
     }
@@ -266,7 +266,7 @@ export class Reservar implements OnInit {
     }
 
     const reserva = {
-      deporte_id: this.deporte.id,
+      deporte_id: this.sport.id,
       fecha: this.fechaSeleccionada,
       hora_inicio: this.horaSeleccionada,
       pista: 'Pista 1'

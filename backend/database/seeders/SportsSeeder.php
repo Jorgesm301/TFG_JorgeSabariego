@@ -4,16 +4,16 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Deporte;
+use App\Models\Sport;
 
-class DeportesSeeder extends Seeder
+class SportsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $deportes = [
+        $sports = [
             [
                 'nombre' => 'Futbol',
                 'max_jugadores' => 22,
@@ -64,8 +64,8 @@ class DeportesSeeder extends Seeder
             ]
         ];
 
-        foreach ($deportes as $deporte) {
-            Deporte::create($deporte);
+        foreach ($sports as $sport) {
+            Sport::create($sport);
         }
     }
 }

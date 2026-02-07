@@ -47,7 +47,7 @@ export interface IResultadoResponse {
 
 export interface IPartidoHistorial {
   id: number;
-  deporte: string;
+  sport: string;
   fecha: string;
   hora: string;
   mi_equipo: number;

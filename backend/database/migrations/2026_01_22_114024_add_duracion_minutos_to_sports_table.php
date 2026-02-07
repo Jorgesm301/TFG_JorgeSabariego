@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('deportes', function (Blueprint $table) {
+        Schema::table('sports', function (Blueprint $table) {
             $table->integer('duracion_minutos')->default(60)->after('max_jugadores');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('deportes', function (Blueprint $table) {
+        Schema::table('sports', function (Blueprint $table) {
             $table->dropColumn('duracion_minutos');
         });
     }
