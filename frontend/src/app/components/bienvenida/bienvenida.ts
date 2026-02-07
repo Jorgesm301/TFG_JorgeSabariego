@@ -83,12 +83,11 @@ export class Bienvenida implements OnInit, OnDestroy {
     private authService: AuthService
   ) {}
 
-  // Verificar si el usuario está logueado
+  //Verificamos si el usuario esta logeado
   get estaLogueado(): boolean {
     return this.authService.isAuthenticated();
   }
 
-  // Obtener el nombre del usuario logueado
   get nombreUsuario(): string {
     return this.authService.getUserData()?.name || '';
   }
@@ -105,7 +104,7 @@ export class Bienvenida implements OnInit, OnDestroy {
     this.stopAutoSlide();
     this.timerId = setInterval(() => {
       this.currentIndex = (this.currentIndex + 1) % this.slides.length;
-      this.cdr.detectChanges(); // <--- Forzamos actualización de la vista
+      this.cdr.detectChanges();
     }, 3000);
   }
 
