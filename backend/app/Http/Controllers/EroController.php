@@ -12,7 +12,7 @@ class EroController extends Controller
         $user = $request->user();
 
         $sports = $user->sports()
-            ->select('deportes.id', 'deportes.nombre')
+            ->select('sports.id', 'sports.nombre')
             ->get()
             ->map(function ($sport) {
                 return [

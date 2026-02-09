@@ -101,11 +101,14 @@ class MatchController extends Controller
     public function obtenerEquipos($bookingId)
     {
         try {
-            $booking = Booking::with(['usuarios' => function($query) {
-                $query->wherePivotNotNull('team');
-            }])->findOrFail($bookingId);
+            $booking = Booking::findOrFail($bookingId);
 
-            if ($booking->usuarios->isEmpty()) {
+            // Verificar si hay equipos generados
+            $tieneEquipos = $booking->usuarios()
+                ->wherePivotNotNull('team')
+                ->exists();
+
+            if (!$tieneEquipos) {
                 return response()->json([
                     'message' => 'Los equipos aún no han sido generados'
                 ], 400);

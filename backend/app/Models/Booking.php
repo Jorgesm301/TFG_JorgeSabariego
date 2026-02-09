@@ -92,7 +92,7 @@ class Booking extends Model
             }])
             ->get();
 
-        //Ordenamos los jugadores por orden de ERO. En caso de ser nuevo el jugador en ese deporte le asignamos 1000.
+        //Ordenamos los jugadores por orden de ERO de forma descendente. En caso de ser nuevo el jugador en ese deporte le asignamos 1000.
         $jugadoresOrdenados = $jugadores->sortByDesc(function($jugador) {
             $sport = $jugador->sports->first();
             return $sport ? $sport->pivot->ero : 1000;

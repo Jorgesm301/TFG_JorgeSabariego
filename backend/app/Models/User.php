@@ -9,7 +9,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable; 
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -49,7 +49,7 @@ class User extends Authenticatable
 
     //Un usuario juega a varios deportes. Aqui usamos la tabla pivote sport_user.
     public function sports(){
-        return $this->belongsToMany(Deporte::class, 'sport_user', 'user_id', 'sport_id')
+        return $this->belongsToMany(Sport::class, 'sport_user', 'user_id', 'sport_id')
                     ->withPivot('ero', 'matches_played')
                     ->withTimestamps();
     }
@@ -57,7 +57,7 @@ class User extends Authenticatable
     //Inicializa el ERO de un deporte para el usuario si no existe ya.
     public function initSportEro(int $deporteId)
     {
-        
+
         $exists = $this->sports()->wherePivot('sport_id', $deporteId)->exists();
 
         if (!$exists) {
