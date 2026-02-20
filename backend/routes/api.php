@@ -7,6 +7,9 @@ use App\Http\Controllers\SportController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\EroController;
 use App\Http\Controllers\MatchController;
+use App\Http\Controllers\FriendshipController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\BlockedUserController;
 use App\Models\User;
 
 
@@ -48,4 +51,24 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Para probar el ERO
     Route::get('/me/ero', [EroController::class, 'myEro']);
+
+    // ========== RUTAS DE AMISTAD ==========
+    Route::post('/friendships', [FriendshipController::class, 'enviarSolicitud']);
+    Route::put('/friendships/{id}/accept', [FriendshipController::class, 'aceptarSolicitud']);
+    Route::put('/friendships/{id}/reject', [FriendshipController::class, 'rechazarSolicitud']);
+    Route::get('/friends', [FriendshipController::class, 'listarAmigos']);
+    Route::get('/friend-requests', [FriendshipController::class, 'listarSolicitudesPendientes']);
+    Route::delete('/friendships/{id}', [FriendshipController::class, 'eliminarAmistad']);
+
+    // ========== RUTAS DE MENSAJERÍA ==========
+    Route::post('/messages', [MessageController::class, 'enviarMensaje']);
+    Route::get('/messages/{userId}', [MessageController::class, 'obtenerConversacion']);
+    Route::get('/conversations', [MessageController::class, 'listarConversaciones']);
+    Route::put('/messages/{id}/read', [MessageController::class, 'marcarComoLeido']);
+    Route::put('/messages/conversation/{userId}/read', [MessageController::class, 'marcarConversacionLeida']);
+
+    // ========== RUTAS DE BLOQUEOS ==========
+    Route::post('/blocked-users', [BlockedUserController::class, 'bloquearUsuario']);
+    Route::delete('/blocked-users/{blockedUserId}', [BlockedUserController::class, 'desbloquearUsuario']);
+    Route::get('/blocked-users', [BlockedUserController::class, 'listarBloqueados']);
 });
