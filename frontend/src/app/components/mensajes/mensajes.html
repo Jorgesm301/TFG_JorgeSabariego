@@ -1,0 +1,76 @@
+<div class="mensajes-page">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <button class="btn-back" (click)="volverInicio()">
+        <span class="arrow-back">←</span>
+        Volver
+      </button>
+      <h1 class="page-title">Mensajes</h1>
+      <button class="btn-amigos" routerLink="/amigos">
+        <span class="icon">👥</span>
+        Amigos
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenido -->
+  <div class="mensajes-content">
+
+    <!-- Badge de mensajes no leídos -->
+    <div class="info-badge" *ngIf="getTotalNoLeidos() > 0">
+      <span class="badge-icon">📬</span>
+      <span>Tienes {{ getTotalNoLeidos() }} mensaje{{ getTotalNoLeidos() > 1 ? 's' : '' }} sin leer</span>
+    </div>
+
+    <!-- Lista de conversaciones -->
+    <div class="conversaciones-list" *ngIf="!cargando && !error">
+      <div
+        class="conversacion-card"
+        *ngFor="let conv of conversaciones"
+        (click)="abrirChat(conv.amigo)"
+        [class.no-leido]="conv.no_leidos > 0">
+
+        <div class="conv-avatar">
+          <span class="avatar-icon">👤</span>
+          <span class="badge-no-leidos" *ngIf="conv.no_leidos > 0">{{ conv.no_leidos }}</span>
+        </div>
+
+        <div class="conv-info">
+          <div class="conv-header">
+            <h3 class="conv-nombre">{{ conv.amigo.name }} {{ conv.amigo.last_name }}</h3>
+            <span class="conv-fecha">{{ conv.ultimo_mensaje.created_at | date:'short' }}</span>
+          </div>
+          <p class="conv-mensaje" [class.no-leido-texto]="conv.no_leidos > 0">
+            <span *ngIf="esMiMensaje(conv.ultimo_mensaje.sender_id)" class="tu-texto">Tú: </span>
+            {{ conv.ultimo_mensaje.message }}
+          </p>
+        </div>
+
+        <div class="conv-arrow">→</div>
+      </div>
+
+      <!-- Sin conversaciones -->
+      <div class="empty-state" *ngIf="conversaciones.length === 0">
+        <span class="empty-icon">💬</span>
+        <h3>No tienes conversaciones</h3>
+        <p>Comienza a chatear con tus amigos</p>
+        <button class="btn-primario" routerLink="/amigos">Ver amigos</button>
+      </div>
+    </div>
+
+    <!-- Estado de carga -->
+    <div class="loading-state" *ngIf="cargando">
+      <div class="spinner"></div>
+      <p>Cargando conversaciones...</p>
+    </div>
+
+    <!-- Estado de error -->
+    <div class="error-state" *ngIf="error">
+      <span class="error-icon">⚠️</span>
+      <p>{{ error }}</p>
+      <button class="btn-secundario" (click)="cargarConversaciones()">Reintentar</button>
+    </div>
+
+  </div>
+</div>

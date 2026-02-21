@@ -188,4 +188,70 @@ class FriendshipController extends Controller
             return response()->json(['message' => 'Error al eliminar amistad: ' . $e->getMessage()], 500);
         }
     }
+
+    // Buscar usuarios
+    public function buscarUsuarios(Request $request)
+    {
+        try {
+            $request->validate([
+                'query' => 'required|string|min:1',
+            ]);
+
+            $userId = Auth::id();
+            $query = $request->query('query');
+
+            // Buscar usuarios por nombre o email (excluir el usuario actual y bloqueados)
+            $usuariosEncontrados = User::where('id', '!=', $userId)
+                ->where(function ($q) use ($query) {
+                    $q->where('name', 'LIKE', "%{$query}%")
+                      ->orWhere('email', 'LIKE', "%{$query}%");
+                })
+                ->select('id', 'name', 'last_name', 'email')
+                ->limit(20)
+                ->get();
+
+            // Obtener IDs de usuarios con los que ya hay relación (amigos o solicitudes pendientes)
+            $relacionesExistentes = Friendship::where(function ($q) use ($userId) {
+                $q->where('user_id', $userId)->orWhere('friend_id', $userId);
+            })->get();
+
+            $idsConRelacion = $relacionesExistentes->map(function ($rel) use ($userId) {
+                return $rel->user_id == $userId ? $rel->friend_id : $rel->user_id;
+            })->toArray();
+
+            // Verificar usuarios bloqueados
+            $usuariosBloqueados = BlockedUser::where('user_id', $userId)
+                ->orWhere('blocked_user_id', $userId)
+                ->pluck('blocked_user_id')
+                ->toArray();
+
+            // Filtrar y agregar información de relación
+            $usuarios = $usuariosEncontrados->map(function ($usuario) use ($userId, $relacionesExistentes, $idsConRelacion, $usuariosBloqueados) {
+                $relacion = 'none'; // none, pending, accepted, blocked
+
+                if (in_array($usuario->id, $usuariosBloqueados)) {
+                    $relacion = 'blocked';
+                } else if (in_array($usuario->id, $idsConRelacion)) {
+                    $amistad = $relacionesExistentes->first(function ($rel) use ($userId, $usuario) {
+                        return ($rel->user_id == $userId && $rel->friend_id == $usuario->id) ||
+                               ($rel->friend_id == $userId && $rel->user_id == $usuario->id);
+                    });
+                    $relacion = $amistad ? $amistad->status : 'none';
+                }
+
+                return [
+                    'id' => $usuario->id,
+                    'name' => $usuario->name,
+                    'last_name' => $usuario->last_name,
+                    'email' => $usuario->email,
+                    'relacion' => $relacion
+                ];
+            });
+
+            return response()->json($usuarios);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al buscar usuarios: ' . $e->getMessage()], 500);
+        }
+    }
 }

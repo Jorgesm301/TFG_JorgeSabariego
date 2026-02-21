@@ -1,0 +1,87 @@
+<div class="chat-page">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <button class="btn-back" (click)="volverMensajes()">
+        <span class="arrow-back">←</span>
+        Volver
+      </button>
+      <div class="header-user" *ngIf="amigo">
+        <div class="header-avatar">
+          <span class="avatar-icon">👤</span>
+        </div>
+        <div class="header-info">
+          <h1 class="header-nombre">{{ amigo.name }} {{ amigo.last_name }}</h1>
+          <span class="header-estado">En línea</span>
+        </div>
+      </div>
+      <div style="width: 80px;"></div>
+    </div>
+  </header>
+
+  <!-- Contenedor de mensajes -->
+  <div class="chat-content">
+
+    <!-- Estado de carga -->
+    <div class="loading-state" *ngIf="cargando">
+      <div class="spinner"></div>
+      <p>Cargando mensajes...</p>
+    </div>
+
+    <!-- Estado de error -->
+    <div class="error-state" *ngIf="error && !cargando">
+      <span class="error-icon">⚠️</span>
+      <p>{{ error }}</p>
+      <button class="btn-secundario" (click)="cargarMensajes()">Reintentar</button>
+    </div>
+
+    <!-- Mensajes -->
+    <div class="messages-container" #messagesContainer *ngIf="!cargando && !error">
+
+      <!-- Sin mensajes -->
+      <div class="empty-chat" *ngIf="mensajes.length === 0">
+        <span class="empty-icon">💬</span>
+        <p>No hay mensajes aún</p>
+        <p class="empty-subtitle">Envía el primer mensaje</p>
+      </div>
+
+      <!-- Lista de mensajes -->
+      <div class="messages-list" *ngIf="mensajes.length > 0">
+        <div
+          *ngFor="let mensaje of mensajes"
+          class="message-wrapper"
+          [class.message-mio]="esMensajeMio(mensaje)"
+          [class.message-otro]="!esMensajeMio(mensaje)">
+
+          <div class="message-bubble">
+            <p class="message-text">{{ mensaje.message }}</p>
+            <span class="message-time">{{ mensaje.created_at | date:'short' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Input para enviar mensaje -->
+  <div class="chat-input-container" *ngIf="!cargando && !error">
+    <div class="chat-input-wrapper">
+      <textarea
+        class="chat-input"
+        [(ngModel)]="nuevoMensaje"
+        placeholder="Escribe un mensaje..."
+        rows="1"
+        (keypress)="onKeyPress($event)"
+        [disabled]="enviando"
+      ></textarea>
+      <button
+        class="btn-enviar"
+        (click)="enviarMensaje()"
+        [disabled]="!nuevoMensaje.trim() || enviando">
+        <span *ngIf="!enviando">📤</span>
+        <span *ngIf="enviando" class="spinner-small"></span>
+      </button>
+    </div>
+  </div>
+
+</div>

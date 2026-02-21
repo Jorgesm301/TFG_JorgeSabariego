@@ -7,6 +7,9 @@ import { MisReservas } from './components/mis-reservas/mis-reservas';
 import { Reservar } from './components/reservar/reservar';
 import { Ero } from './components/ero/ero';
 import { PartidoDetalle } from './components/partido-detalle/partido-detalle';
+import { Mensajes } from './components/mensajes/mensajes';
+import { Chat } from './components/chat/chat';
+import { Amigos } from './components/amigos/amigos';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -41,6 +44,24 @@ export const routes: Routes = [
   {
     path: 'partido/:id',
     component: PartidoDetalle,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'mensajes',
+    component: Mensajes,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'chat/:id',
+    component: Chat,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'amigos',
+    component: Amigos,
     canActivate: [authGuard]
   },
 

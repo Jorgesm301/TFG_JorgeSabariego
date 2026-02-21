@@ -1,0 +1,223 @@
+<div class="amigos-page">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <button class="btn-back" (click)="volverInicio()">
+        <span class="arrow-back">←</span>
+        Volver
+      </button>
+      <h1 class="page-title">Amigos</h1>
+      <button class="btn-mensajes" routerLink="/mensajes">
+        <span class="icon">💬</span>
+        Mensajes
+      </button>
+    </div>
+  </header>
+
+  <!-- Navegación de tabs -->
+  <div class="tabs-container">
+    <div class="tabs-inner">
+      <button
+        class="tab"
+        [class.active]="vistaActual === 'amigos'"
+        (click)="cambiarVista('amigos')">
+        <span class="tab-icon">👥</span>
+        <span class="tab-text">Mis Amigos</span>
+        <span class="tab-badge" *ngIf="amigos.length > 0">{{ amigos.length }}</span>
+      </button>
+      <button
+        class="tab"
+        [class.active]="vistaActual === 'solicitudes'"
+        (click)="cambiarVista('solicitudes')">
+        <span class="tab-icon">✉️</span>
+        <span class="tab-text">Solicitudes</span>
+        <span class="tab-badge alert" *ngIf="solicitudesPendientes.length > 0">{{ solicitudesPendientes.length }}</span>
+      </button>
+      <button
+        class="tab"
+        [class.active]="vistaActual === 'buscar'"
+        (click)="cambiarVista('buscar')">
+        <span class="tab-icon">🔍</span>
+        <span class="tab-text">Buscar</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="amigos-content">
+
+    <!-- Vista de Amigos -->
+    <div class="vista-amigos" *ngIf="vistaActual === 'amigos'">
+
+      <!-- Lista de amigos -->
+      <div class="amigos-list" *ngIf="!cargando && !error">
+        <div
+          class="amigo-card"
+          *ngFor="let amigo of amigos">
+
+          <div class="amigo-avatar">
+            <span class="avatar-icon">👤</span>
+          </div>
+
+          <div class="amigo-info">
+            <h3 class="amigo-nombre">{{ amigo.name }} {{ amigo.last_name }}</h3>
+            <p class="amigo-email">{{ amigo.email }}</p>
+          </div>
+
+          <div class="amigo-actions">
+            <button class="btn-accion primario" (click)="abrirChat(amigo)" title="Enviar mensaje">
+              💬
+            </button>
+            <button class="btn-accion secundario" title="Ver perfil">
+              👤
+            </button>
+          </div>
+        </div>
+
+        <!-- Sin amigos -->
+        <div class="empty-state" *ngIf="amigos.length === 0">
+          <span class="empty-icon">👥</span>
+          <h3>No tienes amigos aún</h3>
+          <p>Comienza a agregar amigos para chatear</p>
+        </div>
+      </div>
+
+      <!-- Estado de carga -->
+      <div class="loading-state" *ngIf="cargando">
+        <div class="spinner"></div>
+        <p>Cargando amigos...</p>
+      </div>
+
+      <!-- Estado de error -->
+      <div class="error-state" *ngIf="error">
+        <span class="error-icon">⚠️</span>
+        <p>{{ error }}</p>
+        <button class="btn-secundario" (click)="cargarAmigos()">Reintentar</button>
+      </div>
+    </div>
+
+    <!-- Vista de Solicitudes -->
+    <div class="vista-solicitudes" *ngIf="vistaActual === 'solicitudes'">
+
+      <!-- Lista de solicitudes -->
+      <div class="solicitudes-list" *ngIf="!cargandoSolicitudes">
+        <div
+          class="solicitud-card"
+          *ngFor="let solicitud of solicitudesPendientes">
+
+          <div class="solicitud-avatar">
+            <span class="avatar-icon">👤</span>
+          </div>
+
+          <div class="solicitud-info">
+            <h3 class="solicitud-nombre">{{ solicitud.user?.name }} {{ solicitud.user?.last_name }}</h3>
+            <p class="solicitud-email">{{ solicitud.user?.email }}</p>
+            <p class="solicitud-fecha">{{ solicitud.created_at | date:'short' }}</p>
+          </div>
+
+          <div class="solicitud-actions">
+            <button class="btn-accion aceptar" (click)="aceptarSolicitud(solicitud)" title="Aceptar">
+              ✓
+            </button>
+            <button class="btn-accion rechazar" (click)="rechazarSolicitud(solicitud)" title="Rechazar">
+              ✕
+            </button>
+          </div>
+        </div>
+
+        <!-- Sin solicitudes -->
+        <div class="empty-state" *ngIf="solicitudesPendientes.length === 0">
+          <span class="empty-icon">✉️</span>
+          <h3>No tienes solicitudes pendientes</h3>
+          <p>Las nuevas solicitudes aparecerán aquí</p>
+        </div>
+      </div>
+
+      <!-- Estado de carga de solicitudes -->
+      <div class="loading-state" *ngIf="cargandoSolicitudes">
+        <div class="spinner"></div>
+        <p>Cargando solicitudes...</p>
+      </div>
+    </div>
+
+    <!-- Vista de Búsqueda -->
+    <div class="vista-busqueda" *ngIf="vistaActual === 'buscar'">
+
+      <!-- Buscador -->
+      <div class="search-box">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Buscar por nombre o email..."
+          [(ngModel)]="busqueda"
+          (input)="buscarUsuarios()"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+
+      <!-- Resultados de búsqueda -->
+      <div class="resultados-list" *ngIf="!cargandoBusqueda && busqueda.trim().length > 0">
+        <div
+          class="usuario-card"
+          *ngFor="let usuario of usuariosBuscados">
+
+          <div class="usuario-avatar">
+            <span class="avatar-icon">👤</span>
+          </div>
+
+          <div class="usuario-info">
+            <h3 class="usuario-nombre">{{ usuario.name }} {{ usuario.last_name }}</h3>
+            <p class="usuario-email">{{ usuario.email }}</p>
+          </div>
+
+          <div class="usuario-actions">
+            <!-- No hay relación -->
+            <button
+              class="btn-accion primario"
+              *ngIf="usuario.relacion === 'none'"
+              (click)="enviarSolicitud(usuario)"
+              title="Enviar solicitud">
+              ➕ Agregar
+            </button>
+
+            <!-- Solicitud pendiente -->
+            <span class="badge-estado" *ngIf="usuario.relacion === 'pending'">
+              ⏳ Pendiente
+            </span>
+
+            <!-- Ya son amigos -->
+            <span class="badge-estado amigo" *ngIf="usuario.relacion === 'accepted'">
+              ✓ Amigos
+            </span>
+
+            <!-- Bloqueado -->
+            <span class="badge-estado bloqueado" *ngIf="usuario.relacion === 'blocked'">
+              🚫 Bloqueado
+            </span>
+          </div>
+        </div>
+
+        <!-- Sin resultados -->
+        <div class="empty-state" *ngIf="usuariosBuscados.length === 0">
+          <span class="empty-icon">🔍</span>
+          <h3>No se encontraron usuarios</h3>
+          <p>Intenta con otro nombre o email</p>
+        </div>
+      </div>
+
+      <!-- Mensaje inicial -->
+      <div class="empty-state" *ngIf="!cargandoBusqueda && busqueda.trim().length === 0">
+        <span class="empty-icon">🔍</span>
+        <h3>Busca nuevos amigos</h3>
+        <p>Escribe un nombre o email para empezar</p>
+      </div>
+
+      <!-- Estado de carga de búsqueda -->
+      <div class="loading-state" *ngIf="cargandoBusqueda">
+        <div class="spinner"></div>
+        <p>Buscando...</p>
+      </div>
+    </div>
+
+  </div>
+</div>

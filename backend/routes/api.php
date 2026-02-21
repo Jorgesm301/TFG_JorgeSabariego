@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me/ero', [EroController::class, 'myEro']);
 
     // ========== RUTAS DE AMISTAD ==========
+    Route::get('/users/search', [FriendshipController::class, 'buscarUsuarios']);
     Route::post('/friendships', [FriendshipController::class, 'enviarSolicitud']);
     Route::put('/friendships/{id}/accept', [FriendshipController::class, 'aceptarSolicitud']);
     Route::put('/friendships/{id}/reject', [FriendshipController::class, 'rechazarSolicitud']);
