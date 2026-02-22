@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
 import { FriendshipService, IUser, IFriendship } from '../../services/friendship.service';
+import { BlockedUserService, IBlockedUser } from '../../services/blocked-user.service';
 
 @Component({
   selector: 'app-amigos',
@@ -16,16 +17,20 @@ export class Amigos implements OnInit {
   amigos: IUser[] = [];
   solicitudesPendientes: IFriendship[] = [];
   usuariosBuscados: IUser[] = [];
+  usuariosBloqueados: IBlockedUser[] = [];
   busqueda: string = '';
   cargando = false;
   cargandoSolicitudes = false;
   cargandoBusqueda = false;
+  cargandoBloqueados = false;
   error = '';
-  vistaActual: 'amigos' | 'solicitudes' | 'buscar' = 'amigos';
+  vistaActual: 'amigos' | 'solicitudes' | 'buscar' | 'bloqueados' = 'amigos';
+  mostrandoMenuAmigo: number | null = null;
 
   constructor(
     private authService: AuthService,
     private friendshipService: FriendshipService,
+    private blockedUserService: BlockedUserService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
@@ -99,18 +104,20 @@ export class Amigos implements OnInit {
     });
   }
 
-  eliminarAmigo(amigo: IUser, friendshipId: number): void {
+  eliminarAmigo(amigo: IUser): void {
     if (!confirm(`¿Estás seguro de eliminar a ${amigo.name} de tus amigos?`)) {
       return;
     }
 
-    this.friendshipService.eliminarAmistad(friendshipId).subscribe({
+    this.friendshipService.eliminarAmigoPorUserId(amigo.id).subscribe({
       next: () => {
+        alert(`Has eliminado a ${amigo.name} de tus amigos`);
         this.cargarAmigos();
+        this.mostrandoMenuAmigo = null;
       },
       error: (err) => {
         console.error('Error al eliminar amistad:', err);
-        alert('No se pudo eliminar la amistad');
+        alert(err.error?.message || 'No se pudo eliminar la amistad');
       }
     });
   }
@@ -119,8 +126,84 @@ export class Amigos implements OnInit {
     this.router.navigate(['/chat', amigo.id]);
   }
 
-  cambiarVista(vista: 'amigos' | 'solicitudes' | 'buscar'): void {
+  cambiarVista(vista: 'amigos' | 'solicitudes' | 'buscar' | 'bloqueados'): void {
     this.vistaActual = vista;
+    if (vista === 'bloqueados') {
+      this.cargarBloqueados();
+    }
+  }
+
+  toggleMenuAmigo(amigoId: number): void {
+    this.mostrandoMenuAmigo = this.mostrandoMenuAmigo === amigoId ? null : amigoId;
+  }
+
+  bloquearAmigo(amigo: IUser): void {
+    if (!confirm(`¿Estás seguro de bloquear a ${amigo.name}? Seguiréis siendo amigos pero no podréis comunicaros hasta que lo desbloquees.`)) {
+      return;
+    }
+
+    this.blockedUserService.bloquearUsuario(amigo.id).subscribe({
+      next: () => {
+        alert(`Has bloqueado a ${amigo.name}. La amistad se mantiene pero no podrán comunicarse.`);
+        this.cargarAmigos();
+        this.mostrandoMenuAmigo = null;
+      },
+      error: (err) => {
+        console.error('Error al bloquear usuario:', err);
+        alert(err.error?.message || 'No se pudo bloquear al usuario');
+      }
+    });
+  }
+
+  desbloquearAmigoDirecto(amigo: IUser): void {
+    if (!confirm(`¿Desbloquear a ${amigo.name}? Podrán volver a comunicarse.`)) {
+      return;
+    }
+
+    this.blockedUserService.desbloquearUsuario(amigo.id).subscribe({
+      next: () => {
+        alert(`Has desbloqueado a ${amigo.name}. Ya podéis comunicaros de nuevo.`);
+        this.cargarAmigos();
+        this.mostrandoMenuAmigo = null;
+      },
+      error: (err) => {
+        console.error('Error al desbloquear usuario:', err);
+        alert('No se pudo desbloquear al usuario');
+      }
+    });
+  }
+
+  cargarBloqueados(): void {
+    this.cargandoBloqueados = true;
+    this.blockedUserService.listarBloqueados().subscribe({
+      next: (data) => {
+        this.usuariosBloqueados = data;
+        this.cargandoBloqueados = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar bloqueados:', err);
+        this.cargandoBloqueados = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  desbloquearUsuario(bloqueado: IBlockedUser): void {
+    if (!confirm(`¿Desbloquear a ${bloqueado.usuario.name}? Podrán volver a comunicarse y la amistad se restaurará.`)) {
+      return;
+    }
+
+    this.blockedUserService.desbloquearUsuario(bloqueado.usuario.id).subscribe({
+      next: () => {
+        alert(`Has desbloqueado a ${bloqueado.usuario.name}. Ya podéis comunicaros de nuevo.`);
+        this.cargarBloqueados();
+      },
+      error: (err) => {
+        console.error('Error al desbloquear usuario:', err);
+        alert('No se pudo desbloquear al usuario');
+      }
+    });
   }
 
   buscarUsuarios(): void {
@@ -160,9 +243,4 @@ export class Amigos implements OnInit {
   volverInicio(): void {
     this.router.navigate(['/']);
   }
-
-  // Obtener el ID de la amistad para eliminar
-  // Necesitamos hacer una llamada adicional o guardar esta info
-  // Por simplicidad, asumimos que podemos eliminarlo por el ID del amigo
-  // En producción, deberías obtener el friendshipId correctamente
 }

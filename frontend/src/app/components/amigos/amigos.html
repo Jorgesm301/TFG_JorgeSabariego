@@ -40,6 +40,14 @@
         <span class="tab-icon">🔍</span>
         <span class="tab-text">Buscar</span>
       </button>
+      <button
+        class="tab"
+        [class.active]="vistaActual === 'bloqueados'"
+        (click)="cambiarVista('bloqueados')">
+        <span class="tab-icon">🚫</span>
+        <span class="tab-text">Bloqueados</span>
+        <span class="tab-badge" *ngIf="usuariosBloqueados.length > 0">{{ usuariosBloqueados.length }}</span>
+      </button>
     </div>
   </div>
 
@@ -60,17 +68,40 @@
           </div>
 
           <div class="amigo-info">
-            <h3 class="amigo-nombre">{{ amigo.name }} {{ amigo.last_name }}</h3>
+            <h3 class="amigo-nombre">
+              {{ amigo.name }} {{ amigo.last_name }}
+              <span class="badge-bloqueado" *ngIf="amigo.esta_bloqueado">🚫 Bloqueado</span>
+            </h3>
             <p class="amigo-email">{{ amigo.email }}</p>
           </div>
 
           <div class="amigo-actions">
-            <button class="btn-accion primario" (click)="abrirChat(amigo)" title="Enviar mensaje">
+            <button
+              class="btn-accion primario"
+              (click)="abrirChat(amigo)"
+              [disabled]="amigo.esta_bloqueado"
+              [title]="amigo.esta_bloqueado ? 'No puedes enviar mensajes a un usuario bloqueado' : 'Enviar mensaje'">
               💬
             </button>
-            <button class="btn-accion secundario" title="Ver perfil">
-              👤
-            </button>
+            <div class="menu-container">
+              <button class="btn-accion menu" (click)="toggleMenuAmigo(amigo.id)" title="Más opciones">
+                ⋮
+              </button>
+              <div class="dropdown-menu" *ngIf="mostrandoMenuAmigo === amigo.id">
+                <button class="menu-item eliminar" (click)="eliminarAmigo(amigo)">
+                  <span class="menu-icon">🗑️</span>
+                  Eliminar amigo
+                </button>
+                <button class="menu-item bloquear" (click)="bloquearAmigo(amigo)" *ngIf="!amigo.esta_bloqueado">
+                  <span class="menu-icon">🚫</span>
+                  Bloquear usuario
+                </button>
+                <button class="menu-item desbloquear" (click)="desbloquearAmigoDirecto(amigo)" *ngIf="amigo.esta_bloqueado">
+                  <span class="menu-icon">🔓</span>
+                  Desbloquear usuario
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -216,6 +247,47 @@
       <div class="loading-state" *ngIf="cargandoBusqueda">
         <div class="spinner"></div>
         <p>Buscando...</p>
+      </div>
+    </div>
+
+    <!-- Vista de Bloqueados -->
+    <div class="vista-bloqueados" *ngIf="vistaActual === 'bloqueados'">
+
+      <!-- Lista de usuarios bloqueados -->
+      <div class="bloqueados-list" *ngIf="!cargandoBloqueados">
+        <div
+          class="bloqueado-card"
+          *ngFor="let bloqueado of usuariosBloqueados">
+
+          <div class="bloqueado-avatar">
+            <span class="avatar-icon">👤</span>
+          </div>
+
+          <div class="bloqueado-info">
+            <h3 class="bloqueado-nombre">{{ bloqueado.usuario.name }}</h3>
+            <p class="bloqueado-email">{{ bloqueado.usuario.email }}</p>
+            <p class="bloqueado-fecha">Bloqueado: {{ bloqueado.bloqueado_en | date:'short' }}</p>
+          </div>
+
+          <div class="bloqueado-actions">
+            <button class="btn-accion desbloquear" (click)="desbloquearUsuario(bloqueado)" title="Desbloquear">
+              🔓 Desbloquear
+            </button>
+          </div>
+        </div>
+
+        <!-- Sin bloqueados -->
+        <div class="empty-state" *ngIf="usuariosBloqueados.length === 0">
+          <span class="empty-icon">🚫</span>
+          <h3>No tienes usuarios bloqueados</h3>
+          <p>Los usuarios bloqueados aparecerán aquí</p>
+        </div>
+      </div>
+
+      <!-- Estado de carga de bloqueados -->
+      <div class="loading-state" *ngIf="cargandoBloqueados">
+        <div class="spinner"></div>
+        <p>Cargando bloqueados...</p>
       </div>
     </div>
 

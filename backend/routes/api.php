@@ -60,6 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/friends', [FriendshipController::class, 'listarAmigos']);
     Route::get('/friend-requests', [FriendshipController::class, 'listarSolicitudesPendientes']);
     Route::delete('/friendships/{id}', [FriendshipController::class, 'eliminarAmistad']);
+    Route::delete('/friends/{friendId}', [FriendshipController::class, 'eliminarAmigoPorUserId']);
 
     // ========== RUTAS DE MENSAJERÍA ==========
     Route::post('/messages', [MessageController::class, 'enviarMensaje']);

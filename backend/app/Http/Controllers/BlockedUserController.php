@@ -35,18 +35,11 @@ class BlockedUserController extends Controller
                 return response()->json(['message' => 'Este usuario ya está bloqueado'], 400);
             }
 
-            // Bloquear usuario
+            // Bloquear usuario (mantiene la amistad)
             $bloqueo = BlockedUser::create([
                 'user_id' => $userId,
                 'blocked_user_id' => $blockedUserId,
             ]);
-
-            // Eliminar amistad si existe
-            Friendship::where(function ($query) use ($userId, $blockedUserId) {
-                $query->where('user_id', $userId)->where('friend_id', $blockedUserId);
-            })->orWhere(function ($query) use ($userId, $blockedUserId) {
-                $query->where('user_id', $blockedUserId)->where('friend_id', $userId);
-            })->delete();
 
             return response()->json([
                 'message' => 'Usuario bloqueado correctamente',

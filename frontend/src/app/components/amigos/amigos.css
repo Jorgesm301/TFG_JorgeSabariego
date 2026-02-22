@@ -185,6 +185,20 @@
   font-weight: 600;
   margin: 0 0 4px 0;
   color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge-bloqueado {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  font-weight: 600;
 }
 
 .amigo-email, .solicitud-email {
@@ -227,6 +241,17 @@
   box-shadow: 0 4px 16px rgba(34,197,94,0.4);
 }
 
+.btn-accion.primario:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn-accion.primario:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 .btn-accion.secundario {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -256,6 +281,157 @@
 .btn-accion.rechazar:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 16px rgba(239,68,68,0.4);
+}
+
+.btn-accion.menu {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.btn-accion.menu:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.1);
+}
+
+.btn-accion.desbloquear {
+  width: auto;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #fff;
+  font-size: 14px;
+  gap: 6px;
+}
+
+.btn-accion.desbloquear:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(59,130,246,0.4);
+}
+
+.menu-container {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: rgba(20, 29, 43, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  min-width: 200px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.menu-item {
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-item.eliminar:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.menu-item.bloquear:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.menu-item.desbloquear:hover {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+}
+
+.menu-icon {
+  font-size: 18px;
+}
+
+/* Vista de bloqueados */
+.vista-bloqueados {
+  width: 100%;
+}
+
+.bloqueados-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bloqueado-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.2s ease;
+}
+
+.bloqueado-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.bloqueado-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(239,68,68,0.3), rgba(220,38,38,0.3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bloqueado-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.bloqueado-nombre {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: #fff;
+}
+
+.bloqueado-email {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 4px 0;
+}
+
+.bloqueado-fecha {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.bloqueado-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .empty-state, .loading-state, .error-state {

@@ -139,7 +139,18 @@ class FriendshipController extends Controller
                 ->get()
                 ->map(function ($friendship) use ($userId) {
                     $friendId = $friendship->user_id == $userId ? $friendship->friend_id : $friendship->user_id;
-                    return User::find($friendId);
+                    $amigo = User::find($friendId);
+
+                    // Verificar si está bloqueado
+                    $estaBloqueado = BlockedUser::where('user_id', $userId)
+                        ->where('blocked_user_id', $friendId)
+                        ->exists();
+
+                    if ($amigo) {
+                        $amigo->esta_bloqueado = $estaBloqueado;
+                    }
+
+                    return $amigo;
                 });
 
             return response()->json($amigos);
@@ -178,6 +189,35 @@ class FriendshipController extends Controller
             // Solo los involucrados pueden eliminar la amistad
             if ($friendship->user_id != $userId && $friendship->friend_id != $userId) {
                 return response()->json(['message' => 'No tienes permiso para eliminar esta amistad'], 403);
+            }
+
+            $friendship->delete();
+
+            return response()->json(['message' => 'Amistad eliminada correctamente']);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al eliminar amistad: ' . $e->getMessage()], 500);
+        }
+    }
+
+    // Eliminar amistad por userId del amigo
+    public function eliminarAmigoPorUserId($friendId)
+    {
+        try {
+            $userId = Auth::id();
+
+            // Buscar la amistad
+            $friendship = Friendship::where('status', 'accepted')
+                ->where(function ($query) use ($userId, $friendId) {
+                    $query->where(function ($q) use ($userId, $friendId) {
+                        $q->where('user_id', $userId)->where('friend_id', $friendId);
+                    })->orWhere(function ($q) use ($userId, $friendId) {
+                        $q->where('user_id', $friendId)->where('friend_id', $userId);
+                    });
+                })->first();
+
+            if (!$friendship) {
+                return response()->json(['message' => 'No existe una amistad con este usuario'], 404);
             }
 
             $friendship->delete();

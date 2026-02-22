@@ -9,6 +9,7 @@ export interface IUser {
   last_name?: string;
   email: string;
   relacion?: 'none' | 'pending' | 'accepted' | 'blocked';
+  esta_bloqueado?: boolean;
 }
 
 export interface IFriendship {
@@ -102,6 +103,17 @@ export class FriendshipService {
       return throwError(() => e);
     }
     return this.http.delete(`${this.apiUrl}/friendships/${friendshipId}`, { headers });
+  }
+
+  // Eliminar amigo por userId
+  eliminarAmigoPorUserId(friendId: number): Observable<any> {
+    let headers: HttpHeaders;
+    try {
+      headers = this.requireAuthHeaders();
+    } catch (e: any) {
+      return throwError(() => e);
+    }
+    return this.http.delete(`${this.apiUrl}/friends/${friendId}`, { headers });
   }
 
   // Buscar usuarios
