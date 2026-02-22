@@ -16,6 +16,7 @@ class Booking extends Model
         'hora_inicio',
         'hora_fin',
         'pista',
+        'ubicacion',
         'max_jugadores',
         'jugadores_actuales',
         'estado',

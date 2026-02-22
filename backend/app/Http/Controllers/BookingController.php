@@ -37,6 +37,7 @@ class BookingController extends Controller
                 'deporte_id' => 'required|exists:sports,id',
                 'fecha' => 'required|date|after_or_equal:today',
                 'hora_inicio' => 'required|date_format:H:i',
+                'ubicacion' => 'required|string|max:255',
             ]);
 
             $userId = Auth::id();
@@ -72,6 +73,7 @@ class BookingController extends Controller
                 'hora_inicio' => $request->hora_inicio,
                 'hora_fin' => $horaFin->format('H:i'),
                 'pista' => $request->pista ?? 'Pista 1',
+                'ubicacion' => $request->ubicacion,
                 'max_jugadores' => $sport->max_jugadores,
                 'jugadores_actuales' => 1,
                 'estado' => 'abierto',
@@ -258,7 +260,7 @@ class BookingController extends Controller
                           });
                 })
                 ->with(['creador:id,name'])
-                ->select('id', 'deporte_id', 'creador_id', 'fecha', 'hora_inicio', 'hora_fin', 'pista', 'max_jugadores', 'jugadores_actuales', 'estado')
+                ->select('id', 'deporte_id', 'creador_id', 'fecha', 'hora_inicio', 'hora_fin', 'pista', 'ubicacion', 'max_jugadores', 'jugadores_actuales', 'estado')
                 ->orderBy('fecha', 'asc')
                 ->orderBy('hora_inicio', 'asc')
                 ->get();
@@ -267,6 +269,42 @@ class BookingController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener reservas disponibles',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    //Funcion que filtra reservas disponibles por ubicación
+    public function reservasPorUbicacion(Request $request, $sportId)
+    {
+        try {
+            $request->validate([
+                'ubicacion' => 'required|string|max:255',
+            ]);
+
+            $hoy = Carbon::today()->format('Y-m-d');
+            $horaActual = Carbon::now()->format('H:i');
+
+            $reservas = Booking::where('deporte_id', $sportId)
+                ->where('estado', 'abierto')
+                ->where('ubicacion', 'LIKE', '%' . $request->ubicacion . '%')
+                ->where(function($query) use ($hoy, $horaActual) {
+                    $query->where('fecha', '>', $hoy)
+                          ->orWhere(function($q) use ($hoy, $horaActual) {
+                              $q->where('fecha', '=', $hoy)
+                                ->where('hora_inicio', '>', $horaActual);
+                          });
+                })
+                ->with(['creador:id,name'])
+                ->select('id', 'deporte_id', 'creador_id', 'fecha', 'hora_inicio', 'hora_fin', 'pista', 'ubicacion', 'max_jugadores', 'jugadores_actuales', 'estado')
+                ->orderBy('fecha', 'asc')
+                ->orderBy('hora_inicio', 'asc')
+                ->get();
+
+            return response()->json($reservas);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener reservas por ubicación',
                 'error' => $e->getMessage()
             ], 500);
         }

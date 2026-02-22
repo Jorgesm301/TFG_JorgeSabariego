@@ -53,4 +53,14 @@ export class AuthService {
   isAuthenticated(): boolean {
     return this.getToken() !== null;
   }
+
+  updateProfile(profileData: any): Observable<any> {
+    return this.http.put(`${this.API_URL}/profile`, profileData).pipe(
+      tap((response: any) => {
+        if (response.user) {
+          this.saveUserData(response.user);
+        }
+      })
+    );
+  }
 }

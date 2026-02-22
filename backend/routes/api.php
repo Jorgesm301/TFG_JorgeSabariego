@@ -35,9 +35,13 @@ Route::get('/sports/{id}', [SportController::class, 'show']);
 // Rutas públicas para reservas (ver reservas disponibles)
 Route::get('/bookings/sport/{sportId}/fecha/{fecha}', [BookingController::class, 'getReservasPorSportYFecha']);
 Route::get('/bookings/disponibles/{sportId}', [BookingController::class, 'reservasDisponibles']);
+Route::post('/bookings/ubicacion/{sportId}', [BookingController::class, 'reservasPorUbicacion']);
 
 // Rutas protegidas para reservas (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {
+    // Ruta para actualizar perfil
+    Route::put('/profile', [AuthController::class, 'updateProfile']);
+
     Route::post('/bookings', [BookingController::class, 'crearReserva']);
     Route::post('/bookings/{bookingId}/unirse', [BookingController::class, 'unirseAReserva']);
     Route::delete('/bookings/{bookingId}/salir', [BookingController::class, 'salirseDeReserva']);

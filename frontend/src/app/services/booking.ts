@@ -11,6 +11,7 @@ export interface IBooking {
   hora_inicio: string;
   hora_fin: string;
   pista: string;
+  ubicacion?: string;
   max_jugadores: number;
   jugadores_actuales: number;
   estado: 'abierto' | 'completo' | 'cancelado' | 'jugado';
@@ -98,5 +99,12 @@ export class BookingService {
       return throwError(() => e);
     }
     return this.http.get<IBooking[]>(`${this.apiUrl}/mis-bookings`, { headers });
+  }
+
+  getReservasPorUbicacion(sportId: number, ubicacion: string): Observable<IBooking[]> {
+    return this.http.post<IBooking[]>(
+      `${this.apiUrl}/bookings/ubicacion/${sportId}`,
+      { ubicacion }
+    );
   }
 }

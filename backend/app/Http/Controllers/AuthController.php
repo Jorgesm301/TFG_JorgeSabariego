@@ -15,6 +15,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
+            'ubicacion' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
         ]);
@@ -27,6 +28,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'last_name' => $request->last_name,
+            'ubicacion' => $request->ubicacion,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
@@ -69,5 +71,36 @@ class AuthController extends Controller
             'user' => $user
         ], 200);
     }
-}
 
+    public function updateProfile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'nullable|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'ubicacion' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $user = $request->user();
+
+        if ($request->has('name')) {
+            $user->name = $request->name;
+        }
+        if ($request->has('last_name')) {
+            $user->last_name = $request->last_name;
+        }
+        if ($request->has('ubicacion')) {
+            $user->ubicacion = $request->ubicacion;
+        }
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'Perfil actualizado correctamente',
+            'user' => $user
+        ], 200);
+    }
+}

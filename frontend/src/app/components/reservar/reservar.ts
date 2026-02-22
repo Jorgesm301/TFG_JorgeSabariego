@@ -24,11 +24,13 @@ export class Reservar implements OnInit {
   fechaMinima: string = '';
   fechaMaxima: string = '';
   horaSeleccionada: string = '';
+  ubicacionSeleccionada: string = '';
   reservasDelDia: IBooking[] = [];
   horariosDisponibles: string[] = [];
 
   // Variables para unirse a reserva
   reservasDisponibles: IBooking[] = [];
+  filtroUbicacion: string = '';
 
   mensaje: string = '';
   mensajeTipo: 'success' | 'error' | 'info' = 'info';
@@ -211,6 +213,34 @@ export class Reservar implements OnInit {
       });
   }
 
+  buscarPorUbicacion() {
+    if (!this.sport) {
+      return;
+    }
+
+    if (!this.filtroUbicacion || this.filtroUbicacion.trim() === '') {
+      this.cargarReservasDisponibles();
+      return;
+    }
+
+    this.cargando = true;
+    this.cdr.detectChanges();
+
+    this.bookingService.getReservasPorUbicacion(this.sport.id, this.filtroUbicacion)
+      .subscribe({
+        next: (reservas) => {
+          this.reservasDisponibles = reservas;
+          this.cargando = false;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error al buscar reservas por ubicación:', error);
+          this.cargando = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
   estaOcupado(hora: string): boolean {
     if (!this.sport) return false;
 
@@ -269,6 +299,7 @@ export class Reservar implements OnInit {
       deporte_id: this.sport.id,
       fecha: this.fechaSeleccionada,
       hora_inicio: this.horaSeleccionada,
+      ubicacion: this.ubicacionSeleccionada,
       pista: 'Pista 1'
     };
 

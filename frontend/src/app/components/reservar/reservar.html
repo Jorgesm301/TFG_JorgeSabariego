@@ -77,6 +77,17 @@
       />
     </div>
 
+    <div class="selector-fecha">
+      <label for="ubicacion">Ubicación del partido:</label>
+      <input
+        type="text"
+        id="ubicacion"
+        [(ngModel)]="ubicacionSeleccionada"
+        placeholder="Ej: Madrid, Martos, Jaén..."
+        class="input-ubicacion"
+      />
+    </div>
+
     <div class="horarios-section">
       <h3>Horarios disponibles</h3>
       <div class="horarios-grid">
@@ -99,12 +110,13 @@
       <div class="resumen-content">
         <p><strong>Deporte:</strong> {{ sport.nombre }}</p>
         <p><strong>Fecha:</strong> {{ fechaSeleccionada }}</p>
+        <p><strong>Ubicación:</strong> {{ ubicacionSeleccionada }}</p>
         <p><strong>Hora:</strong> {{ horaSeleccionada }} - {{ calcularHoraFin(horaSeleccionada) }}</p>
         <p><strong>Duración:</strong> {{ sport.duracion_minutos }} minutos</p>
         <p><strong>Jugadores máximos:</strong> {{ sport.max_jugadores }}</p>
       </div>
 
-      <button class="btn-reservar" (click)="crearReserva()" [disabled]="cargando">
+      <button class="btn-reservar" (click)="crearReserva()" [disabled]="cargando || !ubicacionSeleccionada">
         {{ cargando ? 'Creando...' : 'Confirmar Reserva' }}
       </button>
     </div>
@@ -113,6 +125,25 @@
   <!-- Modo: Unirse a Partido -->
   <div class="contenido" *ngIf="modo === 'unirse'">
     <h3>Partidos disponibles</h3>
+
+    <div class="filtro-ubicacion">
+      <label for="filtroUbicacion">Filtrar por ubicación:</label>
+      <div class="filtro-input-group">
+        <input
+          type="text"
+          id="filtroUbicacion"
+          [(ngModel)]="filtroUbicacion"
+          placeholder="Ej: Madrid, Martos, Jaén..."
+          class="input-ubicacion"
+        />
+        <button class="btn-buscar" (click)="buscarPorUbicacion()" [disabled]="cargando">
+          🔍 Buscar
+        </button>
+        <button class="btn-limpiar" (click)="filtroUbicacion = ''; cargarReservasDisponibles()" [disabled]="cargando">
+          ✖ Limpiar
+        </button>
+      </div>
+    </div>
 
     <div class="partidos-disponibles" *ngIf="reservasDisponibles.length > 0">
       <div class="partido-card" *ngFor="let reserva of reservasDisponibles">
@@ -127,6 +158,7 @@
           <p class="creador">Creado por: {{ reserva.creador?.name }}</p>
           <p class="horario">{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</p>
           <p class="pista">📍 {{ reserva.pista }}</p>
+          <p class="ubicacion" *ngIf="reserva.ubicacion">🌍 {{ reserva.ubicacion }}</p>
 
           <div class="jugadores" *ngIf="reserva.usuarios && reserva.usuarios.length > 0">
             <p class="jugadores-titulo">Jugadores:</p>
