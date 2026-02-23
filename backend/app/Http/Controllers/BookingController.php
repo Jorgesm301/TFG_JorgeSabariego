@@ -56,10 +56,12 @@ class BookingController extends Controller
                 $request->deporte_id,
                 $request->fecha,
                 $request->hora_inicio,
-                $horaFin->format('H:i')
+                $horaFin->format('H:i'),
+                $request->pista ?? 'Pista 1',
+                $request->ubicacion
             )) {
                 return response()->json([
-                    'message' => 'Ya existe una reserva en ese horario'
+                    'message' => 'Ya existe una reserva en ese horario para esta pista y ubicación'
                 ], 409);
             }
 

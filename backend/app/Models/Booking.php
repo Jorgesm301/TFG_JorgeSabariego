@@ -51,19 +51,31 @@ class Booking extends Model
 
 
     //Verificamos si el horario esta disponible y no hay ningun solapamiento de reservas
-    public static function estaDisponible($deporteId, $fecha, $horaInicio, $horaFin)
+    //Ahora consideramos ubicacion y pista para que cada ubicacion tenga sus propias pistas independientes
+    public static function estaDisponible($deporteId, $fecha, $horaInicio, $horaFin, $pista = null, $ubicacion = null)
     {
-        return !self::where('deporte_id', $deporteId)
+        $query = self::where('deporte_id', $deporteId)
             ->where('fecha', $fecha)
-            ->where('estado', '!=', 'cancelado')
-            ->where(function ($query) use ($horaInicio, $horaFin) {
+            ->where('estado', '!=', 'cancelado');
 
-                $query->where(function ($q) use ($horaInicio, $horaFin) {
-                    $q->where('hora_inicio', '<', $horaFin)
-                    ->where('hora_fin', '>', $horaInicio);
-                });
-            })
-            ->exists();
+        // Si se proporciona pista, filtramos por ella
+        if ($pista !== null) {
+            $query->where('pista', $pista);
+        }
+
+        // Si se proporciona ubicación, filtramos por ella
+        if ($ubicacion !== null) {
+            $query->where('ubicacion', $ubicacion);
+        }
+
+        $query->where(function ($query) use ($horaInicio, $horaFin) {
+            $query->where(function ($q) use ($horaInicio, $horaFin) {
+                $q->where('hora_inicio', '<', $horaFin)
+                  ->where('hora_fin', '>', $horaInicio);
+            });
+        });
+
+        return !$query->exists();
     }
 
 

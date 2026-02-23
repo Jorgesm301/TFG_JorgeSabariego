@@ -174,6 +174,11 @@ export class Reservar implements OnInit {
     this.cargarReservasDelDia();
   }
 
+  onUbicacionChange() {
+    this.horaSeleccionada = '';
+    this.cargarReservasDelDia();
+  }
+
   cargarReservasDelDia() {
     if (!this.sport || !this.fechaSeleccionada)
      return;
@@ -181,7 +186,14 @@ export class Reservar implements OnInit {
     this.bookingService.getReservasPorSportYFecha(this.sport.id, this.fechaSeleccionada)
       .subscribe({
         next: (reservas) => {
-          this.reservasDelDia = reservas;
+          // Filtramos solo las reservas de la misma ubicación si se ha seleccionado una
+          if (this.ubicacionSeleccionada && this.ubicacionSeleccionada.trim() !== '') {
+            this.reservasDelDia = reservas.filter(r =>
+              r.ubicacion && r.ubicacion.toLowerCase().includes(this.ubicacionSeleccionada.toLowerCase())
+            );
+          } else {
+            this.reservasDelDia = reservas;
+          }
           this.cdr.detectChanges();
         },
         error: (error) => {
@@ -244,6 +256,11 @@ export class Reservar implements OnInit {
   estaOcupado(hora: string): boolean {
     if (!this.sport) return false;
 
+    // Si no hay ubicación seleccionada, no marcamos nada como ocupado
+    if (!this.ubicacionSeleccionada || this.ubicacionSeleccionada.trim() === '') {
+      return false;
+    }
+
     const [h, m] = hora.split(':').map(Number);
     const minutosSolicitud = h * 60 + m;
     const finSolicitud = minutosSolicitud + this.sport.duracion_minutos;
@@ -287,6 +304,11 @@ export class Reservar implements OnInit {
 
     if (!this.sport || !this.horaSeleccionada) {
       this.mostrarMensaje('Por favor selecciona una hora', 'error');
+      return;
+    }
+
+    if (!this.ubicacionSeleccionada || this.ubicacionSeleccionada.trim() === '') {
+      this.mostrarMensaje('Por favor selecciona una ubicación', 'error');
       return;
     }
 
