@@ -140,7 +140,7 @@
         <button class="btn-buscar" (click)="buscarPorUbicacion()" [disabled]="cargando">
           🔍 Buscar
         </button>
-        <button class="btn-limpiar" (click)="filtroUbicacion = ''; cargarReservasDisponibles()" [disabled]="cargando">
+        <button class="btn-limpiar" (click)="limpiarFiltro()" [disabled]="cargando">
           ✖ Limpiar
         </button>
       </div>
@@ -182,8 +182,8 @@
     </div>
 
     <div class="no-partidos" *ngIf="reservasDisponibles.length === 0 && !cargando">
-      <p>No hay partidos disponibles para este deporte</p>
-      <p class="sugerencia">¿Por qué no creas uno?</p>
+      <p>Busca partidos disponibles usando el filtro de ubicación</p>
+      <p class="sugerencia">¿No encuentras ninguno? ¡Crea uno tú!</p>
       <button class="btn-crear" (click)="cambiarModo('crear')">Crear Partido</button>
     </div>
   </div>

@@ -105,9 +105,8 @@ export class Reservar implements OnInit {
 
         if (this.modo === 'crear') {
           this.cargarReservasDelDia();
-        } else if (this.modo === 'unirse') {
-          this.cargarReservasDisponibles();
         }
+        // En modo unirse, no cargar automáticamente
 
         this.cargando = false;
         this.cdr.detectChanges();
@@ -164,7 +163,9 @@ export class Reservar implements OnInit {
     if (nuevoModo === 'crear') {
       this.cargarReservasDelDia();
     } else {
-      this.cargarReservasDisponibles();
+      // No cargar reservas automáticamente, esperar a que el usuario busque
+      this.reservasDisponibles = [];
+      this.filtroUbicacion = '';
     }
   }
 
@@ -231,6 +232,7 @@ export class Reservar implements OnInit {
     }
 
     if (!this.filtroUbicacion || this.filtroUbicacion.trim() === '') {
+      // Si no hay filtro, cargar todas las reservas disponibles
       this.cargarReservasDisponibles();
       return;
     }
@@ -251,6 +253,11 @@ export class Reservar implements OnInit {
           this.cdr.detectChanges();
         }
       });
+  }
+
+  limpiarFiltro() {
+    this.filtroUbicacion = '';
+    this.reservasDisponibles = [];
   }
 
   estaOcupado(hora: string): boolean {
