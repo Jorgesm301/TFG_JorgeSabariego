@@ -36,6 +36,7 @@ Route::get('/sports/{id}', [SportController::class, 'show']);
 Route::get('/bookings/sport/{sportId}/fecha/{fecha}', [BookingController::class, 'getReservasPorSportYFecha']);
 Route::get('/bookings/disponibles/{sportId}', [BookingController::class, 'reservasDisponibles']);
 Route::post('/bookings/ubicacion/{sportId}', [BookingController::class, 'reservasPorUbicacion']);
+Route::post('/bookings/radio/{sportId}', [BookingController::class, 'reservasPorRadio']);
 
 // Rutas protegidas para reservas (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {

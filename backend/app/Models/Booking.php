@@ -17,6 +17,8 @@ class Booking extends Model
         'hora_fin',
         'pista',
         'ubicacion',
+        'latitud',
+        'longitud',
         'max_jugadores',
         'jugadores_actuales',
         'estado',
@@ -76,6 +78,61 @@ class Booking extends Model
         });
 
         return !$query->exists();
+    }
+
+    /**
+     * Calcula la distancia en kilómetros entre dos coordenadas usando la fórmula Haversine
+     *
+     * @param float $lat1 Latitud del punto 1
+     * @param float $lon1 Longitud del punto 1
+     * @param float $lat2 Latitud del punto 2
+     * @param float $lon2 Longitud del punto 2
+     * @return float Distancia en kilómetros
+     */
+    public static function calcularDistancia($lat1, $lon1, $lat2, $lon2)
+    {
+        $radioTierra = 6371; // Radio de la Tierra en kilómetros
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+             sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $radioTierra * $c;
+    }
+
+    /**
+     * Busca reservas disponibles dentro de un radio desde una ubicación
+     *
+     * @param int $deporteId ID del deporte
+     * @param float $latitud Latitud del centro de búsqueda
+     * @param float $longitud Longitud del centro de búsqueda
+     * @param float $radioKm Radio de búsqueda en kilómetros
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function buscarPorRadio($deporteId, $latitud, $longitud, $radioKm)
+    {
+        // Obtenemos todas las reservas disponibles con coordenadas
+        $reservas = self::where('deporte_id', $deporteId)
+            ->where('estado', 'abierto')
+            ->whereNotNull('latitud')
+            ->whereNotNull('longitud')
+            ->get();
+
+        // Filtramos por distancia
+        return $reservas->filter(function ($reserva) use ($latitud, $longitud, $radioKm) {
+            $distancia = self::calcularDistancia(
+                $latitud,
+                $longitud,
+                $reserva->latitud,
+                $reserva->longitud
+            );
+            return $distancia <= $radioKm;
+        });
     }
 
 

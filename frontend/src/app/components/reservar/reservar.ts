@@ -32,6 +32,19 @@ export class Reservar implements OnInit {
   reservasDisponibles: IBooking[] = [];
   filtroUbicacion: string = '';
 
+  // Variables para geolocalización y búsqueda por radio
+  miLatitud: number | null = null;
+  miLongitud: number | null = null;
+  usarGeolocalizacion: boolean = false;
+  radioBusqueda: number = 10; // Radio en kilómetros
+  radiosDisponibles = [5, 10, 25, 50, 100];
+  geolocalizacionActiva: boolean = false;
+
+  // Variables para crear reserva con ubicación
+  latitudReserva: number | null = null;
+  longitudReserva: number | null = null;
+  ubicacionAutomatica: boolean = false;
+
   mensaje: string = '';
   mensajeTipo: 'success' | 'error' | 'info' = 'info';
   cargando: boolean = false;
@@ -260,6 +273,107 @@ export class Reservar implements OnInit {
     this.reservasDisponibles = [];
   }
 
+  // Función para obtener la ubicación del navegador
+  obtenerUbicacion() {
+    if (!navigator.geolocation) {
+      this.mostrarMensaje('Tu navegador no soporta geolocalización', 'error');
+      return;
+    }
+
+    this.cargando = true;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        this.miLatitud = position.coords.latitude;
+        this.miLongitud = position.coords.longitude;
+        this.geolocalizacionActiva = true;
+        this.cargando = false;
+        this.mostrarMensaje('Ubicación obtenida correctamente', 'success');
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        this.cargando = false;
+        this.geolocalizacionActiva = false;
+        console.error('Error al obtener ubicación:', error);
+        this.mostrarMensaje('No se pudo obtener tu ubicación. Verifica los permisos.', 'error');
+        this.cdr.detectChanges();
+      }
+    );
+  }
+
+  // Función para buscar reservas por radio
+  buscarPorRadio() {
+    if (!this.sport) {
+      return;
+    }
+
+    if (this.miLatitud === null || this.miLongitud === null) {
+      this.mostrarMensaje('Primero activa tu ubicación', 'error');
+      return;
+    }
+
+    this.cargando = true;
+    this.cdr.detectChanges();
+
+    this.bookingService.getReservasPorRadio(
+      this.sport.id,
+      this.miLatitud,
+      this.miLongitud,
+      this.radioBusqueda
+    ).subscribe({
+      next: (reservas) => {
+        this.reservasDisponibles = reservas;
+        this.cargando = false;
+        this.cdr.detectChanges();
+
+        if (reservas.length === 0) {
+          this.mostrarMensaje(`No se encontraron partidos en un radio de ${this.radioBusqueda}km`, 'info');
+        }
+      },
+      error: (error) => {
+        console.error('Error al buscar reservas por radio:', error);
+        this.cargando = false;
+        this.mostrarMensaje('Error al buscar partidos cercanos', 'error');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // Función para activar/desactivar uso de geolocalización en modo crear
+  toggleUbicacionAutomatica() {
+    if (!this.ubicacionAutomatica) {
+      // Activar: obtener ubicación
+      if (!navigator.geolocation) {
+        this.mostrarMensaje('Tu navegador no soporta geolocalización', 'error');
+        return;
+      }
+
+      this.cargando = true;
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.latitudReserva = position.coords.latitude;
+          this.longitudReserva = position.coords.longitude;
+          this.ubicacionAutomatica = true;
+          this.cargando = false;
+          this.mostrarMensaje('Ubicación obtenida. Se guardará con tu reserva.', 'success');
+          this.cdr.detectChanges();
+        },
+        (error) => {
+          this.cargando = false;
+          this.ubicacionAutomatica = false;
+          console.error('Error al obtener ubicación:', error);
+          this.mostrarMensaje('No se pudo obtener tu ubicación', 'error');
+          this.cdr.detectChanges();
+        }
+      );
+    } else {
+      // Desactivar
+      this.latitudReserva = null;
+      this.longitudReserva = null;
+      this.ubicacionAutomatica = false;
+      this.mostrarMensaje('Ubicación automática desactivada', 'info');
+    }
+  }
+
   estaOcupado(hora: string): boolean {
     if (!this.sport) return false;
 
@@ -324,13 +438,19 @@ export class Reservar implements OnInit {
       return;
     }
 
-    const reserva = {
+    const reserva: any = {
       deporte_id: this.sport.id,
       fecha: this.fechaSeleccionada,
       hora_inicio: this.horaSeleccionada,
       ubicacion: this.ubicacionSeleccionada,
       pista: 'Pista 1'
     };
+
+    // Añadir coordenadas si están disponibles
+    if (this.latitudReserva !== null && this.longitudReserva !== null) {
+      reserva.latitud = this.latitudReserva;
+      reserva.longitud = this.longitudReserva;
+    }
 
     this.cargando = true;
     this.cdr.detectChanges();

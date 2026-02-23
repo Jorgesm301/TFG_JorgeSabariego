@@ -750,3 +750,178 @@
     width: 100%;
   }
 }
+
+/* ========== ESTILOS PARA GEOLOCALIZACIÓN Y BÚSQUEDA POR RADIO ========== */
+
+.checkbox-ubicacion {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(34, 197, 94, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.checkbox-ubicacion label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+
+.checkbox-ubicacion input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #22c55e;
+}
+
+.info-tooltip {
+  display: inline-block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-left: 8px;
+}
+
+.tipo-busqueda {
+  margin-bottom: 24px;
+}
+
+.tabs-busqueda {
+  display: flex;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 20px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tab-btn.activo {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  color: #071018;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.filtro-radio {
+  margin-bottom: 24px;
+}
+
+.geolocalizacion-controles {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.btn-ubicacion {
+  padding: 14px 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.35);
+}
+
+.btn-ubicacion:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.45);
+}
+
+.btn-ubicacion:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-ubicacion.activo {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  box-shadow: 0 6px 18px rgba(34, 197, 94, 0.35);
+}
+
+.radio-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.radio-selector label {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+}
+
+.select-radio {
+  padding: 10px 14px;
+  background: rgba(10, 16, 32, 0.8);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.select-radio:hover {
+  border-color: rgba(34, 197, 94, 0.5);
+  background: rgba(10, 16, 32, 0.9);
+}
+
+.select-radio:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+.distancia {
+  font-size: 13px;
+  color: rgba(245, 158, 11, 0.95);
+  font-weight: 700;
+  background: rgba(245, 158, 11, 0.12);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  display: inline-block;
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .tabs-busqueda {
+    flex-direction: column;
+  }
+
+  .radio-selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .radio-selector label {
+    text-align: center;
+  }
+}

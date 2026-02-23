@@ -87,6 +87,17 @@
         class="input-ubicacion"
         (input)="onUbicacionChange()"
       />
+      <div class="checkbox-ubicacion">
+        <label>
+          <input
+            type="checkbox"
+            [(ngModel)]="ubicacionAutomatica"
+            (change)="toggleUbicacionAutomatica()"
+          />
+          Guardar mi ubicación GPS con la reserva
+          <span class="info-tooltip">📍 Permite que otros encuentren tu partido por cercanía</span>
+        </label>
+      </div>
     </div>
 
     <div class="horarios-section">
@@ -127,7 +138,28 @@
   <div class="contenido" *ngIf="modo === 'unirse'">
     <h3>Partidos disponibles</h3>
 
-    <div class="filtro-ubicacion">
+    <!-- Opción de búsqueda por ubicación o por radio -->
+    <div class="tipo-busqueda">
+      <div class="tabs-busqueda">
+        <button
+          [class.activo]="!usarGeolocalizacion"
+          (click)="usarGeolocalizacion = false"
+          class="tab-btn"
+        >
+          🔍 Buscar por nombre
+        </button>
+        <button
+          [class.activo]="usarGeolocalizacion"
+          (click)="usarGeolocalizacion = true"
+          class="tab-btn"
+        >
+          📍 Buscar por cercanía
+        </button>
+      </div>
+    </div>
+
+    <!-- Búsqueda por ubicación (texto) -->
+    <div class="filtro-ubicacion" *ngIf="!usarGeolocalizacion">
       <label for="filtroUbicacion">Filtrar por ubicación:</label>
       <div class="filtro-input-group">
         <input
@@ -146,6 +178,32 @@
       </div>
     </div>
 
+    <!-- Búsqueda por radio (geolocalización) -->
+    <div class="filtro-radio" *ngIf="usarGeolocalizacion">
+      <div class="geolocalizacion-controles">
+        <button
+          class="btn-ubicacion"
+          (click)="obtenerUbicacion()"
+          [disabled]="cargando || geolocalizacionActiva"
+          [class.activo]="geolocalizacionActiva"
+        >
+          {{ geolocalizacionActiva ? '✅ Ubicación activada' : '📍 Activar mi ubicación' }}
+        </button>
+
+        <div class="radio-selector" *ngIf="geolocalizacionActiva">
+          <label for="radioBusqueda">Radio de búsqueda:</label>
+          <select id="radioBusqueda" [(ngModel)]="radioBusqueda" class="select-radio">
+            <option *ngFor="let radio of radiosDisponibles" [value]="radio">
+              {{ radio }} km
+            </option>
+          </select>
+          <button class="btn-buscar" (click)="buscarPorRadio()" [disabled]="cargando">
+            🔍 Buscar
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="partidos-disponibles" *ngIf="reservasDisponibles.length > 0">
       <div class="partido-card" *ngFor="let reserva of reservasDisponibles">
         <div class="partido-info">
@@ -160,6 +218,9 @@
           <p class="horario">{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</p>
           <p class="pista">📍 {{ reserva.pista }}</p>
           <p class="ubicacion" *ngIf="reserva.ubicacion">🌍 {{ reserva.ubicacion }}</p>
+          <p class="distancia" *ngIf="reserva.distancia_km !== undefined">
+            📏 A {{ reserva.distancia_km }} km de ti
+          </p>
 
           <div class="jugadores" *ngIf="reserva.usuarios && reserva.usuarios.length > 0">
             <p class="jugadores-titulo">Jugadores:</p>

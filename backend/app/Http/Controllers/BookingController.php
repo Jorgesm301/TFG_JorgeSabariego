@@ -38,6 +38,8 @@ class BookingController extends Controller
                 'fecha' => 'required|date|after_or_equal:today',
                 'hora_inicio' => 'required|date_format:H:i',
                 'ubicacion' => 'required|string|max:255',
+                'latitud' => 'nullable|numeric|between:-90,90',
+                'longitud' => 'nullable|numeric|between:-180,180',
             ]);
 
             $userId = Auth::id();
@@ -68,7 +70,7 @@ class BookingController extends Controller
             // Crear la reserva
             DB::beginTransaction();
 
-            $booking = Booking::create([
+            $bookingData = [
                 'deporte_id' => $request->deporte_id,
                 'creador_id' => $userId,
                 'fecha' => $request->fecha,
@@ -79,7 +81,15 @@ class BookingController extends Controller
                 'max_jugadores' => $sport->max_jugadores,
                 'jugadores_actuales' => 1,
                 'estado' => 'abierto',
-            ]);
+            ];
+
+            // Añadir coordenadas si se proporcionan
+            if ($request->has('latitud') && $request->has('longitud')) {
+                $bookingData['latitud'] = $request->latitud;
+                $bookingData['longitud'] = $request->longitud;
+            }
+
+            $booking = Booking::create($bookingData);
 
             //Añadimos al creador en booking_user
             $booking->usuarios()->attach($userId, ['es_creador' => true]);
@@ -298,7 +308,7 @@ class BookingController extends Controller
                           });
                 })
                 ->with(['creador:id,name'])
-                ->select('id', 'deporte_id', 'creador_id', 'fecha', 'hora_inicio', 'hora_fin', 'pista', 'ubicacion', 'max_jugadores', 'jugadores_actuales', 'estado')
+                ->select('id', 'deporte_id', 'creador_id', 'fecha', 'hora_inicio', 'hora_fin', 'pista', 'ubicacion', 'latitud', 'longitud', 'max_jugadores', 'jugadores_actuales', 'estado')
                 ->orderBy('fecha', 'asc')
                 ->orderBy('hora_inicio', 'asc')
                 ->get();
@@ -307,6 +317,61 @@ class BookingController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener reservas por ubicación',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    //Función para buscar reservas disponibles por radio desde coordenadas
+    public function reservasPorRadio(Request $request, $sportId)
+    {
+        try {
+            $request->validate([
+                'latitud' => 'required|numeric|between:-90,90',
+                'longitud' => 'required|numeric|between:-180,180',
+                'radio' => 'required|numeric|min:1|max:500', // Radio en kilómetros
+            ]);
+
+            $hoy = Carbon::today()->format('Y-m-d');
+            $horaActual = Carbon::now()->format('H:i');
+
+            // Obtenemos reservas disponibles con coordenadas
+            $reservas = Booking::where('deporte_id', $sportId)
+                ->where('estado', 'abierto')
+                ->whereNotNull('latitud')
+                ->whereNotNull('longitud')
+                ->where(function($query) use ($hoy, $horaActual) {
+                    $query->where('fecha', '>', $hoy)
+                          ->orWhere(function($q) use ($hoy, $horaActual) {
+                              $q->where('fecha', '=', $hoy)
+                                ->where('hora_inicio', '>', $horaActual);
+                          });
+                })
+                ->get();
+
+            // Filtramos por distancia y añadimos el campo de distancia
+            $reservasFiltradas = $reservas->filter(function ($reserva) use ($request) {
+                $distancia = Booking::calcularDistancia(
+                    $request->latitud,
+                    $request->longitud,
+                    $reserva->latitud,
+                    $reserva->longitud
+                );
+                // Añadimos la distancia a la reserva
+                $reserva->distancia_km = round($distancia, 2);
+                return $distancia <= $request->radio;
+            })->values();
+
+            // Ordenamos por distancia
+            $reservasOrdenadas = $reservasFiltradas->sortBy('distancia_km')->values();
+
+            // Cargamos las relaciones necesarias
+            $reservasOrdenadas->load(['creador:id,name']);
+
+            return response()->json($reservasOrdenadas);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al buscar reservas por radio',
                 'error' => $e->getMessage()
             ], 500);
         }

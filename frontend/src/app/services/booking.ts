@@ -12,6 +12,9 @@ export interface IBooking {
   hora_fin: string;
   pista: string;
   ubicacion?: string;
+  latitud?: number | null;
+  longitud?: number | null;
+  distancia_km?: number; // Solo presente en búsquedas por radio
   max_jugadores: number;
   jugadores_actuales: number;
   estado: 'abierto' | 'completo' | 'cancelado' | 'jugado';
@@ -105,6 +108,13 @@ export class BookingService {
     return this.http.post<IBooking[]>(
       `${this.apiUrl}/bookings/ubicacion/${sportId}`,
       { ubicacion }
+    );
+  }
+
+  getReservasPorRadio(sportId: number, latitud: number, longitud: number, radioKm: number): Observable<IBooking[]> {
+    return this.http.post<IBooking[]>(
+      `${this.apiUrl}/bookings/radio/${sportId}`,
+      { latitud, longitud, radio: radioKm }
     );
   }
 }
