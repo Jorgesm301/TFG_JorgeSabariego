@@ -192,15 +192,50 @@ class BookingController extends Controller
             DB::beginTransaction();
 
             if ($esCreador) {
-                //Si es el creador cancelamos la reserva
-                $booking->update(['estado' => 'cancelado']);
-                $booking->usuarios()->detach();
+                // Si es el creador, asignamos la reserva a otro usuario aleatorio
+                $otrosUsuarios = $booking->usuarios()
+                    ->where('user_id', '!=', $userId)
+                    ->get();
+
+                if ($otrosUsuarios->isEmpty()) {
+                    // Si no hay otros usuarios, cancelamos la reserva
+                    $booking->update(['estado' => 'cancelado']);
+                    $booking->usuarios()->detach();
+
+                    DB::commit();
+
+                    return response()->json([
+                        'message' => 'Como eres el único usuario, la reserva ha sido cancelada',
+                        'cancelado' => true
+                    ]);
+                }
+
+                // Seleccionar un usuario aleatorio para ser el nuevo creador
+                $nuevoCreador = $otrosUsuarios->random();
+
+                // Actualizar el creador en la tabla bookings
+                $booking->update(['creador_id' => $nuevoCreador->id]);
+
+                // Actualizar el pivot: quitar es_creador del antiguo creador
+                $booking->usuarios()->updateExistingPivot($userId, ['es_creador' => false]);
+
+                // Poner es_creador al nuevo creador
+                $booking->usuarios()->updateExistingPivot($nuevoCreador->id, ['es_creador' => true]);
+
+                // Quitar al antiguo creador de la reserva
+                $booking->usuarios()->detach($userId);
+                $booking->decrement('jugadores_actuales');
+
+                if ($booking->estado === 'completo') {
+                    $booking->update(['estado' => 'abierto']);
+                }
 
                 DB::commit();
 
                 return response()->json([
-                    'message' => 'Como eres el creador, la reserva ha sido cancelada',
-                    'cancelado' => true
+                    'message' => 'Te has salido de la reserva. Se ha asignado un nuevo creador',
+                    'nuevo_creador' => $nuevoCreador->name,
+                    'cancelado' => false
                 ]);
             } else {
                 //En caso de no ser creador, solo quitamos dicho usuario de la reserva
