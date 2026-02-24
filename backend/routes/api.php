@@ -10,6 +10,7 @@ use App\Http\Controllers\MatchController;
 use App\Http\Controllers\FriendshipController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\BlockedUserController;
+use App\Http\Controllers\GeocodeController;
 use App\Models\User;
 
 
@@ -37,6 +38,9 @@ Route::get('/bookings/sport/{sportId}/fecha/{fecha}', [BookingController::class,
 Route::get('/bookings/disponibles/{sportId}', [BookingController::class, 'reservasDisponibles']);
 Route::post('/bookings/ubicacion/{sportId}', [BookingController::class, 'reservasPorUbicacion']);
 Route::post('/bookings/radio/{sportId}', [BookingController::class, 'reservasPorRadio']);
+
+//Ruta para la geolocalizacion
+Route::get('/geocode', [GeocodeController::class, 'search']);
 
 // Rutas protegidas para reservas (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {

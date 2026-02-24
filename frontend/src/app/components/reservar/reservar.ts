@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -12,14 +12,13 @@ import { AuthService } from '../../services/auth';
   templateUrl: './reservar.html',
   styleUrl: './reservar.css',
 })
-export class Reservar implements OnInit {
+export class Reservar implements OnInit, OnDestroy {
   sportSlug: string = '';
   sport: Sport | null = null;
 
-
   modo: 'crear' | 'unirse' = 'crear';
 
-  //Variables para crear reserva
+  // Variables para crear reserva
   fechaSeleccionada: string = '';
   fechaMinima: string = '';
   fechaMaxima: string = '';
@@ -45,14 +44,20 @@ export class Reservar implements OnInit {
   longitudReserva: number | null = null;
   ubicacionAutomatica: boolean = false;
 
+  // Debounce geocoding manual
+  geocodingTimeout: any = null;
+
+  // ⚠️ Ajusta el puerto si tu Laravel corre en otro
+  private readonly backendUrl = 'http://127.0.0.1:8000';
+
   mensaje: string = '';
   mensajeTipo: 'success' | 'error' | 'info' = 'info';
   cargando: boolean = false;
 
   menuReservarAbierto = false;
   deportesMenu = [
-    { nombre: 'Fútbol', icon: '⚽', ruta: '/reservar/futbol'},
-    { nombre: 'Fútbol Sala', icon: '⚽', ruta: '/reservar/futbol-sala'},
+    { nombre: 'Fútbol', icon: '⚽', ruta: '/reservar/futbol' },
+    { nombre: 'Fútbol Sala', icon: '⚽', ruta: '/reservar/futbol-sala' },
     { nombre: 'Baloncesto', icon: '🏀', ruta: '/reservar/baloncesto' },
     { nombre: 'Tenis', icon: '🎾', ruta: '/reservar/tenis' },
     { nombre: 'Pádel', icon: '🎾', ruta: '/reservar/padel' },
@@ -74,7 +79,7 @@ export class Reservar implements OnInit {
     this.sportSlug = this.route.snapshot.params['deporte'];
     this.cargarSport();
 
-    //Establecemos la fecha minima como hoy para no permitir reservas en el pasado y la fecha maxima como un mes desde hoy
+    // Fecha mínima hoy y máxima un mes
     const hoy = new Date();
     this.fechaMinima = hoy.toISOString().split('T')[0];
     this.fechaSeleccionada = this.fechaMinima;
@@ -91,7 +96,13 @@ export class Reservar implements OnInit {
     }, 10000);
   }
 
-  // Normalizamos el texto quitandole tildes y caracteres especiales. Esto es para comparar el nombre del deporte con el slug de la URL.
+  ngOnDestroy() {
+    if (this.geocodingTimeout) {
+      clearTimeout(this.geocodingTimeout);
+    }
+  }
+
+  // Normalizamos el texto (tildes, espacios, etc.)
   normalizar(texto: string): string {
     return texto
       .normalize('NFD')
@@ -104,10 +115,7 @@ export class Reservar implements OnInit {
     this.cargando = true;
     this.sportService.getSports().subscribe({
       next: (sports: Sport[]) => {
-
-        this.sport = sports.find((d: Sport) =>
-          this.normalizar(d.nombre) === this.sportSlug
-        ) || null;
+        this.sport = sports.find((d: Sport) => this.normalizar(d.nombre) === this.sportSlug) || null;
 
         if (!this.sport) {
           this.cargando = false;
@@ -119,7 +127,6 @@ export class Reservar implements OnInit {
         if (this.modo === 'crear') {
           this.cargarReservasDelDia();
         }
-        // En modo unirse, no cargar automáticamente
 
         this.cargando = false;
         this.cdr.detectChanges();
@@ -135,36 +142,29 @@ export class Reservar implements OnInit {
 
   generarHorarios() {
     this.horariosDisponibles = [];
-
     if (!this.sport) return;
 
-    //Generamos los horarios desde las 9:00 hasta las 00:00 con la duracion de cada deporte.
     const duracionMinutos = this.sport.duracion_minutos;
     const horaInicio = 9 * 60;
     const horaFin = 24 * 60;
-
 
     const hoy = new Date();
     const fechaHoy = hoy.toISOString().split('T')[0];
     const esHoy = this.fechaSeleccionada === fechaHoy;
 
-    //Obtenemos la hora actual en minutos
     let horaActualMinutos = 0;
     if (esHoy) {
       horaActualMinutos = hoy.getHours() * 60 + hoy.getMinutes();
     }
 
     let minutoActual = horaInicio;
-
     while (minutoActual + duracionMinutos <= horaFin) {
-      //Si el dia es hoy, mostramos fechas desde este mismo momento hacia delante
       if (!esHoy || minutoActual > horaActualMinutos) {
         const hora = Math.floor(minutoActual / 60);
         const minuto = minutoActual % 60;
         const horaStr = `${hora.toString().padStart(2, '0')}:${minuto.toString().padStart(2, '0')}`;
         this.horariosDisponibles.push(horaStr);
       }
-
       minutoActual += duracionMinutos;
     }
   }
@@ -176,7 +176,6 @@ export class Reservar implements OnInit {
     if (nuevoModo === 'crear') {
       this.cargarReservasDelDia();
     } else {
-      // No cargar reservas automáticamente, esperar a que el usuario busque
       this.reservasDisponibles = [];
       this.filtroUbicacion = '';
     }
@@ -191,16 +190,45 @@ export class Reservar implements OnInit {
   onUbicacionChange() {
     this.horaSeleccionada = '';
     this.cargarReservasDelDia();
+
+    // Manual: geocodificar texto con debounce
+    if (!this.ubicacionAutomatica && this.ubicacionSeleccionada && this.ubicacionSeleccionada.trim() !== '') {
+      // ✅ Evita coords viejas si falla el geocode
+      this.latitudReserva = null;
+      this.longitudReserva = null;
+
+      if (this.geocodingTimeout) clearTimeout(this.geocodingTimeout);
+
+      this.geocodingTimeout = setTimeout(async () => {
+        console.log('🔵 Geocodificando ubicación manual:', this.ubicacionSeleccionada);
+        const coords = await this.geocode(this.ubicacionSeleccionada);
+
+        if (coords) {
+          this.latitudReserva = coords.lat;
+          this.longitudReserva = coords.lon;
+          console.log('✅ Coordenadas obtenidas para ubicación manual:', coords);
+        } else {
+          console.log('⚠️ No se pudieron obtener coordenadas para:', this.ubicacionSeleccionada);
+        }
+
+        this.cdr.detectChanges();
+      }, 1000);
+
+    } else if (!this.ubicacionSeleccionada || this.ubicacionSeleccionada.trim() === '') {
+      // Si se borra el campo, limpiar coords (si no es GPS)
+      if (!this.ubicacionAutomatica) {
+        this.latitudReserva = null;
+        this.longitudReserva = null;
+      }
+    }
   }
 
   cargarReservasDelDia() {
-    if (!this.sport || !this.fechaSeleccionada)
-     return;
+    if (!this.sport || !this.fechaSeleccionada) return;
 
     this.bookingService.getReservasPorSportYFecha(this.sport.id, this.fechaSeleccionada)
       .subscribe({
         next: (reservas) => {
-          // Filtramos solo las reservas de la misma ubicación si se ha seleccionado una
           if (this.ubicacionSeleccionada && this.ubicacionSeleccionada.trim() !== '') {
             this.reservasDelDia = reservas.filter(r =>
               r.ubicacion && r.ubicacion.toLowerCase().includes(this.ubicacionSeleccionada.toLowerCase())
@@ -217,35 +245,29 @@ export class Reservar implements OnInit {
   }
 
   cargarReservasDisponibles() {
-    if (!this.sport) {
-      return;
-    }
+    if (!this.sport) return;
 
     this.cargando = true;
     this.cdr.detectChanges();
 
-    this.bookingService.getReservasDisponibles(this.sport.id)
-      .subscribe({
-        next: (reservas) => {
-          this.reservasDisponibles = reservas;
-          this.cargando = false;
-          this.cdr.detectChanges();
-        },
-        error: (error) => {
-          console.error('Error al cargar reservas disponibles:', error);
-          this.cargando = false;
-          this.cdr.detectChanges();
-        }
-      });
+    this.bookingService.getReservasDisponibles(this.sport.id).subscribe({
+      next: (reservas) => {
+        this.reservasDisponibles = reservas;
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al cargar reservas disponibles:', error);
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   buscarPorUbicacion() {
-    if (!this.sport) {
-      return;
-    }
+    if (!this.sport) return;
 
     if (!this.filtroUbicacion || this.filtroUbicacion.trim() === '') {
-      // Si no hay filtro, cargar todas las reservas disponibles
       this.cargarReservasDisponibles();
       return;
     }
@@ -253,19 +275,18 @@ export class Reservar implements OnInit {
     this.cargando = true;
     this.cdr.detectChanges();
 
-    this.bookingService.getReservasPorUbicacion(this.sport.id, this.filtroUbicacion)
-      .subscribe({
-        next: (reservas) => {
-          this.reservasDisponibles = reservas;
-          this.cargando = false;
-          this.cdr.detectChanges();
-        },
-        error: (error) => {
-          console.error('Error al buscar reservas por ubicación:', error);
-          this.cargando = false;
-          this.cdr.detectChanges();
-        }
-      });
+    this.bookingService.getReservasPorUbicacion(this.sport.id, this.filtroUbicacion).subscribe({
+      next: (reservas) => {
+        this.reservasDisponibles = reservas;
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al buscar reservas por ubicación:', error);
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   limpiarFiltro() {
@@ -273,7 +294,7 @@ export class Reservar implements OnInit {
     this.reservasDisponibles = [];
   }
 
-  // Función para obtener la ubicación del navegador
+  // Ubicación del navegador (para buscar por radio)
   obtenerUbicacion() {
     if (!navigator.geolocation) {
       this.mostrarMensaje('Tu navegador no soporta geolocalización', 'error');
@@ -300,11 +321,8 @@ export class Reservar implements OnInit {
     );
   }
 
-  // Función para buscar reservas por radio
   buscarPorRadio() {
-    if (!this.sport) {
-      return;
-    }
+    if (!this.sport) return;
 
     if (this.miLatitud === null || this.miLongitud === null) {
       this.mostrarMensaje('Primero activa tu ubicación', 'error');
@@ -338,38 +356,92 @@ export class Reservar implements OnInit {
     });
   }
 
-  // Función para activar/desactivar uso de geolocalización en modo crear
+  // Reverse geocoding (coords -> texto). Si en algún momento te da CORS, lo pasamos al backend también.
+  async reverseGeocode(lat: number, lon: number): Promise<string> {
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=es`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      const address = data.address;
+      const parts: string[] = [];
+
+      if (address?.road) parts.push(address.road);
+      if (address?.city) parts.push(address.city);
+      if (address?.town) parts.push(address.town);
+      if (address?.village) parts.push(address.village);
+      if (address?.state) parts.push(address.state);
+
+      return parts.length > 0 ? parts.join(', ') : (data.display_name || 'Ubicación detectada');
+    } catch (error) {
+      console.error('Error en reverse geocoding:', error);
+      return 'Ubicación desconocida';
+    }
+  }
+
+  // ✅ Geocoding (texto -> coords) usando TU backend (evita CORS)
+  async geocode(address: string): Promise<{ lat: number, lon: number } | null> {
+    try {
+      const url = `${this.backendUrl}/api/geocode?q=${encodeURIComponent(address)}`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data?.found) {
+        return { lat: data.lat, lon: data.lng };
+      }
+      return null;
+    } catch (error) {
+      console.error('Error en geocoding (backend):', error);
+      return null;
+    }
+  }
+
   toggleUbicacionAutomatica() {
-    if (!this.ubicacionAutomatica) {
-      // Activar: obtener ubicación
+    console.log('🔵 toggleUbicacionAutomatica llamado. Estado actual:', this.ubicacionAutomatica);
+
+    if (this.ubicacionAutomatica) {
+      // Activar GPS
       if (!navigator.geolocation) {
         this.mostrarMensaje('Tu navegador no soporta geolocalización', 'error');
+        this.ubicacionAutomatica = false;
         return;
       }
 
       this.cargando = true;
+      console.log('🔵 Solicitando geolocalización...');
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           this.latitudReserva = position.coords.latitude;
           this.longitudReserva = position.coords.longitude;
-          this.ubicacionAutomatica = true;
+
+          console.log('✅ Coordenadas obtenidas:', {
+            latitud: this.latitudReserva,
+            longitud: this.longitudReserva
+          });
+
+          const direccion = await this.reverseGeocode(this.latitudReserva, this.longitudReserva);
+          this.ubicacionSeleccionada = direccion;
+
           this.cargando = false;
-          this.mostrarMensaje('Ubicación obtenida. Se guardará con tu reserva.', 'success');
+          console.log('✅ Ubicación completa:', direccion);
+          this.mostrarMensaje('Ubicación obtenida correctamente', 'success');
           this.cdr.detectChanges();
         },
         (error) => {
           this.cargando = false;
           this.ubicacionAutomatica = false;
-          console.error('Error al obtener ubicación:', error);
+          this.latitudReserva = null;
+          this.longitudReserva = null;
+          console.error('❌ Error al obtener ubicación:', error);
           this.mostrarMensaje('No se pudo obtener tu ubicación', 'error');
           this.cdr.detectChanges();
         }
       );
     } else {
-      // Desactivar
+      // Desactivar GPS
       this.latitudReserva = null;
       this.longitudReserva = null;
-      this.ubicacionAutomatica = false;
+      console.log('🔴 Ubicación automática desactivada');
       this.mostrarMensaje('Ubicación automática desactivada', 'info');
     }
   }
@@ -377,7 +449,6 @@ export class Reservar implements OnInit {
   estaOcupado(hora: string): boolean {
     if (!this.sport) return false;
 
-    // Si no hay ubicación seleccionada, no marcamos nada como ocupado
     if (!this.ubicacionSeleccionada || this.ubicacionSeleccionada.trim() === '') {
       return false;
     }
@@ -393,7 +464,6 @@ export class Reservar implements OnInit {
       const inicioReserva = hInicio * 60 + mInicio;
       const finReserva = hFin * 60 + mFin;
 
-      //Verificamos si se solapan los horarios, se solapan si el inicio de uno acaba despues del inicio del otro y antes del fin del otro.
       return minutosSolicitud < finReserva && finSolicitud > inicioReserva;
     });
 
@@ -401,8 +471,7 @@ export class Reservar implements OnInit {
   }
 
   calcularHoraFin(horaInicio: string): string {
-    if (!this.sport)
-      return horaInicio;
+    if (!this.sport) return horaInicio;
 
     const [h, m] = horaInicio.split(':').map(Number);
     const totalMinutos = h * 60 + m + this.sport.duracion_minutos;
@@ -411,14 +480,12 @@ export class Reservar implements OnInit {
     return `${horaFin.toString().padStart(2, '0')}:${minutosFin.toString().padStart(2, '0')}`;
   }
 
-  crearReserva() {
+  // ✅ IMPORTANTE: ahora es async para poder hacer geocode final si hace falta
+  async crearReserva() {
     if (!this.authService.isAuthenticated()) {
       this.mostrarMensaje('Debes iniciar sesión para crear una reserva', 'error');
       setTimeout(() => {
-        //Guardamos el URL actual para volver después del login
-        this.router.navigate(['/login'], {
-          queryParams: { returnUrl: this.router.url }
-        });
+        this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
       }, 1500);
       return;
     }
@@ -438,6 +505,19 @@ export class Reservar implements OnInit {
       return;
     }
 
+    // ✅ Si NO es GPS, asegúrate de que hay coords (geocode final obligatorio)
+    if (!this.ubicacionAutomatica) {
+      if (this.latitudReserva === null || this.longitudReserva === null) {
+        const coords = await this.geocode(this.ubicacionSeleccionada);
+        if (!coords) {
+          this.mostrarMensaje('No se pudo encontrar esa ubicación. Prueba con "Barcelona, España"', 'error');
+          return;
+        }
+        this.latitudReserva = coords.lat;
+        this.longitudReserva = coords.lon;
+      }
+    }
+
     const reserva: any = {
       deporte_id: this.sport.id,
       fecha: this.fechaSeleccionada,
@@ -446,11 +526,21 @@ export class Reservar implements OnInit {
       pista: 'Pista 1'
     };
 
-    // Añadir coordenadas si están disponibles
+    console.log('🔵 Verificando coordenadas:', {
+      latitudReserva: this.latitudReserva,
+      longitudReserva: this.longitudReserva,
+      ubicacionAutomatica: this.ubicacionAutomatica
+    });
+
     if (this.latitudReserva !== null && this.longitudReserva !== null) {
       reserva.latitud = this.latitudReserva;
       reserva.longitud = this.longitudReserva;
+      console.log('✅ Coordenadas añadidas a la reserva');
+    } else {
+      console.log('⚠️ No se añaden coordenadas (están en null)');
     }
+
+    console.log('🔵 Objeto reserva que se enviará:', reserva);
 
     this.cargando = true;
     this.cdr.detectChanges();
@@ -459,7 +549,6 @@ export class Reservar implements OnInit {
       next: (response) => {
         this.mostrarMensaje('¡Reserva creada con éxito!', 'success');
         this.horaSeleccionada = '';
-
 
         if (response.booking) {
           this.reservasDelDia.push(response.booking);
@@ -481,10 +570,7 @@ export class Reservar implements OnInit {
     if (!this.authService.isAuthenticated()) {
       this.mostrarMensaje('Debes iniciar sesión para unirte a un partido', 'error');
       setTimeout(() => {
-        //Guardamos el URL actual para volver después del login
-        this.router.navigate(['/login'], {
-          queryParams: { returnUrl: this.router.url }
-        });
+        this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
       }, 1500);
       return;
     }
@@ -496,7 +582,6 @@ export class Reservar implements OnInit {
       next: (response) => {
         this.mostrarMensaje('¡Te has unido a la reserva!', 'success');
 
-        // Actualizar directamente la reserva en el array en lugar de recargar todo
         const index = this.reservasDisponibles.findIndex(r => r.id === booking.id);
         if (index !== -1 && response.booking) {
           this.reservasDisponibles[index] = response.booking;
@@ -557,4 +642,5 @@ export class Reservar implements OnInit {
   navegarADeporte(ruta: string) {
     this.router.navigate([ruta]);
     this.menuReservarAbierto = false;
-  }}
+  }
+}
