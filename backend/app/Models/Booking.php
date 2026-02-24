@@ -203,7 +203,7 @@ class Booking extends Model
     }
 
     //Funcion que registra el resultado del partido.
-    public function registrarResultado($scoreTeam1, $scoreTeam2)
+    public function registrarResultado($scoreTeam1, $scoreTeam2, $actualizarEro = true)
     {
 
         $this->team_1_score = $scoreTeam1;
@@ -222,9 +222,54 @@ class Booking extends Model
         $this->estado = 'jugado';
         $this->save();
 
-        $this->actualizarEroJugadores();
+        // Solo actualizar ERO si se especifica
+        if ($actualizarEro) {
+            $this->actualizarEroJugadores();
+        }
 
         return true;
+    }
+
+    //Aplica resultado por defecto (0-0) sin actualizar ERO a partidos vencidos
+    public function aplicarResultadoPorDefecto()
+    {
+        // Solo aplicar si no tiene resultado registrado
+        if ($this->team_1_score !== null || $this->team_2_score !== null) {
+            return false;
+        }
+
+        // Registrar 0-0 sin actualizar ERO
+        $this->registrarResultado(0, 0, false);
+
+        return true;
+    }
+
+    //Procesa partidos vencidos sin resultado y les aplica 0-0 por defecto
+    //Solo procesa partidos que lleven 1 día o más desde su hora de finalización
+    public static function procesarPartidosVencidos()
+    {
+        $now = \Carbon\Carbon::now();
+
+        // Buscar partidos completos que ya pasaron y no tienen resultado
+        $partidos = self::where('estado', 'completo')
+            ->whereNull('team_1_score')
+            ->whereNull('team_2_score')
+            ->get();
+
+        $procesados = 0;
+        foreach ($partidos as $partido) {
+            // Crear un Carbon con la fecha y hora de finalización del partido
+            $fechaHoraFin = \Carbon\Carbon::parse($partido->fecha . ' ' . $partido->hora_fin);
+
+            // Verificar que haya pasado 1 día completo (24 horas o más) desde la hora de fin
+            if ($fechaHoraFin->diffInHours($now) >= 24) {
+                if ($partido->aplicarResultadoPorDefecto()) {
+                    $procesados++;
+                }
+            }
+        }
+
+        return $procesados;
     }
 
     //Actualizamos el ERO de los jugadores.

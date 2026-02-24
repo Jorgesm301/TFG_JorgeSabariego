@@ -42,6 +42,9 @@ Route::post('/bookings/radio/{sportId}', [BookingController::class, 'reservasPor
 //Ruta para la geolocalizacion
 Route::get('/geocode', [GeocodeController::class, 'search']);
 
+// Ruta para procesar partidos vencidos (aplicar 0-0 por defecto)
+Route::post('/matches/procesar-vencidos', [MatchController::class, 'procesarPartidosVencidos']);
+
 // Rutas protegidas para reservas (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {
     // Ruta para actualizar perfil

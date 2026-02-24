@@ -1,11 +1,73 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Backend - Polideportivo Municipal (TFG)
+
+Sistema de gestión de reservas deportivas con sistema de ranking ERO.
+
+## Instalación
+
+1. Instalar dependencias:
+```bash
+composer install
+```
+
+2. Configurar archivo `.env`:
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+3. Configurar base de datos en `.env` y ejecutar migraciones:
+```bash
+php artisan migrate --seed
+```
+
+4. **IMPORTANTE**: Iniciar el scheduler de Laravel para procesamiento automático de partidos:
+```bash
+php artisan schedule:work
+```
+
+Este comando debe ejecutarse en segundo plano para que el sistema procese automáticamente los partidos vencidos sin resultado (aplicando 0-0 después de 24 horas).
+
+### Alternativa: Configurar Cron (Linux/Mac)
+```bash
+* * * * * cd /ruta/al/proyecto/backend && php artisan schedule:run >> /dev/null 2>&1
+```
+
+### Alternativa: Task Scheduler (Windows)
+Crear tarea programada que ejecute cada minuto:
+```bash
+cd C:\ruta\al\proyecto\backend && php artisan schedule:run
+```
+
+## Comandos útiles
+
+- **Procesar partidos vencidos manualmente**:
+```bash
+php artisan partidos:procesar-vencidos
+```
+
+- **Ver rutas disponibles**:
+```bash
+php artisan route:list
+```
+
+- **Limpiar caché**:
+```bash
+php artisan cache:clear
+php artisan config:clear
+```
+
+## Características
+
+- Sistema de autenticación con Laravel Sanctum
+- Gestión de reservas deportivas
+- Sistema de ranking ERO (similar a ELO)
+- Búsqueda de partidos por ubicación y radio GPS
+- Procesamiento automático de partidos vencidos
+- Sistema de equipos equilibrados
+- Mensajería entre usuarios
+- Sistema de amistad
 
 ## About Laravel
 

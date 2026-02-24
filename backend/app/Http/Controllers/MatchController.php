@@ -293,4 +293,23 @@ class MatchController extends Controller
             ], 500);
         }
     }
+
+    //Procesa partidos vencidos y les aplica resultado por defecto (0-0) sin actualizar ERO
+    public function procesarPartidosVencidos()
+    {
+        try {
+            $procesados = Booking::procesarPartidosVencidos();
+
+            return response()->json([
+                'message' => "Se procesaron {$procesados} partido(s) vencido(s)",
+                'partidos_procesados' => $procesados
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al procesar partidos vencidos',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

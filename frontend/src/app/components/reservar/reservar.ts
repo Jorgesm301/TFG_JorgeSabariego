@@ -441,6 +441,9 @@ export class Reservar implements OnInit, OnDestroy {
       // Desactivar GPS
       this.latitudReserva = null;
       this.longitudReserva = null;
+
+      //Limpiamos el texto para evitar que se quede la direccion automatica
+      this.ubicacionSeleccionada = '';
       console.log('🔴 Ubicación automática desactivada');
       this.mostrarMensaje('Ubicación automática desactivada', 'info');
     }
