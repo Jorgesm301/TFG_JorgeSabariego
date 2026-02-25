@@ -259,7 +259,7 @@ class Booking extends Model
         $procesados = 0;
         foreach ($partidos as $partido) {
             // Crear un Carbon con la fecha y hora de finalización del partido
-            $fechaHoraFin = \Carbon\Carbon::parse($partido->fecha . ' ' . $partido->hora_fin);
+            $fechaHoraFin = \Carbon\Carbon::parse($partido->fecha->toDateString() . ' ' . $partido->hora_fin);
 
             // Verificar que haya pasado 1 día completo (24 horas o más) desde la hora de fin
             if ($fechaHoraFin->diffInHours($now) >= 24) {
