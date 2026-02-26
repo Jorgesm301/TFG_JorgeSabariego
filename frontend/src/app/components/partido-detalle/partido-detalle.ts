@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BookingService, IBooking } from '../../services/booking';
-import { MatchService, IEquiposResponse, ICambioEro } from '../../services/match.service';
+import { MatchService, IEquiposResponse, ICambioElo } from '../../services/match.service';
 import { AuthService } from '../../services/auth';
 
 @Component({
@@ -24,8 +24,8 @@ export class PartidoDetalle implements OnInit {
   scoreEquipo1: number = 0;
   scoreEquipo2: number = 0;
 
-  //Para actualizar el ERO despues del resultado
-  cambiosEro: ICambioEro[] = [];
+  //Para actualizar el ELO despues del resultado
+  cambiosElo: ICambioElo[] = [];
   resultadoRegistrado = false;
 
   constructor(
@@ -138,7 +138,7 @@ export class PartidoDetalle implements OnInit {
     this.matchService.registrarResultado(this.bookingId, this.scoreEquipo1, this.scoreEquipo2).subscribe({
       next: (response) => {
         console.log('Resultado registrado:', response);
-        this.cambiosEro = response.cambios_ero;
+        this.cambiosElo = response.cambios_elo;
         this.resultadoRegistrado = true;
 
         // Actualizamos el booking con los nuevos datos
@@ -177,11 +177,11 @@ export class PartidoDetalle implements OnInit {
     return this.booking?.estado === 'jugado';
   }
 
-  calcularEroPromedio(equipo: any[]): number {
+  calcularEloPromedio(equipo: any[]): number {
     if (!equipo || equipo.length === 0)
      return 1000;
 
-    const suma = equipo.reduce((acc, j) => acc + (j.ero || 1000), 0);
+    const suma = equipo.reduce((acc, j) => acc + (j.elo || 1000), 0);
 
     return Math.round(suma / equipo.length);
   }

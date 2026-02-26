@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Ero } from './ero';
+import { Elo } from './elo';
 
-describe('Ero', () => {
-  let component: Ero;
-  let fixture: ComponentFixture<Ero>;
+describe('Elo', () => {
+  let component: Elo;
+  let fixture: ComponentFixture<Elo>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Ero]
+      imports: [Elo]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Ero);
+    fixture = TestBed.createComponent(Elo);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

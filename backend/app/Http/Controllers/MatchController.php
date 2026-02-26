@@ -61,7 +61,7 @@ class MatchController extends Controller
                     return [
                         'id' => $jugador->id,
                         'name' => $jugador->name,
-                        'ero' => $sport ? $sport->pivot->ero : 1000
+                        'elo' => $sport ? $sport->pivot->elo : 1000
                     ];
                 });
 
@@ -76,7 +76,7 @@ class MatchController extends Controller
                     return [
                         'id' => $jugador->id,
                         'name' => $jugador->name,
-                        'ero' => $sport ? $sport->pivot->ero : 1000
+                        'elo' => $sport ? $sport->pivot->elo : 1000
                     ];
                 });
 
@@ -84,8 +84,8 @@ class MatchController extends Controller
                 'message' => 'Equipos generados exitosamente',
                 'equipo_1' => $equipo1,
                 'equipo_2' => $equipo2,
-                'ero_promedio_equipo_1' => $equipo1->avg('ero'),
-                'ero_promedio_equipo_2' => $equipo2->avg('ero')
+                'elo_promedio_equipo_1' => $equipo1->avg('elo'),
+                'elo_promedio_equipo_2' => $equipo2->avg('elo')
             ]);
 
         } catch (\Exception $e) {
@@ -125,7 +125,7 @@ class MatchController extends Controller
                     return [
                         'id' => $jugador->id,
                         'name' => $jugador->name,
-                        'ero' => $sport ? $sport->pivot->ero : 1000
+                        'elo' => $sport ? $sport->pivot->elo : 1000
                     ];
                 });
 
@@ -140,7 +140,7 @@ class MatchController extends Controller
                     return [
                         'id' => $jugador->id,
                         'name' => $jugador->name,
-                        'ero' => $sport ? $sport->pivot->ero : 1000
+                        'elo' => $sport ? $sport->pivot->elo : 1000
                     ];
                 });
 
@@ -192,7 +192,7 @@ class MatchController extends Controller
 
             DB::beginTransaction();
 
-            //Registramos el resultado y actualizamos el ERO
+            //Registramos el resultado y actualizamos el ELO
             $booking->registrarResultado(
                 $request->team_1_score,
                 $request->team_2_score
@@ -201,7 +201,7 @@ class MatchController extends Controller
             DB::commit();
 
 
-            $cambiosEro = $this->obtenerCambiosEro($booking);
+            $cambiosElo = $this->obtenerCambiosElo($booking);
 
             return response()->json([
                 'message' => 'Resultado registrado exitosamente',
@@ -210,7 +210,7 @@ class MatchController extends Controller
                     'team_2_score' => $booking->team_2_score,
                     'winner_team' => $booking->winner_team
                 ],
-                'cambios_ero' => $cambiosEro
+                'cambios_elo' => $cambiosElo
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -227,8 +227,8 @@ class MatchController extends Controller
         }
     }
 
-    //Funcion para obtener los cambios de ERO de un partido
-    private function obtenerCambiosEro($booking)
+    //Funcion para obtener los cambios de ELO de un partido
+    private function obtenerCambiosElo($booking)
     {
         $jugadores = $booking->usuarios()
             ->with(['sports' => function($query) use ($booking) {
@@ -242,7 +242,7 @@ class MatchController extends Controller
                 'id' => $jugador->id,
                 'name' => $jugador->name,
                 'team' => $jugador->pivot->team,
-                'nuevo_ero' => $sport ? $sport->pivot->ero : 1000,
+                'nuevo_elo' => $sport ? $sport->pivot->elo : 1000,
                 'partidos_jugados' => $sport ? $sport->pivot->matches_played : 0,
                 'gano' => $jugador->pivot->team == $booking->winner_team
             ];
@@ -294,7 +294,7 @@ class MatchController extends Controller
         }
     }
 
-    //Procesa partidos vencidos y les aplica resultado por defecto (0-0) sin actualizar ERO
+    //Procesa partidos vencidos y les aplica resultado por defecto (0-0) sin actualizar ELO
     public function procesarPartidosVencidos()
     {
         try {

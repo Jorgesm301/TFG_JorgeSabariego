@@ -27,7 +27,7 @@ class Sport extends Model
     //Un deporte tiene muchos usuarios que juegan a el. Aqui usamos la tabla pivote sport_user.
     public function users(){
         return $this->belongsToMany(User::class, 'sport_user', 'sport_id', 'user_id')
-                    ->withPivot('ero', 'matches_played')
+                    ->withPivot('elo', 'matches_played')
                     ->withTimestamps();
     }
 

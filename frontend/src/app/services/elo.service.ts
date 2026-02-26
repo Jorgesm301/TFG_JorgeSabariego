@@ -5,13 +5,13 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class EroService {
+export class EloService {
   private API_URL = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) { }
 
 
-  getMyEro(): Observable<any> {
-    return this.http.get(`${this.API_URL}/me/ero`);
+  getMyElo(): Observable<any> {
+    return this.http.get(`${this.API_URL}/me/elo`);
   }
 }

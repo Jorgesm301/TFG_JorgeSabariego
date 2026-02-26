@@ -6,7 +6,7 @@ import { AuthService } from './auth';
 export interface IEquipo {
   id: number;
   name: string;
-  ero: number;
+  elo: number;
 }
 
 export interface IEquiposResponse {
@@ -22,15 +22,15 @@ export interface IGenerarEquiposResponse {
   message: string;
   equipo_1: IEquipo[];
   equipo_2: IEquipo[];
-  ero_promedio_equipo_1: number;
-  ero_promedio_equipo_2: number;
+  elo_promedio_equipo_1: number;
+  elo_promedio_equipo_2: number;
 }
 
-export interface ICambioEro {
+export interface ICambioElo {
   id: number;
   name: string;
   team: number;
-  nuevo_ero: number;
+  nuevo_elo: number;
   partidos_jugados: number;
   gano: boolean;
 }
@@ -42,7 +42,7 @@ export interface IResultadoResponse {
     team_2_score: number;
     winner_team: number | null;
   };
-  cambios_ero: ICambioEro[];
+  cambios_elo: ICambioElo[];
 }
 
 export interface IPartidoHistorial {

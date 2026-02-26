@@ -46,7 +46,7 @@
       <div class="stat-card">
         <div class="stat-icon">📅</div>
         <div class="stat-info">
-          <div class="stat-value">{{ deportesEro.length }}</div>
+          <div class="stat-value">{{ deportesElo.length }}</div>
           <div class="stat-label">Deportes activos</div>
         </div>
       </div>
@@ -59,14 +59,14 @@
         </div>
       </div>
 
-      <div class="stat-card clickable" routerLink="/ero">
+      <div class="stat-card clickable" routerLink="/elo">
         <div class="stat-icon">🏆</div>
         <div class="stat-info">
-          <div class="stat-value" *ngIf="!cargandoEro && deportesEro.length > 0">
-            ERO {{ deportesEro[0]?.ero || 0 }}
+          <div class="stat-value" *ngIf="!cargandoElo && deportesElo.length > 0">
+            ELO {{ deportesElo[0]?.elo || 0 }}
           </div>
-          <div class="stat-value" *ngIf="cargandoEro">...</div>
-          <div class="stat-value" *ngIf="!cargandoEro && deportesEro.length === 0">Sin datos</div>
+          <div class="stat-value" *ngIf="cargandoElo">...</div>
+          <div class="stat-value" *ngIf="!cargandoElo && deportesElo.length === 0">Sin datos</div>
           <div class="stat-label">Nivel promedio</div>
         </div>
       </div>

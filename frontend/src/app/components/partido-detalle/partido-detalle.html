@@ -62,7 +62,7 @@
           <span *ngIf="!generandoEquipos">⚡ Generar Equipos Equilibrados</span>
           <span *ngIf="generandoEquipos">Generando...</span>
         </button>
-        <p class="action-hint">Los equipos se generarán automáticamente según el nivel ERO de cada jugador</p>
+        <p class="action-hint">Los equipos se generarán automáticamente según el nivel ELO de cada jugador</p>
       </div>
 
       <!-- Equipos generados -->
@@ -74,12 +74,12 @@
           <div class="equipo-card equipo-1">
             <div class="equipo-header">
               <h4>Equipo 1</h4>
-              <span class="ero-promedio">ERO: {{ calcularEroPromedio(equipos.equipo_1) }}</span>
+              <span class="elo-promedio">ELO: {{ calcularEloPromedio(equipos.equipo_1) }}</span>
             </div>
             <div class="jugadores-list">
               <div class="jugador-item" *ngFor="let jugador of equipos.equipo_1">
                 <span class="jugador-nombre">{{ jugador.name }}</span>
-                <span class="jugador-ero">{{ jugador.ero }}</span>
+                <span class="jugador-elo">{{ jugador.elo }}</span>
               </div>
             </div>
             <div class="score-display" *ngIf="partidoJugado">
@@ -97,12 +97,12 @@
           <div class="equipo-card equipo-2">
             <div class="equipo-header">
               <h4>Equipo 2</h4>
-              <span class="ero-promedio">ERO: {{ calcularEroPromedio(equipos.equipo_2) }}</span>
+              <span class="elo-promedio">ELO: {{ calcularEloPromedio(equipos.equipo_2) }}</span>
             </div>
             <div class="jugadores-list">
               <div class="jugador-item" *ngFor="let jugador of equipos.equipo_2">
                 <span class="jugador-nombre">{{ jugador.name }}</span>
-                <span class="jugador-ero">{{ jugador.ero }}</span>
+                <span class="jugador-elo">{{ jugador.elo }}</span>
               </div>
             </div>
             <div class="score-display" *ngIf="partidoJugado">
@@ -150,19 +150,19 @@
           </div>
         </div>
 
-        <!-- Cambios de ERO -->
-        <div class="cambios-ero-section" *ngIf="cambiosEro.length > 0">
-          <h3 class="section-title">📈 Cambios de ERO</h3>
+        <!-- Cambios de ELO -->
+        <div class="cambios-elo-section" *ngIf="cambiosElo.length > 0">
+          <h3 class="section-title">📈 Cambios de ELO</h3>
           <div class="cambios-grid">
-            <div class="cambio-card" *ngFor="let cambio of cambiosEro" [class.ganador]="cambio.gano">
+            <div class="cambio-card" *ngFor="let cambio of cambiosElo" [class.ganador]="cambio.gano">
               <div class="cambio-header">
                 <span class="cambio-nombre">{{ cambio.name }}</span>
                 <span class="cambio-badge">Equipo {{ cambio.team }}</span>
               </div>
               <div class="cambio-stats">
-                <div class="cambio-ero">
-                  <span class="cambio-label">Nuevo ERO</span>
-                  <span class="cambio-value">{{ cambio.nuevo_ero }}</span>
+                <div class="cambio-elo">
+                  <span class="cambio-label">Nuevo ELO</span>
+                  <span class="cambio-value">{{ cambio.nuevo_elo }}</span>
                 </div>
                 <div class="cambio-partidos">
                   <span class="cambio-label">Partidos</span>

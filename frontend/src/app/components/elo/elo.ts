@@ -2,24 +2,24 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
-import { EroService } from '../../services/ero.service';
+import { EloService } from '../../services/elo.service';
 
 @Component({
-  selector: 'app-ero',
+  selector: 'app-elo',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './ero.html',
-  styleUrl: './ero.css',
+  templateUrl: './elo.html',
+  styleUrl: './elo.css',
 })
-export class Ero implements OnInit {
-  deportesEro: any[] = [];
-  cargandoEro = false;
+export class Elo implements OnInit {
+  deportesElo: any[] = [];
+  cargandoElo = false;
   usuario: any = null;
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private eroService: EroService,
+    private eloService: EloService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -29,21 +29,21 @@ export class Ero implements OnInit {
     if (!this.usuario) {
       this.router.navigate(['/login']);
     } else {
-      this.cargarEro();
+      this.cargarElo();
     }
   }
 
-  cargarEro(): void {
-    this.cargandoEro = true;
-    this.eroService.getMyEro().subscribe({
+  cargarElo(): void {
+    this.cargandoElo = true;
+    this.eloService.getMyElo().subscribe({
       next: (data) => {
-        this.deportesEro = data.sports;
-        this.cargandoEro = false;
+        this.deportesElo = data.sports;
+        this.cargandoElo = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error al cargar ERO:', err);
-        this.cargandoEro = false;
+        console.error('Error al cargar ELO:', err);
+        this.cargandoElo = false;
       }
     });
   }

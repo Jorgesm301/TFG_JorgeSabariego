@@ -162,10 +162,10 @@ class Booking extends Model
             }])
             ->get();
 
-        //Ordenamos los jugadores por orden de ERO de forma descendente. En caso de ser nuevo el jugador en ese deporte le asignamos 1000.
+        //Ordenamos los jugadores por orden de ELO de forma descendente. En caso de ser nuevo el jugador en ese deporte le asignamos 1000.
         $jugadoresOrdenados = $jugadores->sortByDesc(function($jugador) {
             $sport = $jugador->sports->first();
-            return $sport ? $sport->pivot->ero : 1000;
+            return $sport ? $sport->pivot->elo : 1000;
         })->values();
 
         //Usamos algoritmo serpentina para repartir los jugadores.
@@ -203,7 +203,7 @@ class Booking extends Model
     }
 
     //Funcion que registra el resultado del partido.
-    public function registrarResultado($scoreTeam1, $scoreTeam2, $actualizarEro = true)
+    public function registrarResultado($scoreTeam1, $scoreTeam2, $actualizarElo = true)
     {
 
         $this->team_1_score = $scoreTeam1;
@@ -222,15 +222,15 @@ class Booking extends Model
         $this->estado = 'jugado';
         $this->save();
 
-        // Solo actualizar ERO si se especifica
-        if ($actualizarEro) {
-            $this->actualizarEroJugadores();
+        // Solo actualizar ELO si se especifica
+        if ($actualizarElo) {
+            $this->actualizarEloJugadores();
         }
 
         return true;
     }
 
-    //Aplica resultado por defecto (0-0) sin actualizar ERO a partidos vencidos
+    //Aplica resultado por defecto (0-0) sin actualizar ELO a partidos vencidos
     public function aplicarResultadoPorDefecto()
     {
         // Solo aplicar si no tiene resultado registrado
@@ -238,7 +238,7 @@ class Booking extends Model
             return false;
         }
 
-        // Registrar 0-0 sin actualizar ERO
+        // Registrar 0-0 sin actualizar ELO
         $this->registrarResultado(0, 0, false);
 
         return true;
@@ -272,24 +272,24 @@ class Booking extends Model
         return $procesados;
     }
 
-    //Actualizamos el ERO de los jugadores.
-    private function actualizarEroJugadores()
+    //Actualizamos el ELO de los jugadores.
+    private function actualizarEloJugadores()
     {
 
         $jugadoresEquipo1 = $this->usuarios()->wherePivot('team', 1)->get();
         $jugadoresEquipo2 = $this->usuarios()->wherePivot('team', 2)->get();
 
 
-        $eroPromedioEquipo1 = $jugadoresEquipo1->avg(function($jugador) {
-            return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->ero ?? 1000;
+        $eloPromedioEquipo1 = $jugadoresEquipo1->avg(function($jugador) {
+            return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->elo ?? 1000;
         });
 
-        $eroPromedioEquipo2 = $jugadoresEquipo2->avg(function($jugador) {
-            return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->ero ?? 1000;
+        $eloPromedioEquipo2 = $jugadoresEquipo2->avg(function($jugador) {
+            return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->elo ?? 1000;
         });
 
 
-        $probabilidadEquipo1 = 1 / (1 + pow(10, ($eroPromedioEquipo2 - $eroPromedioEquipo1) / 400));
+        $probabilidadEquipo1 = 1 / (1 + pow(10, ($eloPromedioEquipo2 - $eloPromedioEquipo1) / 400));
         $probabilidadEquipo2 = 1 - $probabilidadEquipo1;
 
         // 1 victoria, 0.5 empate, 0 derrota.
@@ -299,39 +299,39 @@ class Booking extends Model
 
         $kFactor = 32;
 
-        //Actualizamos el ERO de los jugadores del equipo 1
+        //Actualizamos el ELO de los jugadores del equipo 1
         foreach ($jugadoresEquipo1 as $jugador) {
             $sportPivot = $jugador->sports()->where('sport_id', $this->deporte_id)->first();
-            $eroActual = $sportPivot->pivot->ero;
+            $eloActual = $sportPivot->pivot->elo;
             $partidosJugados = $sportPivot->pivot->matches_played;
 
             // Ajustamos el kFactor segun la experiencia.
             $kAjustado = $partidosJugados < 10 ? 40 : ($partidosJugados < 30 ? 32 : 24);
 
 
-            $cambioEro = round($kAjustado * ($resultadoEquipo1 - $probabilidadEquipo1));
-            $nuevoEro = max(100, $eroActual + $cambioEro);
+            $cambioElo = round($kAjustado * ($resultadoEquipo1 - $probabilidadEquipo1));
+            $nuevoElo = max(100, $eloActual + $cambioElo);
 
 
             $jugador->sports()->updateExistingPivot($this->deporte_id, [
-                'ero' => $nuevoEro,
+                'elo' => $nuevoElo,
                 'matches_played' => $partidosJugados + 1
             ]);
         }
 
-        //Actualizamos el ERO de los jugadores del equipo 2
+        //Actualizamos el ELO de los jugadores del equipo 2
         foreach ($jugadoresEquipo2 as $jugador) {
             $sportPivot = $jugador->sports()->where('sport_id', $this->deporte_id)->first();
-            $eroActual = $sportPivot->pivot->ero;
+            $eloActual = $sportPivot->pivot->elo;
             $partidosJugados = $sportPivot->pivot->matches_played;
 
             $kAjustado = $partidosJugados < 10 ? 40 : ($partidosJugados < 30 ? 32 : 24);
 
-            $cambioEro = round($kAjustado * ($resultadoEquipo2 - $probabilidadEquipo2));
-            $nuevoEro = max(100, $eroActual + $cambioEro);
+            $cambioElo = round($kAjustado * ($resultadoEquipo2 - $probabilidadEquipo2));
+            $nuevoElo = max(100, $eloActual + $cambioElo);
 
             $jugador->sports()->updateExistingPivot($this->deporte_id, [
-                'ero' => $nuevoEro,
+                'elo' => $nuevoElo,
                 'matches_played' => $partidosJugados + 1
             ]);
         }

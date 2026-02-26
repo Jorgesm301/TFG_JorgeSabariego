@@ -5,7 +5,7 @@ import { Bienvenida } from './components/bienvenida/bienvenida';
 import { Perfil } from './components/perfil/perfil';
 import { MisReservas } from './components/mis-reservas/mis-reservas';
 import { Reservar } from './components/reservar/reservar';
-import { Ero } from './components/ero/ero';
+import { Elo } from './components/elo/elo';
 import { PartidoDetalle } from './components/partido-detalle/partido-detalle';
 import { Mensajes } from './components/mensajes/mensajes';
 import { Chat } from './components/chat/chat';
@@ -36,8 +36,8 @@ export const routes: Routes = [
     component: Reservar
   },
   {
-    path: 'ero',
-    component: Ero,
+    path: 'elo',
+    component: Elo,
     canActivate: [authGuard]
   },
 

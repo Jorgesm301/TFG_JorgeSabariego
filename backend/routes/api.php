@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SportController;
 use App\Http\Controllers\BookingController;
-use App\Http\Controllers\EroController;
+use App\Http\Controllers\EloController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\FriendshipController;
 use App\Http\Controllers\MessageController;
@@ -61,8 +61,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/matches/{bookingId}/resultado', [MatchController::class, 'registrarResultado']);
     Route::get('/mis-partidos', [MatchController::class, 'historialPartidos']);
 
-    // Para probar el ERO
-    Route::get('/me/ero', [EroController::class, 'myEro']);
+    // Para probar el ELO
+    Route::get('/me/elo', [EloController::class, 'myElo']);
 
     // ========== RUTAS DE AMISTAD ==========
     Route::get('/users/search', [FriendshipController::class, 'buscarUsuarios']);

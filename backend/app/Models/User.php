@@ -51,19 +51,19 @@ class User extends Authenticatable
     //Un usuario juega a varios deportes. Aqui usamos la tabla pivote sport_user.
     public function sports(){
         return $this->belongsToMany(Sport::class, 'sport_user', 'user_id', 'sport_id')
-                    ->withPivot('ero', 'matches_played')
+                    ->withPivot('elo', 'matches_played')
                     ->withTimestamps();
     }
 
-    //Inicializa el ERO de un deporte para el usuario si no existe ya.
-    public function initSportEro(int $deporteId)
+    //Inicializa el ELO de un deporte para el usuario si no existe ya.
+    public function initSportElo(int $deporteId)
     {
 
         $exists = $this->sports()->wherePivot('sport_id', $deporteId)->exists();
 
         if (!$exists) {
             $this->sports()->attach($deporteId, [
-                'ero' => 1000,
+                'elo' => 1000,
                 'matches_played' => 0
             ]);
         }

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
-import { EroService } from '../../services/ero.service';
+import { EloService } from '../../services/elo.service';
 
 @Component({
   selector: 'app-perfil',
@@ -14,8 +14,8 @@ import { EroService } from '../../services/ero.service';
 })
 export class Perfil implements OnInit {
   usuario: any = null;
-  deportesEro: any[] = [];
-  cargandoEro = false;
+  deportesElo: any[] = [];
+  cargandoElo = false;
   totalPartidos = 0;
   editandoUbicacion = false;
   nuevaUbicacion = '';
@@ -23,7 +23,7 @@ export class Perfil implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private eroService: EroService,
+    private eloService: EloService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -34,22 +34,22 @@ export class Perfil implements OnInit {
     if (!this.usuario) {
       this.router.navigate(['/login']);
     } else {
-      this.cargarEro();
+      this.cargarElo();
     }
   }
 
-  cargarEro(): void {
-    this.cargandoEro = true;
-    this.eroService.getMyEro().subscribe({
+  cargarElo(): void {
+    this.cargandoElo = true;
+    this.eloService.getMyElo().subscribe({
       next: (data) => {
-        this.deportesEro = data.sports;
+        this.deportesElo = data.sports;
         this.totalPartidos = data.sports.reduce((sum: number, sport: any) => sum + sport.matches_played, 0);
-        this.cargandoEro = false;
+        this.cargandoElo = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error al cargar ERO:', err);
-        this.cargandoEro = false;
+        console.error('Error al cargar ELO:', err);
+        this.cargandoElo = false;
       }
     });
   }

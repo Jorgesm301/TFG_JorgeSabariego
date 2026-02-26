@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class EroController extends Controller
+class EloController extends Controller
 {
-    //Devuelve el ERO del usuario
-    public function myEro(Request $request)
+    //Devuelve el ELO del usuario
+    public function myElo(Request $request)
     {
         $user = $request->user();
 
@@ -18,7 +18,7 @@ class EroController extends Controller
                 return [
                     'sport_id' => $sport->id,
                     'sport_name' => $sport->nombre,
-                    'ero' => (int) $sport->pivot->ero,
+                    'elo' => (int) $sport->pivot->elo,
                     'matches_played' => (int) $sport->pivot->matches_played,
                 ];
             });

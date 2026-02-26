@@ -44,10 +44,10 @@ class BookingController extends Controller
 
             $userId = Auth::id();
 
-            //Inicializamos el ERO del usuario en este deporte si no existe
+            //Inicializamos el ELO del usuario en este deporte si no existe
             /** @var User $user */
             $user = Auth::user();
-            $user->initSportEro((int) $request->deporte_id);
+            $user->initSportElo((int) $request->deporte_id);
 
             //Obtenemos la informacion del deporte y calculamos su duracion.
             $sport = Sport::findOrFail($request->deporte_id);
@@ -139,10 +139,10 @@ class BookingController extends Controller
                 return response()->json(['message' => 'Ya estás en esta reserva'], 400);
             }
 
-            //Inicializamos el ERO del usuario en el deporte de la reserva si no existe
+            //Inicializamos el ELO del usuario en el deporte de la reserva si no existe
             /** @var User $user */
             $user = Auth::user();
-            $user->initSportEro((int) $booking->deporte_id);
+            $user->initSportElo((int) $booking->deporte_id);
 
             DB::beginTransaction();
 
