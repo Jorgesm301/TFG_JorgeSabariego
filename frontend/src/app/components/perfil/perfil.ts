@@ -17,8 +17,6 @@ export class Perfil implements OnInit {
   deportesElo: any[] = [];
   cargandoElo = false;
   totalPartidos = 0;
-  editandoUbicacion = false;
-  nuevaUbicacion = '';
 
   constructor(
     private authService: AuthService,
@@ -61,31 +59,5 @@ export class Perfil implements OnInit {
 
   volverInicio() {
     this.router.navigate(['/']);
-  }
-
-  editarUbicacion() {
-    this.nuevaUbicacion = this.usuario?.ubicacion || '';
-    this.editandoUbicacion = true;
-  }
-
-  guardarUbicacion() {
-    this.authService.updateProfile({ ubicacion: this.nuevaUbicacion }).subscribe({
-      next: (response) => {
-        this.usuario = response.user;
-        this.authService.saveUserData(this.usuario);
-        this.editandoUbicacion = false;
-        this.cdr.detectChanges();
-        alert('¡Ubicación actualizada correctamente!');
-      },
-      error: (err) => {
-        console.error('Error al actualizar ubicación:', err);
-        alert('Error al actualizar la ubicación');
-      }
-    });
-  }
-
-  cancelarEdicion() {
-    this.editandoUbicacion = false;
-    this.nuevaUbicacion = '';
   }
 }

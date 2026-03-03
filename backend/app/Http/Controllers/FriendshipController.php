@@ -115,7 +115,7 @@ class FriendshipController extends Controller
                 return response()->json(['message' => 'Esta solicitud ya fue procesada'], 400);
             }
 
-            $friendship->update(['status' => 'rejected']);
+            $friendship->delete();
 
             return response()->json(['message' => 'Solicitud rechazada']);
 

@@ -19,24 +19,6 @@
       <div class="perfil-info">
         <h2 class="perfil-nombre">{{ usuario?.name }} {{ usuario?.last_name }}</h2>
         <p class="perfil-email">{{ usuario?.email }}</p>
-        <p class="perfil-ubicacion" *ngIf="usuario?.ubicacion && !editandoUbicacion">
-          📍 {{ usuario?.ubicacion }}
-          <button class="btn-editar-pequeno" (click)="editarUbicacion()">✏️</button>
-        </p>
-        <p class="perfil-ubicacion" *ngIf="!usuario?.ubicacion && !editandoUbicacion">
-          📍 Sin ubicación
-          <button class="btn-editar-pequeno" (click)="editarUbicacion()">➕</button>
-        </p>
-        <div class="editar-ubicacion" *ngIf="editandoUbicacion">
-          <input
-            type="text"
-            [(ngModel)]="nuevaUbicacion"
-            placeholder="Ej: Madrid, Martos, Jaén..."
-            class="input-ubicacion"
-          />
-          <button class="btn-guardar" (click)="guardarUbicacion()">💾 Guardar</button>
-          <button class="btn-cancelar" (click)="cancelarEdicion()">✖ Cancelar</button>
-        </div>
         <p class="perfil-fecha">Miembro desde {{ usuario?.created_at | date:'MMMM yyyy' }}</p>
       </div>
     </div>
