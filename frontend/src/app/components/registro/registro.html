@@ -3,7 +3,7 @@
   <header class="header">
     <div class="header-inner">
       <a routerLink="/" class="brand">
-        <span class="brand-logo">🏟️</span>
+        <mat-icon class="brand-icon">sports_soccer</mat-icon>
         <div class="brand-text">
           <div class="brand-name">Polideportivo Municipal</div>
           <div class="brand-sub">Reservas · Partidos · Nivel ELO</div>
@@ -13,64 +13,94 @@
   </header>
 
   <div class="registro-container">
-    <div class="registro-card">
-      <div class="card-header">
-        <div class="logo">🏃</div>
-        <h1 class="title">Crear Cuenta</h1>
-        <p class="subtitle">Únete a la comunidad ELO</p>
-      </div>
+    <mat-card class="registro-card">
+      <mat-card-header class="card-header">
+        <mat-card-title class="title">Crear Cuenta</mat-card-title>
+        <mat-card-subtitle class="subtitle">Únete a la comunidad ELO</mat-card-subtitle>
+      </mat-card-header>
 
-      <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label class="label">Nombre</label>
-          <input
-            type="text"
-            formControlName="name"
-            class="input"
-            placeholder="Tu nombre">
-        </div>
+      <mat-card-content>
+        <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nombre</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <input
+              matInput
+              type="text"
+              formControlName="name"
+              placeholder="Tu nombre">
+            <mat-error *ngIf="registroForm.get('name')?.hasError('required')">
+              El nombre es obligatorio
+            </mat-error>
+            <mat-error *ngIf="registroForm.get('name')?.hasError('minlength')">
+              El nombre debe tener al menos 2 caracteres
+            </mat-error>
+          </mat-form-field>
 
-        <div class="form-group">
-          <label class="label">Apellidos</label>
-          <input
-            type="text"
-            formControlName="last_name"
-            class="input"
-            placeholder="Tus apellidos">
-        </div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Apellidos</mat-label>
+            <mat-icon matPrefix>person_outline</mat-icon>
+            <input
+              matInput
+              type="text"
+              formControlName="last_name"
+              placeholder="Tus apellidos">
+            <mat-error *ngIf="registroForm.get('last_name')?.hasError('required')">
+              Los apellidos son obligatorios
+            </mat-error>
+          </mat-form-field>
 
-        <div class="form-group">
-          <label class="label">Email</label>
-          <input
-            type="email"
-            formControlName="email"
-            class="input"
-            placeholder="tu@email.com">
-          <small class="error" *ngIf="registroForm.get('email')?.errors?.['email'] && registroForm.get('email')?.touched">
-            El formato del email no es válido.
-          </small>
-        </div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email</mat-label>
+            <mat-icon matPrefix>email</mat-icon>
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+              placeholder="tu@email.com">
+            <mat-error *ngIf="registroForm.get('email')?.hasError('required')">
+              El email es obligatorio
+            </mat-error>
+            <mat-error *ngIf="registroForm.get('email')?.hasError('email')">
+              El formato del email no es válido
+            </mat-error>
+          </mat-form-field>
 
-        <div class="form-group">
-          <label class="label">Contraseña</label>
-          <input
-            type="password"
-            formControlName="password"
-            class="input"
-            placeholder="Mínimo 8 caracteres">
-        </div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Contraseña</mat-label>
+            <mat-icon matPrefix>lock</mat-icon>
+            <input
+              matInput
+              type="password"
+              formControlName="password"
+              placeholder="Mínimo 8 caracteres">
+            <mat-hint>Mínimo 8 caracteres</mat-hint>
+            <mat-error *ngIf="registroForm.get('password')?.hasError('required')">
+              La contraseña es obligatoria
+            </mat-error>
+            <mat-error *ngIf="registroForm.get('password')?.hasError('minlength')">
+              La contraseña debe tener al menos 8 caracteres
+            </mat-error>
+          </mat-form-field>
 
-        <button type="submit" [disabled]="registroForm.invalid" class="btn btn-solid btn-full">
-          Registrar Atleta
-        </button>
-      </form>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="registroForm.invalid"
+            class="full-width submit-btn">
+            <mat-icon>person_add</mat-icon>
+            Registrar Atleta
+          </button>
+        </form>
+      </mat-card-content>
 
-      <div class="card-footer">
+      <mat-card-footer class="card-footer">
         <p class="footer-text">
           ¿Ya tienes cuenta?
           <a routerLink="/login" class="link">Inicia sesión</a>
         </p>
-      </div>
-    </div>
+      </mat-card-footer>
+    </mat-card>
   </div>
 </div>

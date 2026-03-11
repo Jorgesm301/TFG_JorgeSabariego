@@ -3,11 +3,25 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule
+  ],
   templateUrl: './registro.html',
   styleUrl: './registro.css'
 })
@@ -31,8 +45,6 @@ export class Registro {
     if (this.registroForm.valid) {
       this.authService.registrar(this.registroForm.value).subscribe({
         next: (res) => {
-          alert('¡Usuario creado con exito!');
-
           //Para que el usuario no tenga que meter otra vez los datos
           this.authService.login({
             email: this.registroForm.value.email,
@@ -47,8 +59,7 @@ export class Registro {
           });
         },
         error: (err) => {
-          alert('Error al conectar con Laravel. Revisa la consola.');
-          console.error(err);
+          console.error('Error al crear la cuenta:', err);
         }
       });
     }

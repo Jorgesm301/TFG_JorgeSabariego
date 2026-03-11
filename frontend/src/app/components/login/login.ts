@@ -3,11 +3,25 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatCardModule
+  ],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -34,11 +48,10 @@ export class Login {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (res) => {
-          console.log('Login exitoso, token guardado');
           this.router.navigateByUrl(this.returnUrl);
         },
         error: (err) => {
-          alert('Error: Credenciales incorrectas');
+          console.error('Credenciales incorrectas');
         }
       });
     }
