@@ -2,6 +2,11 @@ import { Component, OnDestroy, OnInit, ChangeDetectorRef, HostListener } from '@
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatCardModule } from '@angular/material/card';
 
 type Slide = {
   title: string;
@@ -12,7 +17,15 @@ type Slide = {
 @Component({
   selector: 'app-bienvenida',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatCardModule
+  ],
   templateUrl: './bienvenida.html',
   styleUrl: './bienvenida.css'
 })
@@ -22,14 +35,14 @@ export class Bienvenida implements OnInit, OnDestroy {
 
   deportesMenu = [
 
-    { nombre: 'Fútbol', icon: '⚽', ruta: '/reservar/futbol'},
-    { nombre: 'Fútbol Sala', icon: '⚽', ruta: '/reservar/futbol-sala'},
-    { nombre: 'Baloncesto', icon: '🏀', ruta: '/reservar/baloncesto' },
-    { nombre: 'Tenis', icon: '🎾', ruta: '/reservar/tenis' },
-    { nombre: 'Pádel', icon: '🎾', ruta: '/reservar/padel' },
-    { nombre: 'Voleibol', icon: '🏐', ruta: '/reservar/voleibol' },
-    { nombre: 'Natación', icon: '🏊', ruta: '/reservar/natacion' },
-    { nombre: 'Atletismo', icon: '🏃', ruta: '/reservar/atletismo' }
+    { nombre: 'Fútbol', icon: 'sports_soccer', ruta: '/reservar/futbol'},
+    { nombre: 'Fútbol Sala', icon: 'sports_soccer', ruta: '/reservar/futbol-sala'},
+    { nombre: 'Baloncesto', icon: 'sports_basketball', ruta: '/reservar/baloncesto' },
+    { nombre: 'Tenis', icon: 'sports_tennis', ruta: '/reservar/tenis' },
+    { nombre: 'Pádel', icon: 'sports_tennis', ruta: '/reservar/padel' },
+    { nombre: 'Voleibol', icon: 'sports_volleyball', ruta: '/reservar/voleibol' },
+    { nombre: 'Natación', icon: 'pool', ruta: '/reservar/natacion' },
+    { nombre: 'Atletismo', icon: 'directions_run', ruta: '/reservar/atletismo' }
   ];
 
   slides: Slide[] = [

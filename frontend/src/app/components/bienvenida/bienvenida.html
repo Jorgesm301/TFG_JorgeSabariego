@@ -1,62 +1,63 @@
 <div class="page">
 
-  <!-- HEADER a ancho completo -->
-  <header class="header">
-    <div class="header-inner">
-      <a routerLink="/" class="brand">
-        <span class="logo" aria-hidden="true">🏟️</span>
-        <div class="brand-text">
-          <div class="brand-name">Polideportivo Municipal</div>
-          <div class="brand-sub">Reservas · Partidos · Nivel ELO</div>
-        </div>
-      </a>
-
-      <div class="actions">
-        <!-- Mostrar cuando NO está logueado -->
-        <ng-container *ngIf="!estaLogueado">
-          <button class="btn btn-ghost" (click)="irALogin()">Iniciar sesión</button>
-          <button class="btn btn-solid" (click)="irARegistro()">Registrarse</button>
-        </ng-container>
-
-        <!-- Mostrar cuando SÍ está logueado -->
-        <div *ngIf="estaLogueado" class="user-profile" (click)="irAPerfil()">
-          <span class="user-name">👤 {{ nombreUsuario }}</span>
-        </div>
+  <!-- HEADER MATERIAL TOOLBAR -->
+  <mat-toolbar class="header">
+    <a routerLink="/" class="brand">
+      <div class="brand-icon">
+        <mat-icon>sports_soccer</mat-icon>
       </div>
-    </div>
-  </header>
+      <div class="brand-text">
+        <div class="brand-name">Polideportivo Municipal</div>
+        <div class="brand-sub">Reservas · Partidos · Nivel ELO</div>
+      </div>
+    </a>
 
-  <!-- SUBCABECERA con menús desplegables -->
+    <span class="spacer"></span>
+
+    <div class="actions">
+      <!-- Mostrar cuando NO está logueado -->
+      <ng-container *ngIf="!estaLogueado">
+        <button mat-button (click)="irALogin()">Iniciar sesión</button>
+        <button mat-raised-button color="primary" (click)="irARegistro()">Registrarse</button>
+      </ng-container>
+
+      <!-- Mostrar cuando SÍ está logueado -->
+      <button *ngIf="estaLogueado" mat-button (click)="irAPerfil()">
+        <mat-icon>account_circle</mat-icon>
+        <span class="user-name">{{ nombreUsuario }}</span>
+      </button>
+    </div>
+  </mat-toolbar>
+
+  <!-- SUBHEADER CON MATERIAL MENU -->
   <nav class="subheader">
     <div class="subheader-inner">
       <!-- Menú Reservar -->
-      <div class="menu-item" [class.active]="menuReservarAbierto" (mouseenter)="abrirMenuReservar()" (mouseleave)="cerrarMenuReservar()">
-        <button class="menu-btn">
-          <span>Reservar</span>
+      <button mat-button [matMenuTriggerFor]="reservarMenu" class="nav-button">
+        <mat-icon>event_available</mat-icon>
+        <span>Reservar</span>
+        <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #reservarMenu="matMenu" class="deportes-menu">
+        <button
+          mat-menu-item
+          *ngFor="let deporte of deportesMenu"
+          (click)="navegarADeporte(deporte.ruta)"
+        >
+          <mat-icon>{{ deporte.icon }}</mat-icon>
+          <span>{{ deporte.nombre }}</span>
         </button>
-        <div class="dropdown" *ngIf="menuReservarAbierto">
-          <a
-            *ngFor="let deporte of deportesMenu"
-            class="dropdown-item"
-            (click)="navegarADeporte(deporte.ruta)"
-          >
-            <span class="dropdown-icon">{{ deporte.icon }}</span>
-            <span>{{ deporte.nombre }}</span>
-          </a>
-        </div>
-      </div>
+      </mat-menu>
 
       <!-- Menú Mis Reservas -->
-      <a routerLink="/mis-reservas" class="menu-item">
-        <button class="menu-btn">
-          <span>Mis Reservas</span>
-        </button>
-      </a>
-
+      <button mat-button routerLink="/mis-reservas" class="nav-button">
+        <mat-icon>book_online</mat-icon>
+        <span>Mis Reservas</span>
+      </button>
     </div>
   </nav>
 
-  <!-- CONTENIDO centrado -->
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="content">
 
     <!-- TÍTULO PRINCIPAL -->
@@ -65,35 +66,41 @@
       <p class="hero-subtitle">Gestiona reservas y juega con personas de tu mismo nivel</p>
     </div>
 
-    <!-- SLIDER -->
+    <!-- SLIDER CON MATERIAL CARD -->
     <section class="slider" aria-label="Galería de deportes">
-      <div class="slider-frame">
-        <img
-          class="slide-image"
-          [src]="slides[currentIndex].imageUrl"
-          [alt]="slides[currentIndex].title"
-          (error)="onImageError($event)"
-          loading="eager"
-        />
+      <mat-card class="slider-card">
+        <div class="slider-frame">
+          <img
+            class="slide-image"
+            [src]="slides[currentIndex].imageUrl"
+            [alt]="slides[currentIndex].title"
+            (error)="onImageError($event)"
+            loading="eager"
+          />
 
-        <div class="slide-overlay">
-          <div class="slide-title">{{ slides[currentIndex].title }}</div>
-          <div class="slide-sub">{{ slides[currentIndex].subtitle }}</div>
+          <div class="slide-overlay">
+            <div class="slide-title">{{ slides[currentIndex].title }}</div>
+            <div class="slide-sub">{{ slides[currentIndex].subtitle }}</div>
+          </div>
+
+          <button mat-icon-button class="nav-arrow left" (click)="prevSlide()" aria-label="Anterior">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <button mat-icon-button class="nav-arrow right" (click)="nextSlide()" aria-label="Siguiente">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
         </div>
 
-        <button class="nav-arrow left" (click)="prevSlide()" aria-label="Anterior">‹</button>
-        <button class="nav-arrow right" (click)="nextSlide()" aria-label="Siguiente">›</button>
-      </div>
-
-      <div class="dots" role="tablist" aria-label="Seleccionar imagen">
-        <button
-          class="dot"
-          *ngFor="let s of slides; let i = index"
-          [class.active]="i === currentIndex"
-          (click)="goTo(i)"
-          [attr.aria-label]="'Ir a ' + s.title"
-        ></button>
-      </div>
+        <div class="dots" role="tablist" aria-label="Seleccionar imagen">
+          <button
+            class="dot"
+            *ngFor="let s of slides; let i = index"
+            [class.active]="i === currentIndex"
+            (click)="goTo(i)"
+            [attr.aria-label]="'Ir a ' + s.title"
+          ></button>
+        </div>
+      </mat-card>
     </section>
 
   </main>
