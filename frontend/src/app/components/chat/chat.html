@@ -1,87 +1,119 @@
 <div class="chat-page">
-  <!-- Header -->
-  <header class="header">
-    <div class="header-inner">
-      <button class="btn-back" (click)="volverMensajes()">
-        <span class="arrow-back">←</span>
-        Volver
-      </button>
-      <div class="header-user" *ngIf="amigo">
-        <div class="header-avatar">
-          <span class="avatar-icon">👤</span>
-        </div>
-        <div class="header-info">
-          <h1 class="header-nombre">{{ amigo.name }} {{ amigo.last_name }}</h1>
-          <span class="header-estado">En línea</span>
-        </div>
+  <!-- HEADER MATERIAL -->
+  <mat-toolbar class="chat-header">
+    <button mat-icon-button (click)="volverMensajes()" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <div class="header-user" *ngIf="amigo">
+      <div class="user-avatar">
+        <mat-icon>account_circle</mat-icon>
       </div>
-      <div style="width: 80px;"></div>
+      <div class="user-info">
+        <span class="user-name">{{ amigo.name }} {{ amigo.last_name }}</span>
+        <span class="user-status">En línea</span>
+      </div>
     </div>
-  </header>
 
-  <!-- Contenedor de mensajes -->
+    <span class="spacer"></span>
+
+    <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="amigo">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>
+        <mat-icon>person</mat-icon>
+        <span>Ver perfil</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>delete</mat-icon>
+        <span>Borrar conversación</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+
+  <!-- CONTENEDOR DE MENSAJES -->
   <div class="chat-content">
-
-    <!-- Estado de carga -->
-    <div class="loading-state" *ngIf="cargando">
-      <div class="spinner"></div>
+    <!-- Loading -->
+    <div *ngIf="cargando" class="loading-state">
+      <mat-spinner diameter="50"></mat-spinner>
       <p>Cargando mensajes...</p>
     </div>
 
-    <!-- Estado de error -->
-    <div class="error-state" *ngIf="error && !cargando">
-      <span class="error-icon">⚠️</span>
+    <!-- Error -->
+    <div *ngIf="error && !cargando" class="error-state">
+      <mat-icon color="warn">error</mat-icon>
       <p>{{ error }}</p>
-      <button class="btn-secundario" (click)="cargarMensajes()">Reintentar</button>
+      <button mat-raised-button color="primary" (click)="cargarMensajes()">Reintentar</button>
     </div>
 
     <!-- Mensajes -->
     <div class="messages-container" #messagesContainer *ngIf="!cargando && !error">
-
-      <!-- Sin mensajes -->
-      <div class="empty-chat" *ngIf="mensajes.length === 0">
-        <span class="empty-icon">💬</span>
-        <p>No hay mensajes aún</p>
-        <p class="empty-subtitle">Envía el primer mensaje</p>
+      <!-- Vacío -->
+      <div *ngIf="mensajes.length === 0" class="empty-state">
+        <mat-icon>chat_bubble_outline</mat-icon>
+        <h3>No hay mensajes aún</h3>
+        <p>Envía el primer mensaje a {{ amigo?.name }}</p>
       </div>
 
       <!-- Lista de mensajes -->
       <div class="messages-list" *ngIf="mensajes.length > 0">
         <div
-          *ngFor="let mensaje of mensajes"
-          class="message-wrapper"
-          [class.message-mio]="esMensajeMio(mensaje)"
-          [class.message-otro]="!esMensajeMio(mensaje)">
+          *ngFor="let mensaje of mensajes; let i = index"
+          class="message-row"
+          [class.my-message]="esMensajeMio(mensaje)"
+          [class.other-message]="!esMensajeMio(mensaje)">
 
+          <!-- Avatar del otro usuario -->
+          <div class="message-avatar" *ngIf="!esMensajeMio(mensaje)">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+
+          <!-- Burbuja del mensaje -->
           <div class="message-bubble">
-            <p class="message-text">{{ mensaje.message }}</p>
-            <span class="message-time">{{ mensaje.created_at | date:'short' }}</span>
+            <div class="bubble-content">
+              {{ mensaje.message }}
+            </div>
+            <div class="bubble-footer">
+              <span class="message-time">{{ formatearHora(mensaje.created_at) }}</span>
+              <mat-icon *ngIf="esMensajeMio(mensaje) && mensaje.read_at" class="read-icon">done_all</mat-icon>
+              <mat-icon *ngIf="esMensajeMio(mensaje) && !mensaje.read_at" class="sent-icon">done</mat-icon>
+            </div>
+          </div>
+
+          <!-- Avatar propio -->
+          <div class="message-avatar" *ngIf="esMensajeMio(mensaje)">
+            <mat-icon>account_circle</mat-icon>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- Input para enviar mensaje -->
-  <div class="chat-input-container" *ngIf="!cargando && !error">
-    <div class="chat-input-wrapper">
-      <textarea
-        class="chat-input"
-        [(ngModel)]="nuevoMensaje"
-        placeholder="Escribe un mensaje..."
-        rows="1"
-        (keypress)="onKeyPress($event)"
-        [disabled]="enviando"
-      ></textarea>
+  <!-- INPUT DE MENSAJE -->
+  <div class="chat-input-area" *ngIf="!cargando && !error">
+    <div class="input-container">
+      <mat-form-field appearance="outline" class="message-field">
+        <mat-icon matPrefix>comment</mat-icon>
+        <input
+          matInput
+          type="text"
+          placeholder="Escribe un mensaje..."
+          [(ngModel)]="nuevoMensaje"
+          (keypress)="onKeyPress($event)"
+          [disabled]="enviando"
+        />
+      </mat-form-field>
+
       <button
-        class="btn-enviar"
+        mat-fab
+        color="primary"
         (click)="enviarMensaje()"
-        [disabled]="!nuevoMensaje.trim() || enviando">
-        <span *ngIf="!enviando">📤</span>
-        <span *ngIf="enviando" class="spinner-small"></span>
+        [disabled]="!nuevoMensaje.trim() || enviando"
+        class="send-btn">
+        <mat-icon *ngIf="!enviando">send</mat-icon>
+        <mat-spinner *ngIf="enviando" diameter="24"></mat-spinner>
       </button>
     </div>
   </div>
-
 </div>

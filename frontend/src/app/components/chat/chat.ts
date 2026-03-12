@@ -5,11 +5,31 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
 import { MessageService, IMessage } from '../../services/message.service';
 import { FriendshipService, IUser } from '../../services/friendship.service';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCardModule } from '@angular/material/card';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    MatCardModule,
+    MatMenuModule
+  ],
   templateUrl: './chat.html',
   styleUrl: './chat.css'
 })
@@ -174,5 +194,10 @@ export class Chat implements OnInit, OnDestroy {
       event.preventDefault();
       this.enviarMensaje();
     }
+  }
+
+  formatearHora(fecha: string): string {
+    const date = new Date(fecha);
+    return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
   }
 }

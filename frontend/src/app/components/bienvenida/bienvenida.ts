@@ -1,12 +1,17 @@
-import { Component, OnDestroy, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef, HostListener, AfterViewInit, ElementRef } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
+import { MessageService, IConversation } from '../../services/message.service';
+import { FriendshipService, IUser } from '../../services/friendship.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatListModule } from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
 
 type Slide = {
   title: string;
@@ -24,15 +29,30 @@ type Slide = {
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    MatCardModule
+    MatCardModule,
+    MatBadgeModule,
+    MatListModule,
+    MatDividerModule
   ],
   templateUrl: './bienvenida.html',
   styleUrl: './bienvenida.css'
 })
-export class Bienvenida implements OnInit, OnDestroy {
+export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   private timerId: any;
   menuReservarAbierto = false;
   currentYear = new Date().getFullYear();
+  private observer?: IntersectionObserver;
+
+  // Mensajería
+  drawerAbierto = false;
+  conversaciones: IConversation[] = [];
+  cargandoConversaciones = false;
+  private intervaloMensajes: any;
+
+  // Nuevo mensaje
+  modoNuevoMensaje = false;
+  amigos: IUser[] = [];
+  cargandoAmigos = false;
 
   deportesMenu = [
 
@@ -94,7 +114,10 @@ export class Bienvenida implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private authService: AuthService
+    private authService: AuthService,
+    private messageService: MessageService,
+    private friendshipService: FriendshipService,
+    private el: ElementRef
   ) {}
 
   //Verificamos si el usuario esta logeado
@@ -108,10 +131,132 @@ export class Bienvenida implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.startAutoSlide();
+    if (this.estaLogueado) {
+      this.cargarConversaciones();
+      this.iniciarActualizacionMensajes();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.setupScrollAnimations();
   }
 
   ngOnDestroy(): void {
     this.stopAutoSlide();
+    this.observer?.disconnect();
+    if (this.intervaloMensajes) {
+      clearInterval(this.intervaloMensajes);
+    }
+  }
+
+  private setupScrollAnimations(): void {
+    const options = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, options);
+
+    const elements = this.el.nativeElement.querySelectorAll('.animate-on-scroll');
+    elements.forEach((el: Element) => this.observer?.observe(el));
+  }
+
+  // ===== MENSAJERÍA =====
+  cargarConversaciones(): void {
+    if (!this.estaLogueado) return;
+
+    this.cargandoConversaciones = true;
+    this.messageService.listarConversaciones().subscribe({
+      next: (data) => {
+        this.conversaciones = data;
+        this.cargandoConversaciones = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar conversaciones:', err);
+        this.cargandoConversaciones = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  iniciarActualizacionMensajes(): void {
+    // Actualizar cada 30 segundos
+    this.intervaloMensajes = setInterval(() => {
+      this.cargarConversaciones();
+    }, 30000);
+  }
+
+  getTotalNoLeidos(): number {
+    return this.conversaciones.reduce((sum, conv) => sum + conv.no_leidos, 0);
+  }
+
+  toggleDrawer(): void {
+    this.drawerAbierto = !this.drawerAbierto;
+    if (this.drawerAbierto) {
+      this.cargarConversaciones();
+    }
+  }
+
+  cerrarDrawer(): void {
+    this.drawerAbierto = false;
+    this.modoNuevoMensaje = false;
+  }
+
+  abrirNuevoMensaje(): void {
+    this.modoNuevoMensaje = true;
+    this.cargarAmigos();
+  }
+
+  volverAConversaciones(): void {
+    this.modoNuevoMensaje = false;
+  }
+
+  cargarAmigos(): void {
+    this.cargandoAmigos = true;
+    this.friendshipService.listarAmigos().subscribe({
+      next: (data) => {
+        this.amigos = data;
+        this.cargandoAmigos = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar amigos:', err);
+        this.cargandoAmigos = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  abrirChat(amigoId: number): void {
+    this.cerrarDrawer();
+    this.router.navigate(['/chat', amigoId]);
+  }
+
+  irAMensajes(): void {
+    this.cerrarDrawer();
+    this.router.navigate(['/mensajes']);
+  }
+
+  formatearFecha(fecha: string): string {
+    const date = new Date(fecha);
+    const hoy = new Date();
+    const ayer = new Date(hoy);
+    ayer.setDate(hoy.getDate() - 1);
+
+    if (date.toDateString() === hoy.toDateString()) {
+      return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    } else if (date.toDateString() === ayer.toDateString()) {
+      return 'Ayer';
+    } else {
+      return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+    }
   }
 
   private startAutoSlide(): void {

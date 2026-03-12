@@ -18,10 +18,20 @@
       </ng-container>
 
       <!-- Mostrar cuando SÍ está logueado -->
-      <button *ngIf="estaLogueado" mat-button (click)="irAPerfil()">
-        <mat-icon>account_circle</mat-icon>
-        <span class="user-name">{{ nombreUsuario }}</span>
-      </button>
+      <ng-container *ngIf="estaLogueado">
+        <!-- Botón de mensajes con badge -->
+        <button mat-icon-button (click)="toggleDrawer()" class="messages-btn">
+          <mat-icon [matBadge]="getTotalNoLeidos()" [matBadgeHidden]="getTotalNoLeidos() === 0" matBadgeColor="warn" matBadgeSize="small">
+            mail
+          </mat-icon>
+        </button>
+
+        <!-- Botón de perfil -->
+        <button mat-button (click)="irAPerfil()">
+          <mat-icon>account_circle</mat-icon>
+          <span class="user-name">{{ nombreUsuario }}</span>
+        </button>
+      </ng-container>
     </div>
   </mat-toolbar>
 
@@ -57,13 +67,13 @@
   <main class="content">
 
     <!-- TÍTULO PRINCIPAL -->
-    <div class="hero-text">
+    <div class="hero-text animate-on-scroll">
       <h1 class="hero-title">Reserva pistas y únete a partidos equilibrados</h1>
       <p class="hero-subtitle">Gestiona reservas y juega con personas de tu mismo nivel</p>
     </div>
 
     <!-- SLIDER CON MATERIAL CARD -->
-    <section class="slider" aria-label="Galería de deportes">
+    <section class="slider animate-on-scroll" aria-label="Galería de deportes">
       <mat-card class="slider-card">
         <div class="slider-frame">
           <img
@@ -102,7 +112,7 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="footer">
+  <footer class="footer animate-on-scroll">
     <div class="footer-content">
       <!-- Sección 1: Acerca de -->
       <div class="footer-section">
@@ -173,4 +183,126 @@
       </p>
     </div>
   </footer>
+
+  <!-- DRAWER DE MENSAJES -->
+  <div class="messages-drawer" [class.open]="drawerAbierto">
+    <!-- Header del drawer -->
+    <div class="drawer-header">
+      <!-- Botón volver (solo en modo nuevo mensaje) -->
+      <button *ngIf="modoNuevoMensaje" mat-icon-button (click)="volverAConversaciones()" class="back-btn">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+
+      <h2 class="drawer-title">
+        <mat-icon>{{ modoNuevoMensaje ? 'edit' : 'mail' }}</mat-icon>
+        {{ modoNuevoMensaje ? 'Nuevo Mensaje' : 'Mensajes' }}
+      </h2>
+
+      <div class="header-actions">
+        <!-- Botón nuevo mensaje (solo en vista de conversaciones) -->
+        <button *ngIf="!modoNuevoMensaje" mat-icon-button (click)="abrirNuevoMensaje()" class="new-msg-btn" matTooltip="Nuevo mensaje">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <!-- Botón cerrar -->
+        <button mat-icon-button (click)="cerrarDrawer()" class="close-btn">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- ========== VISTA: CONVERSACIONES ========== -->
+    <div *ngIf="!modoNuevoMensaje">
+      <!-- Loading -->
+      <div *ngIf="cargandoConversaciones" class="drawer-loading">
+        <mat-icon class="spinner">refresh</mat-icon>
+        <p>Cargando conversaciones...</p>
+      </div>
+
+      <!-- Lista de conversaciones -->
+      <mat-list *ngIf="!cargandoConversaciones" class="conversations-list">
+        <!-- Sin conversaciones -->
+        <div *ngIf="conversaciones.length === 0" class="empty-state">
+          <mat-icon>forum</mat-icon>
+          <p>No tienes conversaciones</p>
+          <small>Envía un mensaje a tus amigos</small>
+          <button mat-raised-button color="primary" (click)="abrirNuevoMensaje()" class="empty-action-btn">
+            <mat-icon>edit</mat-icon>
+            Nuevo Mensaje
+          </button>
+        </div>
+
+        <!-- Conversaciones -->
+        <mat-list-item
+          *ngFor="let conv of conversaciones"
+          (click)="abrirChat(conv.amigo.id)"
+          class="conversation-item"
+          [class.unread]="conv.no_leidos > 0">
+
+          <div class="conv-avatar">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+
+          <div class="conv-content">
+            <div class="conv-header">
+              <span class="conv-name">{{ conv.amigo.name }} {{ conv.amigo.last_name }}</span>
+              <span class="conv-time">{{ formatearFecha(conv.ultimo_mensaje.created_at) }}</span>
+            </div>
+            <div class="conv-message">
+              <span class="message-text">{{ conv.ultimo_mensaje.message }}</span>
+              <span *ngIf="conv.no_leidos > 0" class="unread-badge">{{ conv.no_leidos }}</span>
+            </div>
+          </div>
+        </mat-list-item>
+
+        <mat-divider *ngIf="conversaciones.length > 0"></mat-divider>
+
+        <!-- Ver todos los mensajes -->
+        <mat-list-item *ngIf="conversaciones.length > 0" (click)="irAMensajes()" class="view-all-item">
+          <mat-icon>open_in_new</mat-icon>
+          <span>Ver todos los mensajes</span>
+        </mat-list-item>
+      </mat-list>
+    </div>
+
+    <!-- ========== VISTA: NUEVO MENSAJE (LISTA DE AMIGOS) ========== -->
+    <div *ngIf="modoNuevoMensaje">
+      <!-- Loading amigos -->
+      <div *ngIf="cargandoAmigos" class="drawer-loading">
+        <mat-icon class="spinner">refresh</mat-icon>
+        <p>Cargando amigos...</p>
+      </div>
+
+      <!-- Lista de amigos -->
+      <mat-list *ngIf="!cargandoAmigos" class="friends-list">
+        <!-- Sin amigos -->
+        <div *ngIf="amigos.length === 0" class="empty-state">
+          <mat-icon>person_add</mat-icon>
+          <p>No tienes amigos aún</p>
+          <small>Añade amigos para enviarles mensajes</small>
+        </div>
+
+        <!-- Amigos -->
+        <mat-list-item
+          *ngFor="let amigo of amigos"
+          (click)="abrirChat(amigo.id)"
+          class="friend-item">
+
+          <div class="friend-avatar">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+
+          <div class="friend-info">
+            <span class="friend-name">{{ amigo.name }} {{ amigo.last_name }}</span>
+            <span class="friend-email">{{ amigo.email }}</span>
+          </div>
+
+          <mat-icon class="send-icon">send</mat-icon>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+
+  <!-- Overlay para cerrar drawer -->
+  <div class="drawer-overlay" [class.visible]="drawerAbierto" (click)="cerrarDrawer()"></div>
 </div>
