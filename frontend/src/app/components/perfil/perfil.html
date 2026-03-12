@@ -1,109 +1,124 @@
 <div class="perfil-page">
   <!-- Header -->
-  <header class="header">
-    <div class="header-inner">
-      <h1 class="page-title">Mi Perfil</h1>
-      <div></div>
-    </div>
-  </header>
+  <mat-toolbar class="perfil-toolbar">
+    <button mat-icon-button routerLink="/" aria-label="Volver">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="toolbar-title">Mi Perfil</span>
+    <span class="spacer"></span>
+  </mat-toolbar>
 
   <!-- Contenido del perfil -->
   <div class="perfil-content">
 
     <!-- Card del usuario -->
-    <div class="perfil-card">
-      <div class="perfil-avatar">
-        <span class="avatar-icon">👤</span>
-      </div>
+    <mat-card class="perfil-card">
+      <mat-card-content class="perfil-card-content">
+        <div class="perfil-avatar">
+          <mat-icon class="avatar-icon">account_circle</mat-icon>
+        </div>
 
-      <div class="perfil-info">
-        <h2 class="perfil-nombre">{{ usuario?.name }} {{ usuario?.last_name }}</h2>
-        <p class="perfil-email">{{ usuario?.email }}</p>
-        <p class="perfil-fecha">Miembro desde {{ usuario?.created_at | date:'MMMM yyyy' }}</p>
-      </div>
-    </div>
+        <div class="perfil-info">
+          <h2 class="perfil-nombre">{{ usuario?.name }} {{ usuario?.last_name }}</h2>
+          <p class="perfil-email">
+            <mat-icon class="info-icon">email</mat-icon>
+            {{ usuario?.email }}
+          </p>
+          <p class="perfil-fecha">
+            <mat-icon class="info-icon">event</mat-icon>
+            Miembro desde {{ usuario?.created_at | date:'MMMM yyyy' }}
+          </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
     <!-- Estadísticas -->
     <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon">📅</div>
-        <div class="stat-info">
-          <div class="stat-value">{{ deportesElo.length }}</div>
-          <div class="stat-label">Deportes activos</div>
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-icon">⚽</div>
-        <div class="stat-info">
-          <div class="stat-value">{{ totalPartidos }}</div>
-          <div class="stat-label">Partidos jugados</div>
-        </div>
-      </div>
-
-      <div class="stat-card clickable" routerLink="/elo">
-        <div class="stat-icon">🏆</div>
-        <div class="stat-info">
-          <div class="stat-value" *ngIf="!cargandoElo && deportesElo.length > 0">
-            ELO {{ deportesElo[0]?.elo || 0 }}
+      <mat-card class="stat-card">
+        <mat-card-content class="stat-content">
+          <mat-icon class="stat-icon" color="primary">calendar_today</mat-icon>
+          <div class="stat-info">
+            <div class="stat-value">{{ deportesElo.length }}</div>
+            <div class="stat-label">Deportes activos</div>
           </div>
-          <div class="stat-value" *ngIf="cargandoElo">...</div>
-          <div class="stat-value" *ngIf="!cargandoElo && deportesElo.length === 0">Sin datos</div>
-          <div class="stat-label">Nivel promedio</div>
-        </div>
-      </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content class="stat-content">
+          <mat-icon class="stat-icon" color="primary">sports_soccer</mat-icon>
+          <div class="stat-info">
+            <div class="stat-value">{{ totalPartidos }}</div>
+            <div class="stat-label">Partidos jugados</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card clickable" routerLink="/elo">
+        <mat-card-content class="stat-content">
+          <mat-icon class="stat-icon" color="accent">emoji_events</mat-icon>
+          <div class="stat-info">
+            <div class="stat-value" *ngIf="!cargandoElo && deportesElo.length > 0">
+              {{ deportesElo[0]?.elo || 0 }}
+            </div>
+            <mat-spinner *ngIf="cargandoElo" diameter="30"></mat-spinner>
+            <div class="stat-value" *ngIf="!cargandoElo && deportesElo.length === 0">--</div>
+            <div class="stat-label">Nivel promedio</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
 
     <!-- Opciones -->
-    <div class="opciones-grid">
-      <button class="opcion-card" routerLink="/">
-        <span class="opcion-icon">🏠</span>
-        <div class="opcion-info">
-          <div class="opcion-title">Inicio</div>
-          <div class="opcion-desc">Volver a la página principal</div>
-        </div>
-      </button>
+    <mat-card class="opciones-card">
+      <mat-card-header>
+        <mat-card-title>Acciones rápidas</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-nav-list>
+          <mat-list-item routerLink="/">
+            <mat-icon matListItemIcon>home</mat-icon>
+            <div matListItemTitle>Inicio</div>
+            <div matListItemLine>Volver a la página principal</div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
 
-      <button class="opcion-card" routerLink="/mis-reservas">
-        <span class="opcion-icon">📋</span>
-        <div class="opcion-info">
-          <div class="opcion-title">Mis Reservas</div>
-          <div class="opcion-desc">Ver mis reservas activas</div>
-        </div>
-      </button>
+          <mat-list-item routerLink="/mis-reservas">
+            <mat-icon matListItemIcon>event_note</mat-icon>
+            <div matListItemTitle>Mis Reservas</div>
+            <div matListItemLine>Ver mis reservas activas</div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
 
-      <button class="opcion-card" routerLink="/amigos">
-        <span class="opcion-icon">👥</span>
-        <div class="opcion-info">
-          <div class="opcion-title">Amigos</div>
-          <div class="opcion-desc">Gestionar amigos y solicitudes</div>
-        </div>
-      </button>
+          <mat-list-item routerLink="/amigos">
+            <mat-icon matListItemIcon>people</mat-icon>
+            <div matListItemTitle>Amigos</div>
+            <div matListItemLine>Gestionar amigos y solicitudes</div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
 
-      <button class="opcion-card" routerLink="/mensajes">
-        <span class="opcion-icon">💬</span>
-        <div class="opcion-info">
-          <div class="opcion-title">Mensajes</div>
-          <div class="opcion-desc">Ver tus conversaciones</div>
-        </div>
-      </button>
+          <mat-list-item routerLink="/mensajes">
+            <mat-icon matListItemIcon>chat</mat-icon>
+            <div matListItemTitle>Mensajes</div>
+            <div matListItemLine>Ver tus conversaciones</div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
 
-      <button class="opcion-card">
-        <span class="opcion-icon">⚙️</span>
-        <div class="opcion-info">
-          <div class="opcion-title">Configuración</div>
-          <div class="opcion-desc">Ajustes de la cuenta</div>
-        </div>
-      </button>
+          <mat-list-item routerLink="/elo">
+            <mat-icon matListItemIcon>leaderboard</mat-icon>
+            <div matListItemTitle>Ranking ELO</div>
+            <div matListItemLine>Ver tu progreso deportivo</div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
 
-      <button class="opcion-card danger" (click)="logout()">
-        <span class="opcion-icon">🚪</span>
-        <div class="opcion-info">
-          <div class="opcion-title">Cerrar Sesión</div>
-          <div class="opcion-desc">Salir de tu cuenta</div>
-        </div>
-      </button>
-    </div>
+          <mat-list-item (click)="logout()" class="logout-item">
+            <mat-icon matListItemIcon color="warn">logout</mat-icon>
+            <div matListItemTitle>Cerrar Sesión</div>
+            <div matListItemLine>Salir de tu cuenta</div>
+          </mat-list-item>
+        </mat-nav-list>
+      </mat-card-content>
+    </mat-card>
 
   </div>
 </div>
