@@ -64,7 +64,7 @@
   align-items: center;
   gap: 12px;
   text-decoration: none;
-  color: #1b5e20;
+  color: #1565C0;
   transition: all 0.2s ease;
 }
 
@@ -80,20 +80,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+  background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
   color: white;
-  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.2);
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.2);
 }
 
 .brand-name {
   font-weight: 800;
   letter-spacing: -0.2px;
-  color: #1b5e20;
+  color: #1565C0;
 }
 
 .brand-sub {
   font-size: 12px;
-  color: rgba(27, 94, 32, 0.65);
+  color: rgba(21, 101, 192, 0.65);
   font-weight: 600;
 }
 

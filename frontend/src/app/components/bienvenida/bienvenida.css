@@ -48,7 +48,7 @@
   position: sticky !important;
   top: 0;
   z-index: 100;
-  color: #1b5e20 !important;
+  color: #1565C0 !important;
   height: 64px;
   padding: 0 32px !important;
 }
@@ -58,7 +58,7 @@
   align-items: center;
   gap: 12px;
   text-decoration: none;
-  color: #1b5e20;
+  color: #1565C0;
   transition: all 0.2s ease;
 }
 
@@ -73,9 +73,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+  background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
   color: white;
-  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.2);
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.2);
 }
 
 .brand-icon mat-icon {
@@ -87,13 +87,13 @@
 .brand-name {
   font-weight: 800;
   letter-spacing: -0.2px;
-  color: #1b5e20;
+  color: #1565C0;
   font-size: 16px;
 }
 
 .brand-sub {
   font-size: 12px;
-  color: rgba(27, 94, 32, 0.65);
+  color: rgba(21, 101, 192, 0.65);
   font-weight: 600;
 }
 
@@ -141,9 +141,9 @@
 }
 
 .nav-button:hover {
-  color: #1b5e20 !important;
-  background: rgba(67, 160, 71, 0.05) !important;
-  border-bottom-color: rgba(67, 160, 71, 0.3);
+  color: #1565C0 !important;
+  background: rgba(25, 118, 210, 0.05) !important;
+  border-bottom-color: rgba(25, 118, 210, 0.3);
 }
 
 .nav-button mat-icon {
@@ -175,7 +175,7 @@
 .hero-title {
   font-size: 42px;
   font-weight: 900;
-  background: linear-gradient(135deg, #2e7d32 0%, #43a047 50%, #66bb6a 100%);
+  background: linear-gradient(135deg, #1565C0 0%, #1976D2 50%, #42A5F5 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -195,6 +195,9 @@
 /* ====== SLIDER CON MATERIAL CARD ====== */
 .slider {
   margin-top: 24px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .slider-card {
@@ -214,7 +217,7 @@
 
 .slide-image {
   width: 100%;
-  height: 500px;
+  height: 650px;
   object-fit: cover;
   display: block;
   transition: opacity 0.5s ease-in-out;
@@ -291,13 +294,156 @@
 }
 
 .dot:hover {
-  border-color: #43a047;
+  border-color: #1976D2;
   transform: scale(1.2);
 }
 
 .dot.active {
-  background: #43a047;
-  border-color: #43a047;
+  background: #1976D2;
+  border-color: #1976D2;
+}
+
+/* ====== FOOTER ====== */
+.footer {
+  background: linear-gradient(180deg, #1565C0 0%, #1976D2 100%);
+  color: white;
+  margin-top: 80px;
+  position: relative;
+  z-index: 10;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 32px 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 40px;
+}
+
+.footer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.footer-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: white;
+  letter-spacing: 0.3px;
+}
+
+.footer-text {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.footer-social {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.social-link {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.social-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.social-link mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.footer-links a:hover {
+  color: white;
+  transform: translateX(4px);
+}
+
+.contact-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 24px 32px;
+  text-align: center;
+}
+
+.copyright {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 40px 24px 32px;
+  }
+
+  .footer-section {
+    text-align: center;
+  }
+
+  .footer-social {
+    justify-content: center;
+  }
+
+  .footer-links li {
+    justify-content: center;
+  }
+}
   transform: scale(1.3);
 }
 

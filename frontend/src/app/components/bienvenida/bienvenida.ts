@@ -32,6 +32,7 @@ type Slide = {
 export class Bienvenida implements OnInit, OnDestroy {
   private timerId: any;
   menuReservarAbierto = false;
+  currentYear = new Date().getFullYear();
 
   deportesMenu = [
 
