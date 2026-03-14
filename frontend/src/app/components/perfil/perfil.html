@@ -8,8 +8,10 @@
 
     <span class="spacer"></span>
     <div class="actions">
-      <button mat-icon-button routerLink="/mensajes" class="messages-btn" aria-label="Mensajes">
-        <mat-icon>mail</mat-icon>
+      <button mat-icon-button (click)="toggleDrawer()" class="messages-btn" aria-label="Mensajes">
+        <mat-icon [matBadge]="getTotalNoLeidos()" [matBadgeHidden]="getTotalNoLeidos() === 0" matBadgeColor="warn" matBadgeSize="small">
+          mail
+        </mat-icon>
       </button>
       <button mat-button routerLink="/perfil">
         <mat-icon>account_circle</mat-icon>
@@ -132,13 +134,6 @@
           </mat-list-item>
           <mat-divider></mat-divider>
 
-          <mat-list-item routerLink="/mensajes">
-            <mat-icon matListItemIcon>chat</mat-icon>
-            <div matListItemTitle>Mensajes</div>
-            <div matListItemLine>Ver tus conversaciones</div>
-          </mat-list-item>
-          <mat-divider></mat-divider>
-
           <mat-list-item routerLink="/elo">
             <mat-icon matListItemIcon>leaderboard</mat-icon>
             <div matListItemTitle>Ranking ELO</div>
@@ -156,4 +151,109 @@
     </mat-card>
 
   </div>
+
+  <div class="messages-drawer" [class.open]="drawerAbierto">
+    <div class="drawer-header">
+      <button *ngIf="modoNuevoMensaje" mat-icon-button (click)="volverAConversaciones()" class="back-btn">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+
+      <h2 class="drawer-title">
+        <mat-icon>{{ modoNuevoMensaje ? 'edit' : 'mail' }}</mat-icon>
+        {{ modoNuevoMensaje ? 'Nuevo Mensaje' : 'Mensajes' }}
+      </h2>
+
+      <div class="header-actions">
+        <button *ngIf="!modoNuevoMensaje" mat-icon-button (click)="abrirNuevoMensaje()" class="new-msg-btn" matTooltip="Nuevo mensaje">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="cerrarDrawer()" class="close-btn">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="!modoNuevoMensaje">
+      <div *ngIf="cargandoConversaciones" class="drawer-loading">
+        <mat-icon class="spinner">refresh</mat-icon>
+        <p>Cargando conversaciones...</p>
+      </div>
+
+      <mat-list *ngIf="!cargandoConversaciones" class="conversations-list">
+        <div *ngIf="conversaciones.length === 0" class="drawer-empty-state">
+          <mat-icon>forum</mat-icon>
+          <p>No tienes conversaciones</p>
+          <small>Envia un mensaje a tus amigos</small>
+          <button mat-raised-button color="primary" (click)="abrirNuevoMensaje()" class="empty-action-btn">
+            <mat-icon>edit</mat-icon>
+            Nuevo Mensaje
+          </button>
+        </div>
+
+        <mat-list-item
+          *ngFor="let conv of conversaciones"
+          (click)="abrirChat(conv.amigo.id)"
+          class="conversation-item"
+          [class.unread]="conv.no_leidos > 0"
+        >
+          <div class="conv-avatar">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+
+          <div class="conv-content">
+            <div class="conv-header">
+              <span class="conv-name">{{ conv.amigo.name }} {{ conv.amigo.last_name }}</span>
+              <span class="conv-time">{{ formatearFecha(conv.ultimo_mensaje.created_at) }}</span>
+            </div>
+            <div class="conv-message">
+              <span class="message-text">{{ conv.ultimo_mensaje.message }}</span>
+              <span *ngIf="conv.no_leidos > 0" class="unread-badge">{{ conv.no_leidos }}</span>
+            </div>
+          </div>
+        </mat-list-item>
+
+        <mat-divider *ngIf="conversaciones.length > 0"></mat-divider>
+
+        <mat-list-item *ngIf="conversaciones.length > 0" (click)="irAMensajes()" class="view-all-item">
+          <mat-icon>open_in_new</mat-icon>
+          <span>Ver todos los mensajes</span>
+        </mat-list-item>
+      </mat-list>
+    </div>
+
+    <div *ngIf="modoNuevoMensaje">
+      <div *ngIf="cargandoAmigosDrawer" class="drawer-loading">
+        <mat-icon class="spinner">refresh</mat-icon>
+        <p>Cargando amigos...</p>
+      </div>
+
+      <mat-list *ngIf="!cargandoAmigosDrawer" class="friends-list">
+        <div *ngIf="amigosDrawer.length === 0" class="drawer-empty-state">
+          <mat-icon>person_add</mat-icon>
+          <p>No tienes amigos aun</p>
+          <small>Anade amigos para enviarles mensajes</small>
+        </div>
+
+        <mat-list-item
+          *ngFor="let amigo of amigosDrawer"
+          (click)="abrirChat(amigo.id)"
+          class="friend-item"
+        >
+          <div class="friend-avatar">
+            <mat-icon>account_circle</mat-icon>
+          </div>
+
+          <div class="friend-info">
+            <span class="friend-name">{{ amigo.name }} {{ amigo.last_name }}</span>
+            <span class="friend-email">{{ amigo.email }}</span>
+          </div>
+
+          <mat-icon class="send-icon">send</mat-icon>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+
+  <div class="drawer-overlay" [class.visible]="drawerAbierto" (click)="cerrarDrawer()"></div>
 </div>

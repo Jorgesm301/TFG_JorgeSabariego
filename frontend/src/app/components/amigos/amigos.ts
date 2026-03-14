@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +11,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatListModule } from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../services/auth';
+import { MessageService, IConversation } from '../../services/message.service';
 import { FriendshipService, IUser, IFriendship } from '../../services/friendship.service';
 import { BlockedUserService, IBlockedUser } from '../../services/blocked-user.service';
 
@@ -30,12 +34,15 @@ import { BlockedUserService, IBlockedUser } from '../../services/blocked-user.se
     MatInputModule,
     MatMenuModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatBadgeModule,
+    MatListModule,
+    MatDividerModule
   ],
   templateUrl: './amigos.html',
   styleUrl: './amigos.css'
 })
-export class Amigos implements OnInit {
+export class Amigos implements OnInit, OnDestroy {
   amigos: IUser[] = [];
   solicitudesPendientes: IFriendship[] = [];
   usuariosBuscados: IUser[] = [];
@@ -46,6 +53,13 @@ export class Amigos implements OnInit {
   cargandoBusqueda = false;
   cargandoBloqueados = false;
   error = '';
+  drawerAbierto = false;
+  conversaciones: IConversation[] = [];
+  cargandoConversaciones = false;
+  modoNuevoMensaje = false;
+  amigosDrawer: IUser[] = [];
+  cargandoAmigosDrawer = false;
+  private intervaloMensajes: any;
   vistaActual: 'amigos' | 'solicitudes' | 'buscar' | 'bloqueados' = 'amigos';
   deportesMenu = [
     { nombre: 'Futbol', icon: 'sports_soccer', ruta: '/reservar/futbol' },
@@ -60,6 +74,7 @@ export class Amigos implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private messageService: MessageService,
     private friendshipService: FriendshipService,
     private blockedUserService: BlockedUserService,
     private router: Router,
@@ -74,10 +89,106 @@ export class Amigos implements OnInit {
     }
     this.cargarAmigos();
     this.cargarSolicitudes();
+    this.cargarConversaciones();
+    this.iniciarActualizacionMensajes();
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervaloMensajes) {
+      clearInterval(this.intervaloMensajes);
+    }
   }
 
   get nombreUsuario(): string {
     return this.authService.getUserData()?.name || '';
+  }
+
+  cargarConversaciones(): void {
+    this.cargandoConversaciones = true;
+    this.messageService.listarConversaciones().subscribe({
+      next: (data) => {
+        this.conversaciones = data;
+        this.cargandoConversaciones = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar conversaciones:', err);
+        this.cargandoConversaciones = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  iniciarActualizacionMensajes(): void {
+    this.intervaloMensajes = setInterval(() => {
+      this.cargarConversaciones();
+    }, 30000);
+  }
+
+  getTotalNoLeidos(): number {
+    return this.conversaciones.reduce((sum, conv) => sum + conv.no_leidos, 0);
+  }
+
+  toggleDrawer(): void {
+    this.drawerAbierto = !this.drawerAbierto;
+    if (this.drawerAbierto) {
+      this.cargarConversaciones();
+    }
+  }
+
+  cerrarDrawer(): void {
+    this.drawerAbierto = false;
+    this.modoNuevoMensaje = false;
+  }
+
+  abrirNuevoMensaje(): void {
+    this.modoNuevoMensaje = true;
+    this.cargarAmigosDrawer();
+  }
+
+  volverAConversaciones(): void {
+    this.modoNuevoMensaje = false;
+  }
+
+  cargarAmigosDrawer(): void {
+    this.cargandoAmigosDrawer = true;
+    this.friendshipService.listarAmigos().subscribe({
+      next: (data) => {
+        this.amigosDrawer = data;
+        this.cargandoAmigosDrawer = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar amigos:', err);
+        this.cargandoAmigosDrawer = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  abrirChatDrawer(amigoId: number): void {
+    this.cerrarDrawer();
+    this.router.navigate(['/chat', amigoId]);
+  }
+
+  irAMensajes(): void {
+    this.cerrarDrawer();
+    this.router.navigate(['/mensajes']);
+  }
+
+  formatearFecha(fecha: string): string {
+    const date = new Date(fecha);
+    const hoy = new Date();
+    const ayer = new Date(hoy);
+    ayer.setDate(hoy.getDate() - 1);
+
+    if (date.toDateString() === hoy.toDateString()) {
+      return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    } else if (date.toDateString() === ayer.toDateString()) {
+      return 'Ayer';
+    }
+
+    return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
   }
 
   cargarAmigos(): void {
