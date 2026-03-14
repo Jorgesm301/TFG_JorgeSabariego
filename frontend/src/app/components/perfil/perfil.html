@@ -1,12 +1,47 @@
 <div class="perfil-page">
-  <!-- Header -->
-  <mat-toolbar class="perfil-toolbar">
-    <button mat-icon-button routerLink="/" aria-label="Volver">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <span class="toolbar-title">Mi Perfil</span>
+  <mat-toolbar class="header">
+    <a routerLink="/" class="brand" aria-label="Inicio">
+      <div class="brand-icon">
+        <mat-icon>sports_soccer</mat-icon>
+      </div>
+    </a>
+
     <span class="spacer"></span>
+    <div class="actions">
+      <button mat-icon-button routerLink="/mensajes" class="messages-btn" aria-label="Mensajes">
+        <mat-icon>mail</mat-icon>
+      </button>
+      <button mat-button routerLink="/perfil">
+        <mat-icon>account_circle</mat-icon>
+        <span class="user-name">{{ nombreUsuario }}</span>
+      </button>
+    </div>
   </mat-toolbar>
+
+  <nav class="subheader">
+    <div class="subheader-inner">
+      <button mat-button [matMenuTriggerFor]="reservarMenu" class="nav-button">
+        <mat-icon>event_available</mat-icon>
+        <span>Reservar</span>
+        <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #reservarMenu="matMenu" class="deportes-menu">
+        <button
+          mat-menu-item
+          *ngFor="let deporte of deportesMenu"
+          (click)="navegarADeporte(deporte.ruta)"
+        >
+          <mat-icon>{{ deporte.icon }}</mat-icon>
+          <span>{{ deporte.nombre }}</span>
+        </button>
+      </mat-menu>
+
+      <button mat-button routerLink="/mis-reservas" class="nav-button">
+        <mat-icon>book_online</mat-icon>
+        <span>Mis Reservas</span>
+      </button>
+    </div>
+  </nav>
 
   <!-- Contenido del perfil -->
   <div class="perfil-content">

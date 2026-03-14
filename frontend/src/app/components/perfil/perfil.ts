@@ -12,6 +12,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-perfil',
@@ -27,7 +28,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatListModule,
     MatDividerModule,
     MatChipsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatMenuModule
   ],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
@@ -37,6 +39,16 @@ export class Perfil implements OnInit {
   deportesElo: any[] = [];
   cargandoElo = false;
   totalPartidos = 0;
+  deportesMenu = [
+    { nombre: 'Futbol', icon: 'sports_soccer', ruta: '/reservar/futbol' },
+    { nombre: 'Futbol Sala', icon: 'sports_soccer', ruta: '/reservar/futbol-sala' },
+    { nombre: 'Baloncesto', icon: 'sports_basketball', ruta: '/reservar/baloncesto' },
+    { nombre: 'Tenis', icon: 'sports_tennis', ruta: '/reservar/tenis' },
+    { nombre: 'Padel', icon: 'sports_tennis', ruta: '/reservar/padel' },
+    { nombre: 'Voleibol', icon: 'sports_volleyball', ruta: '/reservar/voleibol' },
+    { nombre: 'Natacion', icon: 'pool', ruta: '/reservar/natacion' },
+    { nombre: 'Atletismo', icon: 'directions_run', ruta: '/reservar/atletismo' }
+  ];
 
   constructor(
     private authService: AuthService,
@@ -54,6 +66,10 @@ export class Perfil implements OnInit {
     } else {
       this.cargarElo();
     }
+  }
+
+  get nombreUsuario(): string {
+    return this.authService.getUserData()?.name || '';
   }
 
   cargarElo(): void {
@@ -79,5 +95,9 @@ export class Perfil implements OnInit {
 
   volverInicio() {
     this.router.navigate(['/']);
+  }
+
+  navegarADeporte(ruta: string): void {
+    this.router.navigate([ruta]);
   }
 }

@@ -2,6 +2,15 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../services/auth';
 import { FriendshipService, IUser, IFriendship } from '../../services/friendship.service';
 import { BlockedUserService, IBlockedUser } from '../../services/blocked-user.service';
@@ -9,7 +18,20 @@ import { BlockedUserService, IBlockedUser } from '../../services/blocked-user.se
 @Component({
   selector: 'app-amigos',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    MatToolbarModule,
+    MatCardModule,
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatMenuModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule
+  ],
   templateUrl: './amigos.html',
   styleUrl: './amigos.css'
 })
@@ -25,7 +47,16 @@ export class Amigos implements OnInit {
   cargandoBloqueados = false;
   error = '';
   vistaActual: 'amigos' | 'solicitudes' | 'buscar' | 'bloqueados' = 'amigos';
-  mostrandoMenuAmigo: number | null = null;
+  deportesMenu = [
+    { nombre: 'Futbol', icon: 'sports_soccer', ruta: '/reservar/futbol' },
+    { nombre: 'Futbol Sala', icon: 'sports_soccer', ruta: '/reservar/futbol-sala' },
+    { nombre: 'Baloncesto', icon: 'sports_basketball', ruta: '/reservar/baloncesto' },
+    { nombre: 'Tenis', icon: 'sports_tennis', ruta: '/reservar/tenis' },
+    { nombre: 'Padel', icon: 'sports_tennis', ruta: '/reservar/padel' },
+    { nombre: 'Voleibol', icon: 'sports_volleyball', ruta: '/reservar/voleibol' },
+    { nombre: 'Natacion', icon: 'pool', ruta: '/reservar/natacion' },
+    { nombre: 'Atletismo', icon: 'directions_run', ruta: '/reservar/atletismo' }
+  ];
 
   constructor(
     private authService: AuthService,
@@ -43,6 +74,10 @@ export class Amigos implements OnInit {
     }
     this.cargarAmigos();
     this.cargarSolicitudes();
+  }
+
+  get nombreUsuario(): string {
+    return this.authService.getUserData()?.name || '';
   }
 
   cargarAmigos(): void {
@@ -82,6 +117,7 @@ export class Amigos implements OnInit {
   aceptarSolicitud(solicitud: IFriendship): void {
     this.friendshipService.aceptarSolicitud(solicitud.id).subscribe({
       next: () => {
+        alert('Solicitud aceptada');
         this.cargarAmigos();
         this.cargarSolicitudes();
       },
@@ -95,6 +131,7 @@ export class Amigos implements OnInit {
   rechazarSolicitud(solicitud: IFriendship): void {
     this.friendshipService.rechazarSolicitud(solicitud.id).subscribe({
       next: () => {
+        alert('Solicitud rechazada');
         this.cargarSolicitudes();
       },
       error: (err) => {
@@ -105,15 +142,14 @@ export class Amigos implements OnInit {
   }
 
   eliminarAmigo(amigo: IUser): void {
-    if (!confirm(`¿Estás seguro de eliminar a ${amigo.name} de tus amigos?`)) {
+    if (!confirm(`¿Eliminar a ${amigo.name} de tus amigos?`)) {
       return;
     }
 
     this.friendshipService.eliminarAmigoPorUserId(amigo.id).subscribe({
       next: () => {
-        alert(`Has eliminado a ${amigo.name} de tus amigos`);
+        alert(`${amigo.name} eliminado de tus amigos`);
         this.cargarAmigos();
-        this.mostrandoMenuAmigo = null;
       },
       error: (err) => {
         console.error('Error al eliminar amistad:', err);
@@ -133,20 +169,15 @@ export class Amigos implements OnInit {
     }
   }
 
-  toggleMenuAmigo(amigoId: number): void {
-    this.mostrandoMenuAmigo = this.mostrandoMenuAmigo === amigoId ? null : amigoId;
-  }
-
   bloquearAmigo(amigo: IUser): void {
-    if (!confirm(`¿Estás seguro de bloquear a ${amigo.name}? Seguiréis siendo amigos pero no podréis comunicaros hasta que lo desbloquees.`)) {
+    if (!confirm(`¿Estás seguro de bloquear a ${amigo.name}? No podréis comunicaros hasta que lo desbloquees.`)) {
       return;
     }
 
     this.blockedUserService.bloquearUsuario(amigo.id).subscribe({
       next: () => {
-        alert(`Has bloqueado a ${amigo.name}. La amistad se mantiene pero no podrán comunicarse.`);
+        alert(`${amigo.name} bloqueado`);
         this.cargarAmigos();
-        this.mostrandoMenuAmigo = null;
       },
       error: (err) => {
         console.error('Error al bloquear usuario:', err);
@@ -162,9 +193,8 @@ export class Amigos implements OnInit {
 
     this.blockedUserService.desbloquearUsuario(amigo.id).subscribe({
       next: () => {
-        alert(`Has desbloqueado a ${amigo.name}. Ya podéis comunicaros de nuevo.`);
+        alert(`${amigo.name} desbloqueado`);
         this.cargarAmigos();
-        this.mostrandoMenuAmigo = null;
       },
       error: (err) => {
         console.error('Error al desbloquear usuario:', err);
@@ -196,7 +226,7 @@ export class Amigos implements OnInit {
 
     this.blockedUserService.desbloquearUsuario(bloqueado.usuario.id).subscribe({
       next: () => {
-        alert(`Has desbloqueado a ${bloqueado.usuario.name}. Ya podéis comunicaros de nuevo.`);
+        alert(`${bloqueado.usuario.name} desbloqueado`);
         this.cargarBloqueados();
       },
       error: (err) => {
@@ -231,7 +261,7 @@ export class Amigos implements OnInit {
     this.friendshipService.enviarSolicitud(usuario.id).subscribe({
       next: () => {
         alert(`Solicitud enviada a ${usuario.name}`);
-        this.buscarUsuarios(); // Recargar resultados
+        this.buscarUsuarios();
       },
       error: (err) => {
         console.error('Error al enviar solicitud:', err);
@@ -242,5 +272,9 @@ export class Amigos implements OnInit {
 
   volverInicio(): void {
     this.router.navigate(['/']);
+  }
+
+  navegarADeporte(ruta: string): void {
+    this.router.navigate([ruta]);
   }
 }
