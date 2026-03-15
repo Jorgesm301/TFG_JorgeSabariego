@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { BookingService, IBooking } from '../../services/booking';
+import { MessageService, IConversation } from '../../services/message.service';
+import { FriendshipService, IUser } from '../../services/friendship.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +14,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatListModule } from '@angular/material/list';
 
 @Component({
   selector: 'app-mis-reservas',
@@ -20,7 +24,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     CommonModule, RouterModule,
     MatToolbarModule, MatButtonModule, MatIconModule, MatCardModule,
     MatChipsModule, MatDividerModule, MatProgressSpinnerModule,
-    MatMenuModule, MatTooltipModule
+    MatMenuModule, MatTooltipModule, MatBadgeModule, MatListModule
   ],
   templateUrl: './mis-reservas.html',
   styleUrl: './mis-reservas.css'
@@ -30,6 +34,15 @@ export class MisReservas implements OnInit {
   reservas: IBooking[] = [];
   cargando: boolean = false;
   error: string = '';
+
+  drawerAbierto = false;
+  conversaciones: IConversation[] = [];
+  cargandoConversaciones = false;
+  private intervaloMensajes: any;
+
+  modoNuevoMensaje = false;
+  amigos: IUser[] = [];
+  cargandoAmigos = false;
 
   deportesMenu = [
     { nombre: 'Fútbol', icon: 'sports_soccer', ruta: '/reservar/futbol' },
@@ -46,6 +59,8 @@ export class MisReservas implements OnInit {
     private authService: AuthService,
     private router: Router,
     private bookingService: BookingService,
+    private messageService: MessageService,
+    private friendshipService: FriendshipService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -59,6 +74,14 @@ export class MisReservas implements OnInit {
     }
 
     this.cargarReservas();
+    this.cargarConversaciones();
+    this.iniciarActualizacionMensajes();
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervaloMensajes) {
+      clearInterval(this.intervaloMensajes);
+    }
   }
 
   cargarReservas() {
@@ -123,5 +146,93 @@ export class MisReservas implements OnInit {
 
   navegarADeporte(ruta: string) {
     this.router.navigate([ruta]);
+  }
+
+  cargarConversaciones(): void {
+    if (!this.estaLogueado) return;
+
+    this.cargandoConversaciones = true;
+    this.messageService.listarConversaciones().subscribe({
+      next: (data) => {
+        this.conversaciones = data;
+        this.cargandoConversaciones = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.cargandoConversaciones = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  iniciarActualizacionMensajes(): void {
+    this.intervaloMensajes = setInterval(() => {
+      this.cargarConversaciones();
+    }, 30000);
+  }
+
+  getTotalNoLeidos(): number {
+    return this.conversaciones.reduce((sum, conv) => sum + conv.no_leidos, 0);
+  }
+
+  toggleDrawer(): void {
+    this.drawerAbierto = !this.drawerAbierto;
+    if (this.drawerAbierto) {
+      this.cargarConversaciones();
+    }
+  }
+
+  cerrarDrawer(): void {
+    this.drawerAbierto = false;
+    this.modoNuevoMensaje = false;
+  }
+
+  abrirNuevoMensaje(): void {
+    this.modoNuevoMensaje = true;
+    this.cargarAmigos();
+  }
+
+  volverAConversaciones(): void {
+    this.modoNuevoMensaje = false;
+  }
+
+  cargarAmigos(): void {
+    this.cargandoAmigos = true;
+    this.friendshipService.listarAmigos().subscribe({
+      next: (data) => {
+        this.amigos = data;
+        this.cargandoAmigos = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.cargandoAmigos = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  abrirChat(amigoId: number): void {
+    this.cerrarDrawer();
+    this.router.navigate(['/chat', amigoId]);
+  }
+
+  irAMensajes(): void {
+    this.cerrarDrawer();
+    this.router.navigate(['/mensajes']);
+  }
+
+  formatearFecha(fecha: string): string {
+    const date = new Date(fecha);
+    const hoy = new Date();
+    const ayer = new Date(hoy);
+    ayer.setDate(hoy.getDate() - 1);
+
+    if (date.toDateString() === hoy.toDateString()) {
+      return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    } else if (date.toDateString() === ayer.toDateString()) {
+      return 'Ayer';
+    }
+
+    return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
   }
 }

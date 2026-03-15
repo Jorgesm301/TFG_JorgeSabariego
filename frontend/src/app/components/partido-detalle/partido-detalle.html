@@ -1,182 +1,197 @@
 <div class="partido-page">
-  <!-- Header -->
-  <header class="header">
-    <div class="header-inner">
-      <button class="back-button" (click)="volver()">
-        <span class="back-icon">←</span>
-      </button>
-      <h1 class="page-title">Detalles del Partido</h1>
-      <div></div>
+  <mat-toolbar class="header">
+    <a routerLink="/" class="brand" aria-label="Inicio">
+      <div class="brand-icon">
+        <mat-icon>sports_soccer</mat-icon>
+      </div>
+    </a>
+    <span class="spacer"></span>
+    <div class="actions">
+      <ng-container *ngIf="!estaLogueado">
+        <button mat-button (click)="irALogin()">Iniciar sesión</button>
+        <button mat-raised-button color="primary" (click)="irARegistro()">Registrarse</button>
+      </ng-container>
+      <ng-container *ngIf="estaLogueado">
+        <button mat-icon-button (click)="toggleDrawer()" class="messages-btn" matTooltip="Mensajes">
+          <mat-icon [matBadge]="getTotalNoLeidos()" [matBadgeHidden]="getTotalNoLeidos() === 0" matBadgeColor="warn" matBadgeSize="small">mail</mat-icon>
+        </button>
+        <button mat-button (click)="irAPerfil()">
+          <mat-icon>account_circle</mat-icon>
+          <span class="user-name">{{ nombreUsuario }}</span>
+        </button>
+      </ng-container>
     </div>
-  </header>
+  </mat-toolbar>
 
-  <!-- Contenido -->
+  <nav class="subheader">
+    <div class="subheader-inner">
+      <button mat-button [matMenuTriggerFor]="reservarMenu" class="nav-button">
+        <mat-icon>event_available</mat-icon>
+        <span>Reservar</span>
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #reservarMenu="matMenu">
+        <button mat-menu-item *ngFor="let deporte of deportesMenu" (click)="navegarADeporte(deporte.ruta)">
+          <mat-icon>{{ deporte.icon }}</mat-icon>
+          <span>{{ deporte.nombre }}</span>
+        </button>
+      </mat-menu>
+      <button mat-button routerLink="/mis-reservas" class="nav-button nav-button-active">
+        <mat-icon>book_online</mat-icon>
+        <span>Mis Reservas</span>
+      </button>
+    </div>
+  </nav>
+
   <div class="partido-content">
-    <!-- Loading -->
+    <div class="page-title-row">
+      <div>
+        <h1 class="page-title">Detalles del Partido</h1>
+        <p class="page-subtitle">Consulta equipos, resultado y cambios ELO</p>
+      </div>
+      <button mat-stroked-button color="primary" (click)="volver()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver
+      </button>
+    </div>
+
     <div class="loading-state" *ngIf="cargando">
-      <div class="spinner"></div>
+      <mat-spinner diameter="48"></mat-spinner>
       <p>Cargando detalles...</p>
     </div>
 
-    <!-- Error -->
-    <div class="error-message" *ngIf="error && !cargando">
-      <span class="error-icon">⚠️</span>
-      <p>{{ error }}</p>
-    </div>
+    <mat-card class="error-card" *ngIf="error && !cargando">
+      <mat-card-content>
+        <mat-icon class="error-icon" color="warn">error_outline</mat-icon>
+        <p>{{ error }}</p>
+      </mat-card-content>
+    </mat-card>
 
-    <!-- Detalles del partido -->
-    <div *ngIf="booking && !cargando">
-      <!-- Info del partido -->
-      <div class="info-card">
-        <div class="info-header">
-          <h2>{{ booking.sport?.nombre }}</h2>
-          <span class="estado-badge" [class.completo]="booking.estado === 'completo'"
-                [class.jugado]="booking.estado === 'jugado'"
-                [class.abierto]="booking.estado === 'abierto'">
-            {{ booking.estado }}
-          </span>
-        </div>
-        <div class="info-details">
-          <div class="detail-item">
-            <span class="detail-icon">📅</span>
-            <span>{{ booking.fecha }}</span>
+    <div *ngIf="booking && !cargando" class="partido-body">
+      <mat-card class="info-card">
+        <mat-card-content>
+          <div class="info-header">
+            <h2>{{ booking.sport?.nombre }}</h2>
+            <span class="estado-badge" [class.completo]="booking.estado === 'completo'" [class.jugado]="booking.estado === 'jugado'" [class.abierto]="booking.estado === 'abierto'">
+              {{ booking.estado }}
+            </span>
           </div>
-          <div class="detail-item">
-            <span class="detail-icon">⏰</span>
-            <span>{{ booking.hora_inicio }} - {{ booking.hora_fin }}</span>
+          <div class="info-details">
+            <div class="detail-item"><mat-icon color="primary">event</mat-icon><span>{{ booking.fecha }}</span></div>
+            <div class="detail-item"><mat-icon color="primary">schedule</mat-icon><span>{{ booking.hora_inicio }} - {{ booking.hora_fin }}</span></div>
+            <div class="detail-item"><mat-icon color="primary">stadium</mat-icon><span>{{ booking.pista }}</span></div>
+            <div class="detail-item"><mat-icon color="primary">group</mat-icon><span>{{ booking.jugadores_actuales }} / {{ booking.max_jugadores }} jugadores</span></div>
           </div>
-          <div class="detail-item">
-            <span class="detail-icon">🏟️</span>
-            <span>{{ booking.pista }}</span>
-          </div>
-          <div class="detail-item">
-            <span class="detail-icon">👥</span>
-            <span>{{ booking.jugadores_actuales }} / {{ booking.max_jugadores }} jugadores</span>
-          </div>
-        </div>
-      </div>
+        </mat-card-content>
+      </mat-card>
 
-      <!-- Botón generar equipos -->
       <div class="action-section" *ngIf="puedeGenerarEquipos">
-        <button class="btn-primary" (click)="generarEquipos()" [disabled]="generandoEquipos">
-          <span *ngIf="!generandoEquipos">⚡ Generar Equipos Equilibrados</span>
-          <span *ngIf="generandoEquipos">Generando...</span>
+        <button mat-raised-button color="primary" (click)="generarEquipos()" [disabled]="generandoEquipos">
+          <mat-icon>auto_awesome</mat-icon>
+          {{ generandoEquipos ? 'Generando...' : 'Generar Equipos Equilibrados' }}
         </button>
-        <p class="action-hint">Los equipos se generarán automáticamente según el nivel ELO de cada jugador</p>
+        <p class="action-hint">Los equipos se generan segun el nivel ELO de cada jugador.</p>
       </div>
 
-      <!-- Equipos generados -->
       <div class="equipos-section" *ngIf="equipos">
-        <h3 class="section-title">⚔️ Equipos</h3>
-
+        <h3 class="section-title">Equipos</h3>
         <div class="equipos-grid">
-          <!-- Equipo 1 -->
-          <div class="equipo-card equipo-1">
-            <div class="equipo-header">
-              <h4>Equipo 1</h4>
-              <span class="elo-promedio">ELO: {{ calcularEloPromedio(equipos.equipo_1) }}</span>
-            </div>
-            <div class="jugadores-list">
-              <div class="jugador-item" *ngFor="let jugador of equipos.equipo_1">
-                <span class="jugador-nombre">{{ jugador.name }}</span>
-                <span class="jugador-elo">{{ jugador.elo }}</span>
+          <mat-card class="equipo-card equipo-1">
+            <mat-card-content>
+              <div class="equipo-header"><h4>Equipo 1</h4><span class="elo-promedio">ELO: {{ calcularEloPromedio(equipos.equipo_1) }}</span></div>
+              <div class="jugadores-list">
+                <div class="jugador-item" *ngFor="let jugador of equipos.equipo_1"><span class="jugador-nombre">{{ jugador.name }}</span><span class="jugador-elo">{{ jugador.elo }}</span></div>
               </div>
-            </div>
-            <div class="score-display" *ngIf="partidoJugado">
-              <span class="score-label">Puntos</span>
-              <span class="score-value">{{ booking.team_1_score }}</span>
-            </div>
-          </div>
+              <div class="score-display" *ngIf="partidoJugado"><span class="score-label">Puntos</span><span class="score-value">{{ booking.team_1_score }}</span></div>
+            </mat-card-content>
+          </mat-card>
 
-          <!-- VS -->
-          <div class="vs-divider">
-            <span>VS</span>
-          </div>
+          <div class="vs-divider"><span>VS</span></div>
 
-          <!-- Equipo 2 -->
-          <div class="equipo-card equipo-2">
-            <div class="equipo-header">
-              <h4>Equipo 2</h4>
-              <span class="elo-promedio">ELO: {{ calcularEloPromedio(equipos.equipo_2) }}</span>
-            </div>
-            <div class="jugadores-list">
-              <div class="jugador-item" *ngFor="let jugador of equipos.equipo_2">
-                <span class="jugador-nombre">{{ jugador.name }}</span>
-                <span class="jugador-elo">{{ jugador.elo }}</span>
+          <mat-card class="equipo-card equipo-2">
+            <mat-card-content>
+              <div class="equipo-header"><h4>Equipo 2</h4><span class="elo-promedio">ELO: {{ calcularEloPromedio(equipos.equipo_2) }}</span></div>
+              <div class="jugadores-list">
+                <div class="jugador-item" *ngFor="let jugador of equipos.equipo_2"><span class="jugador-nombre">{{ jugador.name }}</span><span class="jugador-elo">{{ jugador.elo }}</span></div>
               </div>
-            </div>
-            <div class="score-display" *ngIf="partidoJugado">
-              <span class="score-label">Puntos</span>
-              <span class="score-value">{{ booking.team_2_score }}</span>
-            </div>
-          </div>
+              <div class="score-display" *ngIf="partidoJugado"><span class="score-label">Puntos</span><span class="score-value">{{ booking.team_2_score }}</span></div>
+            </mat-card-content>
+          </mat-card>
         </div>
 
-        <!-- Registrar resultado -->
-        <div class="resultado-section" *ngIf="puedeRegistrarResultado && !partidoJugado">
-          <h3 class="section-title">📊 Registrar Resultado</h3>
-          <div class="resultado-form">
-            <div class="score-input">
-              <label>Equipo 1</label>
-              <input type="number" [(ngModel)]="scoreEquipo1" min="0" placeholder="0">
+        <mat-card class="resultado-section" *ngIf="puedeRegistrarResultado && !partidoJugado">
+          <mat-card-content>
+            <h3 class="section-title">Registrar Resultado</h3>
+            <div class="resultado-form">
+              <div class="score-input"><label>Equipo 1</label><input type="number" [(ngModel)]="scoreEquipo1" min="0" placeholder="0"></div>
+              <span class="score-separator">-</span>
+              <div class="score-input"><label>Equipo 2</label><input type="number" [(ngModel)]="scoreEquipo2" min="0" placeholder="0"></div>
             </div>
-            <span class="score-separator">-</span>
-            <div class="score-input">
-              <label>Equipo 2</label>
-              <input type="number" [(ngModel)]="scoreEquipo2" min="0" placeholder="0">
-            </div>
-          </div>
-          <button class="btn-success" (click)="registrarResultado()" [disabled]="registrandoResultado">
-            <span *ngIf="!registrandoResultado">✅ Confirmar Resultado</span>
-            <span *ngIf="registrandoResultado">Registrando...</span>
-          </button>
-        </div>
+            <button mat-raised-button color="primary" (click)="registrarResultado()" [disabled]="registrandoResultado">
+              <mat-icon>check_circle</mat-icon>
+              {{ registrandoResultado ? 'Registrando...' : 'Confirmar Resultado' }}
+            </button>
+          </mat-card-content>
+        </mat-card>
 
-        <!-- Resultado final -->
-        <div class="resultado-final" *ngIf="partidoJugado">
-          <h3 class="section-title">🏆 Resultado Final</h3>
-          <div class="resultado-display">
-            <div class="resultado-score">
-              <span class="team-name" [class.ganador]="booking.winner_team === 1">Equipo 1</span>
-              <span class="final-score">{{ booking.team_1_score }} - {{ booking.team_2_score }}</span>
-              <span class="team-name" [class.ganador]="booking.winner_team === 2">Equipo 2</span>
+        <mat-card class="resultado-final" *ngIf="partidoJugado">
+          <mat-card-content>
+            <h3 class="section-title">Resultado Final</h3>
+            <div class="resultado-display">
+              <div class="resultado-score"><span class="team-name" [class.ganador]="booking.winner_team === 1">Equipo 1</span><span class="final-score">{{ booking.team_1_score }} - {{ booking.team_2_score }}</span><span class="team-name" [class.ganador]="booking.winner_team === 2">Equipo 2</span></div>
+              <p class="ganador-text" *ngIf="booking.winner_team">Gano el Equipo {{ booking.winner_team }}</p>
+              <p class="ganador-text" *ngIf="!booking.winner_team">Empate</p>
             </div>
-            <p class="ganador-text" *ngIf="booking.winner_team">
-              🎉 Ganó el Equipo {{ booking.winner_team }}
-            </p>
-            <p class="ganador-text" *ngIf="!booking.winner_team">
-              🤝 Empate
-            </p>
-          </div>
-        </div>
+          </mat-card-content>
+        </mat-card>
 
-        <!-- Cambios de ELO -->
-        <div class="cambios-elo-section" *ngIf="cambiosElo.length > 0">
-          <h3 class="section-title">📈 Cambios de ELO</h3>
-          <div class="cambios-grid">
-            <div class="cambio-card" *ngFor="let cambio of cambiosElo" [class.ganador]="cambio.gano">
-              <div class="cambio-header">
-                <span class="cambio-nombre">{{ cambio.name }}</span>
-                <span class="cambio-badge">Equipo {{ cambio.team }}</span>
-              </div>
-              <div class="cambio-stats">
-                <div class="cambio-elo">
-                  <span class="cambio-label">Nuevo ELO</span>
-                  <span class="cambio-value">{{ cambio.nuevo_elo }}</span>
+        <mat-card class="cambios-elo-section" *ngIf="cambiosElo.length > 0">
+          <mat-card-content>
+            <h3 class="section-title">Cambios de ELO</h3>
+            <div class="cambios-grid">
+              <div class="cambio-card" *ngFor="let cambio of cambiosElo" [class.ganador]="cambio.gano">
+                <div class="cambio-header"><span class="cambio-nombre">{{ cambio.name }}</span><span class="cambio-badge">Equipo {{ cambio.team }}</span></div>
+                <div class="cambio-stats">
+                  <div class="cambio-elo"><span class="cambio-label">Nuevo ELO</span><span class="cambio-value">{{ cambio.nuevo_elo }}</span></div>
+                  <div class="cambio-partidos"><span class="cambio-label">Partidos</span><span class="cambio-value">{{ cambio.partidos_jugados }}</span></div>
                 </div>
-                <div class="cambio-partidos">
-                  <span class="cambio-label">Partidos</span>
-                  <span class="cambio-value">{{ cambio.partidos_jugados }}</span>
-                </div>
-              </div>
-              <div class="cambio-resultado">
-                <span *ngIf="cambio.gano" class="resultado-gano">✅ Victoria</span>
-                <span *ngIf="!cambio.gano" class="resultado-perdio">❌ Derrota</span>
+                <div class="cambio-resultado"><span *ngIf="cambio.gano" class="resultado-gano">Victoria</span><span *ngIf="!cambio.gano" class="resultado-perdio">Derrota</span></div>
               </div>
             </div>
-          </div>
-        </div>
+          </mat-card-content>
+        </mat-card>
       </div>
     </div>
   </div>
+
+  <div class="messages-drawer" [class.open]="drawerAbierto">
+    <div class="drawer-header">
+      <button *ngIf="modoNuevoMensaje" mat-icon-button (click)="volverAConversaciones()" class="back-btn"><mat-icon>arrow_back</mat-icon></button>
+      <h2 class="drawer-title"><mat-icon>{{ modoNuevoMensaje ? 'edit' : 'mail' }}</mat-icon>{{ modoNuevoMensaje ? 'Nuevo Mensaje' : 'Mensajes' }}</h2>
+      <div class="header-actions">
+        <button *ngIf="!modoNuevoMensaje" mat-icon-button (click)="abrirNuevoMensaje()" class="new-msg-btn" matTooltip="Nuevo mensaje"><mat-icon>edit</mat-icon></button>
+        <button mat-icon-button (click)="cerrarDrawer()" class="close-btn"><mat-icon>close</mat-icon></button>
+      </div>
+    </div>
+
+    <div *ngIf="!modoNuevoMensaje">
+      <div *ngIf="cargandoConversaciones" class="drawer-loading"><mat-icon class="spinner">refresh</mat-icon><p>Cargando conversaciones...</p></div>
+      <mat-list *ngIf="!cargandoConversaciones" class="conversations-list">
+        <div *ngIf="conversaciones.length === 0" class="empty-drawer-state"><mat-icon>forum</mat-icon><p>No tienes conversaciones</p><small>Envia un mensaje a tus amigos</small><button mat-raised-button color="primary" (click)="abrirNuevoMensaje()" class="empty-action-btn"><mat-icon>edit</mat-icon>Nuevo Mensaje</button></div>
+        <mat-list-item *ngFor="let conv of conversaciones" (click)="abrirChat(conv.amigo.id)" class="conversation-item" [class.unread]="conv.no_leidos > 0"><div class="conv-avatar"><mat-icon>account_circle</mat-icon></div><div class="conv-content"><div class="conv-header"><span class="conv-name">{{ conv.amigo.name }} {{ conv.amigo.last_name }}</span><span class="conv-time">{{ formatearFecha(conv.ultimo_mensaje.created_at) }}</span></div><div class="conv-message"><span class="message-text">{{ conv.ultimo_mensaje.message }}</span><span *ngIf="conv.no_leidos > 0" class="unread-badge">{{ conv.no_leidos }}</span></div></div></mat-list-item>
+        <mat-divider *ngIf="conversaciones.length > 0"></mat-divider>
+        <mat-list-item *ngIf="conversaciones.length > 0" (click)="irAMensajes()" class="view-all-item"><mat-icon>open_in_new</mat-icon><span>Ver todos los mensajes</span></mat-list-item>
+      </mat-list>
+    </div>
+
+    <div *ngIf="modoNuevoMensaje">
+      <div *ngIf="cargandoAmigos" class="drawer-loading"><mat-icon class="spinner">refresh</mat-icon><p>Cargando amigos...</p></div>
+      <mat-list *ngIf="!cargandoAmigos" class="friends-list">
+        <div *ngIf="amigos.length === 0" class="empty-drawer-state"><mat-icon>person_add</mat-icon><p>No tienes amigos aun</p><small>Anade amigos para enviarles mensajes</small></div>
+        <mat-list-item *ngFor="let amigo of amigos" (click)="abrirChat(amigo.id)" class="friend-item"><div class="friend-avatar"><mat-icon>account_circle</mat-icon></div><div class="friend-info"><span class="friend-name">{{ amigo.name }} {{ amigo.last_name }}</span><span class="friend-email">{{ amigo.email }}</span></div><mat-icon class="send-icon">send</mat-icon></mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+
+  <div class="drawer-overlay" [class.visible]="drawerAbierto" (click)="cerrarDrawer()"></div>
 </div>
