@@ -5,10 +5,36 @@ import { FormsModule } from '@angular/forms';
 import { BookingService, IBooking } from '../../services/booking';
 import { SportsService, Sport } from '../../services/sports.service';
 import { AuthService } from '../../services/auth';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatListModule } from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 
 @Component({
   selector: 'app-reservar',
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [
+    CommonModule, FormsModule, RouterModule,
+    MatToolbarModule, MatButtonModule, MatIconModule, MatCardModule,
+    MatFormFieldModule, MatInputModule, MatSelectModule, MatCheckboxModule,
+    MatProgressSpinnerModule, MatChipsModule, MatListModule,
+    MatDividerModule, MatMenuModule, MatTooltipModule,
+    MatDatepickerModule, MatNativeDateModule
+  ],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' }
+  ],
   templateUrl: './reservar.html',
   styleUrl: './reservar.css',
 })
@@ -20,8 +46,9 @@ export class Reservar implements OnInit, OnDestroy {
 
   // Variables para crear reserva
   fechaSeleccionada: string = '';
-  fechaMinima: string = '';
-  fechaMaxima: string = '';
+  fechaSeleccionadaDate: Date | null = null;
+  fechaMinimaDate: Date | null = null;
+  fechaMaximaDate: Date | null = null;
   horaSeleccionada: string = '';
   ubicacionSeleccionada: string = '';
   reservasDelDia: IBooking[] = [];
@@ -54,16 +81,15 @@ export class Reservar implements OnInit, OnDestroy {
   mensajeTipo: 'success' | 'error' | 'info' = 'info';
   cargando: boolean = false;
 
-  menuReservarAbierto = false;
   deportesMenu = [
-    { nombre: 'Fútbol', icon: '⚽', ruta: '/reservar/futbol' },
-    { nombre: 'Fútbol Sala', icon: '⚽', ruta: '/reservar/futbol-sala' },
-    { nombre: 'Baloncesto', icon: '🏀', ruta: '/reservar/baloncesto' },
-    { nombre: 'Tenis', icon: '🎾', ruta: '/reservar/tenis' },
-    { nombre: 'Pádel', icon: '🎾', ruta: '/reservar/padel' },
-    { nombre: 'Voleibol', icon: '🏐', ruta: '/reservar/voleibol' },
-    { nombre: 'Natación', icon: '🏊', ruta: '/reservar/natacion' },
-    { nombre: 'Atletismo', icon: '🏃', ruta: '/reservar/atletismo' }
+    { nombre: 'Fútbol', icon: 'sports_soccer', ruta: '/reservar/futbol' },
+    { nombre: 'Fútbol Sala', icon: 'sports_soccer', ruta: '/reservar/futbol-sala' },
+    { nombre: 'Baloncesto', icon: 'sports_basketball', ruta: '/reservar/baloncesto' },
+    { nombre: 'Tenis', icon: 'sports_tennis', ruta: '/reservar/tenis' },
+    { nombre: 'Pádel', icon: 'sports_tennis', ruta: '/reservar/padel' },
+    { nombre: 'Voleibol', icon: 'sports_volleyball', ruta: '/reservar/voleibol' },
+    { nombre: 'Natación', icon: 'pool', ruta: '/reservar/natacion' },
+    { nombre: 'Atletismo', icon: 'directions_run', ruta: '/reservar/atletismo' }
   ];
 
   constructor(
@@ -77,16 +103,18 @@ export class Reservar implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.sportSlug = this.route.snapshot.params['deporte'];
-    this.cargarSport();
 
     // Fecha mínima hoy y máxima un mes
-    const hoy = new Date();
-    this.fechaMinima = hoy.toISOString().split('T')[0];
-    this.fechaSeleccionada = this.fechaMinima;
+    const hoy = this.normalizarFecha(new Date());
+    this.fechaMinimaDate = hoy;
+    this.fechaSeleccionadaDate = hoy;
+    this.fechaSeleccionada = this.formatearFechaLocal(hoy);
 
-    const fechaMax = new Date();
+    const fechaMax = new Date(hoy);
     fechaMax.setMonth(fechaMax.getMonth() + 1);
-    this.fechaMaxima = fechaMax.toISOString().split('T')[0];
+    this.fechaMaximaDate = this.normalizarFecha(fechaMax);
+
+    this.cargarSport();
 
     setTimeout(() => {
       if (this.cargando && !this.sport) {
@@ -109,6 +137,35 @@ export class Reservar implements OnInit, OnDestroy {
       .replace(/[\u0300-\u036f]/g, '')
       .toLowerCase()
       .replace(/\s+/g, '-');
+  }
+
+  private normalizarFecha(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+
+  private formatearFechaLocal(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  private parsearFechaLocal(dateString: string): Date {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  get fechaSeleccionadaFormateada(): string {
+    if (!this.fechaSeleccionada) {
+      return '';
+    }
+
+    return new Intl.DateTimeFormat('es-ES', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(this.parsearFechaLocal(this.fechaSeleccionada));
   }
 
   cargarSport() {
@@ -149,7 +206,7 @@ export class Reservar implements OnInit, OnDestroy {
     const horaFin = 24 * 60;
 
     const hoy = new Date();
-    const fechaHoy = hoy.toISOString().split('T')[0];
+    const fechaHoy = this.formatearFechaLocal(hoy);
     const esHoy = this.fechaSeleccionada === fechaHoy;
 
     let horaActualMinutos = 0;
@@ -181,7 +238,13 @@ export class Reservar implements OnInit, OnDestroy {
     }
   }
 
-  onFechaChange() {
+  onFechaChange(date?: Date | null) {
+    if (date) {
+      const fechaNormalizada = this.normalizarFecha(date);
+      this.fechaSeleccionadaDate = fechaNormalizada;
+      this.fechaSeleccionada = this.formatearFechaLocal(fechaNormalizada);
+    }
+
     this.horaSeleccionada = '';
     this.generarHorarios();
     this.cargarReservasDelDia();
@@ -634,16 +697,21 @@ export class Reservar implements OnInit, OnDestroy {
     this.router.navigate(['/perfil']);
   }
 
-  abrirMenuReservar() {
-    this.menuReservarAbierto = true;
-  }
-
-  cerrarMenuReservar() {
-    this.menuReservarAbierto = false;
-  }
-
   navegarADeporte(ruta: string) {
     this.router.navigate([ruta]);
-    this.menuReservarAbierto = false;
+  }
+
+  getSportMatIcon(): string {
+    const iconMap: Record<string, string> = {
+      'futbol': 'sports_soccer',
+      'futbol-sala': 'sports_soccer',
+      'baloncesto': 'sports_basketball',
+      'tenis': 'sports_tennis',
+      'padel': 'sports_tennis',
+      'voleibol': 'sports_volleyball',
+      'natacion': 'pool',
+      'atletismo': 'directions_run'
+    };
+    return iconMap[this.sportSlug] || 'sports';
   }
 }

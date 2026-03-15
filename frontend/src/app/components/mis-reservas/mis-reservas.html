@@ -3,99 +3,185 @@
   <header class="header">
     <div class="header-inner">
       <a routerLink="/" class="brand">
-        <span class="logo" aria-hidden="true">🏟️</span>
-      </a>
+        <div class="mis-reservas-page">
 
-      <div class="actions">
-        <!-- Mostrar cuando NO está logueado -->
-        <ng-container *ngIf="!estaLogueado">
-          <button class="btn btn-ghost" (click)="irALogin()">Iniciar sesión</button>
-          <button class="btn btn-solid" (click)="irARegistro()">Registrarse</button>
-        </ng-container>
+          <!-- HEADER -->
+          <mat-toolbar class="header">
+            <a routerLink="/" class="brand" aria-label="Inicio">
+              <div class="brand-icon">
+                <mat-icon>sports_soccer</mat-icon>
+              </div>
+            </a>
+            <span class="spacer"></span>
+            <div class="actions">
+              <ng-container *ngIf="!estaLogueado">
+                <button mat-button (click)="irALogin()">Iniciar sesión</button>
+                <button mat-raised-button color="primary" (click)="irARegistro()">Registrarse</button>
+              </ng-container>
+              <button *ngIf="estaLogueado" mat-button (click)="irAPerfil()">
+                <mat-icon>account_circle</mat-icon>
+                <span class="user-name">{{ nombreUsuario }}</span>
+              </button>
+            </div>
+          </mat-toolbar>
 
-        <!-- Mostrar cuando SÍ está logueado -->
-        <div *ngIf="estaLogueado" class="user-profile" (click)="irAPerfil()">
-          <span class="user-name">👤 {{ nombreUsuario }}</span>
+          <!-- SUBHEADER NAV -->
+          <nav class="subheader">
+            <div class="subheader-inner">
+              <button mat-button [matMenuTriggerFor]="reservarMenu" class="nav-button">
+                <mat-icon>event_available</mat-icon>
+                <span>Reservar</span>
+                <mat-icon>arrow_drop_down</mat-icon>
+              </button>
+              <mat-menu #reservarMenu="matMenu">
+                <button mat-menu-item *ngFor="let deporte of deportesMenu" (click)="navegarADeporte(deporte.ruta)">
+                  <mat-icon>{{ deporte.icon }}</mat-icon>
+                  <span>{{ deporte.nombre }}</span>
+                </button>
+              </mat-menu>
+              <button mat-button routerLink="/mis-reservas" class="nav-button nav-button-active">
+                <mat-icon>book_online</mat-icon>
+                <span>Mis Reservas</span>
+              </button>
+            </div>
+          </nav>
+
+          <!-- CONTENIDO -->
+          <div class="page-content">
+
+            <!-- Page title -->
+            <div class="page-title-row">
+              <div class="page-title-info">
+                <h1 class="page-title">Mis Reservas</h1>
+                <p class="page-subtitle">Gestiona tus partidos y reservas activas</p>
+              </div>
+              <button mat-raised-button color="primary" [matMenuTriggerFor]="nuevaReservaMenu">
+                <mat-icon>add_circle</mat-icon>
+                Nueva Reserva
+              </button>
+              <mat-menu #nuevaReservaMenu="matMenu">
+                <button mat-menu-item *ngFor="let deporte of deportesMenu" (click)="navegarADeporte(deporte.ruta)">
+                  <mat-icon>{{ deporte.icon }}</mat-icon>
+                  <span>{{ deporte.nombre }}</span>
+                </button>
+              </mat-menu>
+            </div>
+
+            <!-- Loading -->
+            <div class="loading-state" *ngIf="cargando">
+              <mat-spinner diameter="48"></mat-spinner>
+              <p>Cargando tus reservas...</p>
+            </div>
+
+            <!-- Error -->
+            <div class="error-state" *ngIf="error && !cargando">
+              <mat-card class="error-card">
+                <mat-card-content>
+                  <mat-icon class="error-icon" color="warn">error_outline</mat-icon>
+                  <h3>{{ error }}</h3>
+                  <button mat-raised-button color="primary" (click)="cargarReservas()">
+                    <mat-icon>refresh</mat-icon>
+                    Reintentar
+                  </button>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <!-- Estado vacío -->
+            <div class="empty-state" *ngIf="!cargando && !error && reservas.length === 0">
+              <mat-card class="empty-card">
+                <mat-card-content>
+                  <mat-icon class="empty-icon">calendar_today</mat-icon>
+                  <h2>No tienes reservas</h2>
+                  <p>Aún no has realizado ninguna reserva. ¡Explora nuestros deportes y reserva tu partido!</p>
+                  <button mat-raised-button color="primary" [matMenuTriggerFor]="nuevaReservaMenu2">
+                    <mat-icon>add_circle</mat-icon>
+                    Reservar ahora
+                  </button>
+                  <mat-menu #nuevaReservaMenu2="matMenu">
+                    <button mat-menu-item *ngFor="let deporte of deportesMenu" (click)="navegarADeporte(deporte.ruta)">
+                      <mat-icon>{{ deporte.icon }}</mat-icon>
+                      <span>{{ deporte.nombre }}</span>
+                    </button>
+                  </mat-menu>
+                </mat-card-content>
+              </mat-card>
+            </div>
+
+            <!-- Grid de reservas -->
+            <div class="reservas-grid" *ngIf="!cargando && !error && reservas.length > 0">
+              <mat-card class="reserva-card" *ngFor="let reserva of reservas">
+                <mat-card-content>
+
+                  <!-- Cabecera con deporte y estado -->
+                  <div class="reserva-top">
+                    <div class="deporte-badge">
+                      <mat-icon>sports</mat-icon>
+                      <span>{{ reserva.sport?.nombre || 'Deporte' }}</span>
+                    </div>
+                    <mat-chip class="estado-chip"
+                      [class.chip-abierto]="reserva.estado === 'abierto'"
+                      [class.chip-completo]="reserva.estado === 'completo'"
+                      [class.chip-jugado]="reserva.estado === 'jugado'"
+                      [class.chip-cancelado]="reserva.estado === 'cancelado'">
+                      <mat-icon>{{
+                        reserva.estado === 'abierto' ? 'lock_open' :
+                        reserva.estado === 'completo' ? 'groups' :
+                        reserva.estado === 'jugado' ? 'emoji_events' :
+                        'cancel'
+                      }}</mat-icon>
+                      {{
+                        reserva.estado === 'abierto' ? 'Abierto' :
+                        reserva.estado === 'completo' ? 'Completo' :
+                        reserva.estado === 'jugado' ? 'Jugado' : 'Cancelado'
+                      }}
+                    </mat-chip>
+                  </div>
+
+                  <mat-divider></mat-divider>
+
+                  <!-- Detalles -->
+                  <div class="reserva-detalles">
+                    <div class="detalle-item">
+                      <mat-icon color="primary">event</mat-icon>
+                      <span>{{ reserva.fecha }}</span>
+                    </div>
+                    <div class="detalle-item">
+                      <mat-icon color="primary">schedule</mat-icon>
+                      <span>{{ reserva.hora_inicio }} — {{ reserva.hora_fin }}</span>
+                    </div>
+                    <div class="detalle-item">
+                      <mat-icon color="primary">location_on</mat-icon>
+                      <span>{{ reserva.pista }}</span>
+                    </div>
+                    <div class="detalle-item">
+                      <mat-icon color="primary">group</mat-icon>
+                      <span>{{ reserva.jugadores_actuales }}/{{ reserva.max_jugadores }} jugadores</span>
+                    </div>
+                    <div class="detalle-item" *ngIf="reserva.creador">
+                      <mat-icon color="primary">person</mat-icon>
+                      <span>Creado por {{ reserva.creador.name }}</span>
+                    </div>
+                  </div>
+
+                </mat-card-content>
+
+                <mat-card-actions align="end">
+                  <button mat-stroked-button color="primary"
+                    [routerLink]="['/partido', reserva.id]"
+                    *ngIf="reserva.estado === 'completo' || reserva.estado === 'jugado'">
+                    <mat-icon>visibility</mat-icon>
+                    Ver Partido
+                  </button>
+                  <button mat-stroked-button color="warn"
+                    (click)="salirseDeReserva(reserva)"
+                    *ngIf="reserva.estado !== 'cancelado' && reserva.estado !== 'jugado'">
+                    <mat-icon>exit_to_app</mat-icon>
+                    Salir
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+
+          </div>
         </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Título de la sección -->
-  <div class="page-header">
-    <h1 class="page-title">Mis Reservas</h1>
-  </div>
-
-  <!-- Contenido -->
-  <div class="reservas-content">
-
-    <!-- Loader -->
-    <div class="loading" *ngIf="cargando">
-      <div class="spinner"></div>
-      <p>Cargando tus reservas...</p>
-    </div>
-
-    <!-- Error -->
-    <div class="error-message" *ngIf="error && !cargando">
-      <p>{{ error }}</p>
-      <button class="btn-primary" (click)="cargarReservas()">Reintentar</button>
-    </div>
-
-    <!-- Estado vacío -->
-    <div class="empty-state" *ngIf="!cargando && !error && reservas.length === 0">
-      <div class="empty-icon">📅</div>
-      <h2 class="empty-title">No tienes reservas</h2>
-      <p class="empty-text">Aún no has realizado ninguna reserva. ¡Explora nuestras instalaciones y reserva tu pista!</p>
-      <button class="btn-primary" routerLink="/">
-        Explorar instalaciones
-      </button>
-    </div>
-
-    <!-- Lista de reservas -->
-    <div class="reservas-grid" *ngIf="!cargando && reservas.length > 0">
-      <div class="reserva-card" *ngFor="let reserva of reservas">
-        <div class="reserva-header">
-          <span class="reserva-deporte">{{ reserva.sport?.nombre || 'Deporte' }}</span>
-          <span class="reserva-estado" [class]="reserva.estado">
-            {{ reserva.estado === 'abierto' ? 'Abierto' :
-               reserva.estado === 'completo' ? 'Completo' :
-               reserva.estado === 'jugado' ? 'Jugado' : 'Cancelado' }}
-          </span>
-        </div>
-        <div class="reserva-info">
-          <div class="info-item">
-            <span class="info-icon">📅</span>
-            <span>{{ reserva.fecha }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-icon">⏰</span>
-            <span>{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-icon">📍</span>
-            <span>{{ reserva.pista }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-icon">👥</span>
-            <span>{{ reserva.jugadores_actuales }}/{{ reserva.max_jugadores }} jugadores</span>
-          </div>
-          <div class="info-item" *ngIf="reserva.creador">
-            <span class="info-icon">👤</span>
-            <span>Creada por: {{ reserva.creador.name }}</span>
-          </div>
-        </div>
-        <div class="reserva-actions">
-          <button class="btn-small btn-primary" [routerLink]="['/partido', reserva.id]"
-                  *ngIf="reserva.estado === 'completo' || reserva.estado === 'jugado'">
-            Ver Partido
-          </button>
-          <button class="btn-small btn-danger" (click)="salirseDeReserva(reserva)"
-                  *ngIf="reserva.estado !== 'cancelado' && reserva.estado !== 'jugado'">
-            Salir de la reserva
-          </button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>

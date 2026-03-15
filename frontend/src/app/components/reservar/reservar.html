@@ -1,260 +1,421 @@
-<div class="page">
+<div class="reservar-page">
 
-  <!-- HEADER a ancho completo -->
-  <header class="header">
-    <div class="header-inner">
-      <a routerLink="/" class="brand">
-        <span class="logo" aria-hidden="true">🏟️</span>
-      </a>
-
-      <div class="actions">
-        <!-- Mostrar cuando NO está logueado -->
-        <ng-container *ngIf="!estaLogueado">
-          <button class="btn btn-ghost" (click)="irALogin()">Iniciar sesión</button>
-          <button class="btn btn-solid" (click)="irARegistro()">Registrarse</button>
-        </ng-container>
-
-        <!-- Mostrar cuando SÍ está logueado -->
-        <div *ngIf="estaLogueado" class="user-profile" (click)="irAPerfil()">
-          <span class="user-name">👤 {{ nombreUsuario }}</span>
-        </div>
+  <!-- HEADER -->
+  <mat-toolbar class="header">
+    <a routerLink="/" class="brand" aria-label="Inicio">
+      <div class="brand-icon">
+        <mat-icon>sports_soccer</mat-icon>
       </div>
+    </a>
+    <span class="spacer"></span>
+    <div class="actions">
+      <ng-container *ngIf="!estaLogueado">
+        <button mat-button (click)="irALogin()">Iniciar sesión</button>
+        <button mat-raised-button color="primary" (click)="irARegistro()">Registrarse</button>
+      </ng-container>
+      <button *ngIf="estaLogueado" mat-button (click)="irAPerfil()">
+        <mat-icon>account_circle</mat-icon>
+        <span class="user-name">{{ nombreUsuario }}</span>
+      </button>
     </div>
-  </header>
+  </mat-toolbar>
 
-  <!-- Mensaje de carga -->
-  <div class="loader-inicial" *ngIf="cargando && !sport">
-    <div class="spinner"></div>
+  <!-- SUBHEADER NAV -->
+  <nav class="subheader">
+    <div class="subheader-inner">
+      <button mat-button [matMenuTriggerFor]="reservarMenu" class="nav-button">
+        <mat-icon>event_available</mat-icon>
+        <span>Reservar</span>
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #reservarMenu="matMenu">
+        <button mat-menu-item *ngFor="let deporte of deportesMenu" (click)="navegarADeporte(deporte.ruta)">
+          <mat-icon>{{ deporte.icon }}</mat-icon>
+          <span>{{ deporte.nombre }}</span>
+        </button>
+      </mat-menu>
+      <button mat-button routerLink="/mis-reservas" class="nav-button">
+        <mat-icon>book_online</mat-icon>
+        <span>Mis Reservas</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Loading inicial -->
+  <div class="loading-state" *ngIf="cargando && !sport">
+    <mat-spinner diameter="48"></mat-spinner>
     <p>Cargando deporte...</p>
   </div>
 
-  <!-- Mensaje de error si no se encuentra el deporte -->
-  <div class="error-container" *ngIf="!cargando && !sport">
-    <h2>Deporte no encontrado</h2>
-    <p>El deporte "{{ sportSlug }}" no está disponible.</p>
-    <button class="btn-volver" (click)="volver()">Volver al inicio</button>
-  </div>
-
-  <div class="reservar-container" *ngIf="sport">
-  <div class="header">
-    <h1>{{ sport.nombre }}</h1>
-    <p class="info">Duración: {{ sport.duracion_minutos }} minutos | Jugadores: {{ sport.max_jugadores }}</p>
-  </div>
-
-  <!-- Selector de modo -->
-  <div class="modo-selector">
-    <button
-      [class.activo]="modo === 'crear'"
-      (click)="cambiarModo('crear')"
-      class="btn-modo"
-    >
-      Crear Partido
-    </button>
-    <button
-      [class.activo]="modo === 'unirse'"
-      (click)="cambiarModo('unirse')"
-      class="btn-modo"
-    >
-      Unirse a Partido
-    </button>
-  </div>
-
-  <!-- Modo: Crear Partido -->
-  <div class="contenido" *ngIf="modo === 'crear'">
-    <div class="selector-fecha">
-      <label for="fecha">Selecciona la fecha:</label>
-      <input
-        type="date"
-        id="fecha"
-        [(ngModel)]="fechaSeleccionada"
-        [min]="fechaMinima"
-        [max]="fechaMaxima"
-        (change)="onFechaChange()"
-      />
-    </div>
-
-    <div class="selector-fecha">
-      <label for="ubicacion">Ubicación del partido:</label>
-      <input
-        type="text"
-        id="ubicacion"
-        [(ngModel)]="ubicacionSeleccionada"
-        placeholder="Ej: Madrid, Martos, Jaén..."
-        class="input-ubicacion"
-        (input)="onUbicacionChange()"
-      />
-      <div class="checkbox-ubicacion">
-        <label>
-          <input
-            type="checkbox"
-            [(ngModel)]="ubicacionAutomatica"
-            (change)="toggleUbicacionAutomatica()"
-          />
-          Guardar mi ubicación GPS con la reserva
-          <span class="info-tooltip">📍 Permite que otros encuentren tu partido por cercanía</span>
-        </label>
-      </div>
-    </div>
-
-    <div class="horarios-section">
-      <h3>Horarios disponibles</h3>
-      <div class="horarios-grid">
-        <button
-          *ngFor="let hora of horariosDisponibles"
-          class="horario-btn"
-          [class.ocupado]="estaOcupado(hora)"
-          [class.seleccionado]="horaSeleccionada === hora"
-          [disabled]="estaOcupado(hora)"
-          (click)="horaSeleccionada = hora"
-        >
-          <span class="hora">{{ hora }} - {{ calcularHoraFin(hora) }}</span>
-          <span class="estado" *ngIf="estaOcupado(hora)">Ocupado</span>
+  <!-- Error state -->
+  <div class="error-state" *ngIf="!cargando && !sport">
+    <mat-card class="error-card">
+      <mat-card-content>
+        <mat-icon class="error-icon" color="warn">sports_off</mat-icon>
+        <h2>Deporte no encontrado</h2>
+        <p>El deporte "{{ sportSlug }}" no está disponible.</p>
+        <button mat-raised-button color="primary" (click)="volver()">
+          <mat-icon>arrow_back</mat-icon>
+          Volver al inicio
         </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="reservar-content" *ngIf="sport">
+
+    <!-- Sport Hero -->
+    <div class="sport-hero">
+      <div class="sport-hero-inner">
+        <div class="sport-icon-wrap">
+          <mat-icon class="sport-hero-icon">{{ getSportMatIcon() }}</mat-icon>
+        </div>
+        <div class="sport-hero-info">
+          <h1 class="sport-title">{{ sport.nombre }}</h1>
+          <mat-chip-set>
+            <mat-chip class="meta-chip">
+              <mat-icon>timer</mat-icon>
+              {{ sport.duracion_minutos }} min
+            </mat-chip>
+            <mat-chip class="meta-chip">
+              <mat-icon>group</mat-icon>
+              {{ sport.max_jugadores }} jugadores
+            </mat-chip>
+          </mat-chip-set>
+        </div>
       </div>
     </div>
 
-    <div class="resumen" *ngIf="horaSeleccionada && !estaOcupado(horaSeleccionada)">
-      <h3>Resumen de tu reserva</h3>
-      <div class="resumen-content">
-        <p><strong>Deporte:</strong> {{ sport.nombre }}</p>
-        <p><strong>Fecha:</strong> {{ fechaSeleccionada }}</p>
-        <p><strong>Ubicación:</strong> {{ ubicacionSeleccionada }}</p>
-        <p><strong>Hora:</strong> {{ horaSeleccionada }} - {{ calcularHoraFin(horaSeleccionada) }}</p>
-        <p><strong>Duración:</strong> {{ sport.duracion_minutos }} minutos</p>
-        <p><strong>Jugadores máximos:</strong> {{ sport.max_jugadores }}</p>
-      </div>
-
-      <button class="btn-reservar" (click)="crearReserva()" [disabled]="cargando || !ubicacionSeleccionada">
-        {{ cargando ? 'Creando...' : 'Confirmar Reserva' }}
+    <div class="modo-switch">
+      <button
+        mat-stroked-button
+        class="modo-switch-btn"
+        [class.modo-switch-btn-active]="modo === 'crear'"
+        (click)="cambiarModo('crear')"
+      >
+        <mat-icon>add_circle_outline</mat-icon>
+        Crear Partido
+      </button>
+      <button
+        mat-stroked-button
+        class="modo-switch-btn"
+        [class.modo-switch-btn-active]="modo === 'unirse'"
+        (click)="cambiarModo('unirse')"
+      >
+        <mat-icon>group_add</mat-icon>
+        Unirse a Partido
       </button>
     </div>
-  </div>
 
-  <!-- Modo: Unirse a Partido -->
-  <div class="contenido" *ngIf="modo === 'unirse'">
-    <h3>Partidos disponibles</h3>
+    <div class="tab-content" *ngIf="modo === 'crear'">
 
-    <!-- Opción de búsqueda por ubicación o por radio -->
-    <div class="tipo-busqueda">
-      <div class="tabs-busqueda">
-        <button
-          [class.activo]="!usarGeolocalizacion"
-          (click)="usarGeolocalizacion = false"
-          class="tab-btn"
-        >
-          🔍 Buscar por nombre
-        </button>
-        <button
-          [class.activo]="usarGeolocalizacion"
-          (click)="usarGeolocalizacion = true"
-          class="tab-btn"
-        >
-          📍 Buscar por cercanía
-        </button>
-      </div>
+          <!-- Formulario detalles -->
+          <mat-card class="form-card">
+            <mat-card-content>
+              <div class="section-header">
+                <mat-icon color="primary">event_note</mat-icon>
+                <h3>Detalles del partido</h3>
+              </div>
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="flex-field">
+                  <mat-label>Fecha</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="selectorFecha"
+                    [(ngModel)]="fechaSeleccionadaDate"
+                    [min]="fechaMinimaDate"
+                    [max]="fechaMaximaDate"
+                    readonly
+                    (dateChange)="onFechaChange($event.value)" />
+                  <mat-datepicker-toggle matIconSuffix [for]="selectorFecha"></mat-datepicker-toggle>
+                  <mat-datepicker #selectorFecha></mat-datepicker>
+                  <mat-hint *ngIf="fechaSeleccionadaFormateada">{{ fechaSeleccionadaFormateada }}</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="flex-field">
+                  <mat-label>Ubicación</mat-label>
+                  <input matInput
+                    [(ngModel)]="ubicacionSeleccionada"
+                    placeholder="Ej: Madrid, Martos, Jaén..."
+                    (input)="onUbicacionChange()" />
+                  <mat-icon matSuffix>location_on</mat-icon>
+                  <mat-hint>Ciudad o localidad del partido</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <mat-checkbox [(ngModel)]="ubicacionAutomatica" (change)="toggleUbicacionAutomatica()" color="primary">
+                <span class="checkbox-label">
+                  Guardar mi ubicación GPS con la reserva
+                  <mat-icon class="hint-icon" matTooltip="Permite que otros encuentren tu partido por cercanía">info_outline</mat-icon>
+                </span>
+              </mat-checkbox>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Horarios disponibles -->
+          <mat-card class="form-card">
+            <mat-card-content>
+              <div class="section-header">
+                <mat-icon color="primary">schedule</mat-icon>
+                <h3>Horarios disponibles <span class="fecha-label">{{ fechaSeleccionadaFormateada || fechaSeleccionada }}</span></h3>
+              </div>
+
+              <div class="horarios-grid" *ngIf="horariosDisponibles.length > 0; else noHorarios">
+                <button
+                  *ngFor="let hora of horariosDisponibles"
+                  mat-stroked-button
+                  class="horario-btn"
+                  [class.horario-ocupado]="estaOcupado(hora)"
+                  [class.horario-seleccionado]="horaSeleccionada === hora"
+                  [disabled]="estaOcupado(hora)"
+                  (click)="horaSeleccionada = hora"
+                >
+                  <mat-icon>{{ estaOcupado(hora) ? 'block' : horaSeleccionada === hora ? 'check_circle' : 'access_time' }}</mat-icon>
+                  <div class="hora-info">
+                    <span class="hora-inicio">{{ hora }}</span>
+                    <span class="hora-guion">—</span>
+                    <span class="hora-fin">{{ calcularHoraFin(hora) }}</span>
+                  </div>
+                </button>
+              </div>
+
+              <ng-template #noHorarios>
+                <div class="empty-horarios">
+                  <mat-icon>event_busy</mat-icon>
+                  <p>No hay horarios disponibles para este día</p>
+                </div>
+              </ng-template>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Resumen de reserva -->
+          <mat-card class="resumen-card" *ngIf="horaSeleccionada && !estaOcupado(horaSeleccionada)">
+            <mat-card-content>
+              <div class="section-header">
+                <mat-icon color="primary">receipt_long</mat-icon>
+                <h3>Resumen de tu reserva</h3>
+              </div>
+              <mat-list>
+                <mat-list-item>
+                  <mat-icon matListItemIcon color="primary">sports</mat-icon>
+                  <span matListItemTitle>Deporte</span>
+                  <span matListItemLine>{{ sport.nombre }}</span>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+                <mat-list-item>
+                  <mat-icon matListItemIcon color="primary">event</mat-icon>
+                  <span matListItemTitle>Fecha</span>
+                  <span matListItemLine>{{ fechaSeleccionadaFormateada || fechaSeleccionada }}</span>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+                <mat-list-item>
+                  <mat-icon matListItemIcon color="primary">schedule</mat-icon>
+                  <span matListItemTitle>Hora</span>
+                  <span matListItemLine>{{ horaSeleccionada }} — {{ calcularHoraFin(horaSeleccionada) }}</span>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+                <mat-list-item>
+                  <mat-icon matListItemIcon color="primary">location_on</mat-icon>
+                  <span matListItemTitle>Ubicación</span>
+                  <span matListItemLine>{{ ubicacionSeleccionada || 'Sin especificar' }}</span>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+                <mat-list-item>
+                  <mat-icon matListItemIcon color="primary">group</mat-icon>
+                  <span matListItemTitle>Jugadores máximos</span>
+                  <span matListItemLine>{{ sport.max_jugadores }}</span>
+                </mat-list-item>
+              </mat-list>
+            </mat-card-content>
+            <mat-card-actions align="end">
+              <button mat-raised-button color="primary"
+                (click)="crearReserva()"
+                [disabled]="cargando || !ubicacionSeleccionada"
+                class="btn-confirmar">
+                <mat-spinner *ngIf="cargando" diameter="18" class="btn-spinner"></mat-spinner>
+                <mat-icon *ngIf="!cargando">check_circle</mat-icon>
+                {{ cargando ? 'Creando...' : 'Confirmar Reserva' }}
+              </button>
+            </mat-card-actions>
+          </mat-card>
+
     </div>
 
-    <!-- Búsqueda por ubicación (texto) -->
-    <div class="filtro-ubicacion" *ngIf="!usarGeolocalizacion">
-      <label for="filtroUbicacion">Filtrar por ubicación:</label>
-      <div class="filtro-input-group">
-        <input
-          type="text"
-          id="filtroUbicacion"
-          [(ngModel)]="filtroUbicacion"
-          placeholder="Ej: Madrid, Martos, Jaén..."
-          class="input-ubicacion"
-        />
-        <button class="btn-buscar" (click)="buscarPorUbicacion()" [disabled]="cargando">
-          🔍 Buscar
-        </button>
-        <button class="btn-limpiar" (click)="limpiarFiltro()" [disabled]="cargando">
-          ✖ Limpiar
-        </button>
-      </div>
-    </div>
+    <div class="tab-content" *ngIf="modo === 'unirse'">
 
-    <!-- Búsqueda por radio (geolocalización) -->
-    <div class="filtro-radio" *ngIf="usarGeolocalizacion">
-      <div class="geolocalizacion-controles">
-        <button
-          class="btn-ubicacion"
-          (click)="obtenerUbicacion()"
-          [disabled]="cargando || geolocalizacionActiva"
-          [class.activo]="geolocalizacionActiva"
-        >
-          {{ geolocalizacionActiva ? '✅ Ubicación activada' : '📍 Activar mi ubicación' }}
-        </button>
+          <!-- Búsqueda -->
+          <mat-card class="form-card">
+            <mat-card-content>
+              <div class="section-header">
+                <mat-icon color="primary">manage_search</mat-icon>
+                <h3>Buscar partidos</h3>
+              </div>
 
-        <div class="radio-selector" *ngIf="geolocalizacionActiva">
-          <label for="radioBusqueda">Radio de búsqueda:</label>
-          <select id="radioBusqueda" [(ngModel)]="radioBusqueda" class="select-radio">
-            <option *ngFor="let radio of radiosDisponibles" [value]="radio">
-              {{ radio }} km
-            </option>
-          </select>
-          <button class="btn-buscar" (click)="buscarPorRadio()" [disabled]="cargando">
-            🔍 Buscar
-          </button>
-        </div>
-      </div>
-    </div>
+              <div class="busqueda-toggle">
+                <button mat-stroked-button
+                  [color]="!usarGeolocalizacion ? 'primary' : ''"
+                  [class.active-toggle]="!usarGeolocalizacion"
+                  (click)="usarGeolocalizacion = false">
+                  <mat-icon>search</mat-icon>
+                  Por nombre
+                </button>
+                <button mat-stroked-button
+                  [color]="usarGeolocalizacion ? 'primary' : ''"
+                  [class.active-toggle]="usarGeolocalizacion"
+                  (click)="usarGeolocalizacion = true">
+                  <mat-icon>my_location</mat-icon>
+                  Por cercanía
+                </button>
+              </div>
 
-    <div class="partidos-disponibles" *ngIf="reservasDisponibles.length > 0">
-      <div class="partido-card" *ngFor="let reserva of reservasDisponibles">
-        <div class="partido-info">
-          <div class="partido-header">
-            <h4>{{ reserva.fecha }} - {{ reserva.hora_inicio }}</h4>
-            <span class="badge" [class.completo]="reserva.estado === 'completo'">
-              {{ reserva.jugadores_actuales }}/{{ reserva.max_jugadores }}
-            </span>
+              <!-- Búsqueda por texto -->
+              <div *ngIf="!usarGeolocalizacion" class="busqueda-form">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Filtrar por ubicación</mat-label>
+                  <input matInput [(ngModel)]="filtroUbicacion"
+                    placeholder="Ej: Madrid, Martos, Jaén..." />
+                  <mat-icon matSuffix>location_on</mat-icon>
+                </mat-form-field>
+                <div class="form-actions">
+                  <button mat-raised-button color="primary" (click)="buscarPorUbicacion()" [disabled]="cargando">
+                    <mat-icon>search</mat-icon>
+                    Buscar
+                  </button>
+                  <button mat-stroked-button (click)="limpiarFiltro()" [disabled]="cargando">
+                    <mat-icon>clear</mat-icon>
+                    Limpiar
+                  </button>
+                </div>
+              </div>
+
+              <!-- Búsqueda por radio -->
+              <div *ngIf="usarGeolocalizacion" class="busqueda-form">
+                <button mat-raised-button
+                  [color]="geolocalizacionActiva ? '' : 'primary'"
+                  (click)="obtenerUbicacion()"
+                  [disabled]="cargando || geolocalizacionActiva"
+                  class="btn-geo"
+                  [class.btn-geo-activa]="geolocalizacionActiva">
+                  <mat-icon>{{ geolocalizacionActiva ? 'check_circle' : 'my_location' }}</mat-icon>
+                  {{ geolocalizacionActiva ? 'Ubicación activada' : 'Activar mi ubicación' }}
+                </button>
+
+                <div *ngIf="geolocalizacionActiva" class="radio-form">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Radio de búsqueda</mat-label>
+                    <mat-select [(ngModel)]="radioBusqueda">
+                      <mat-option *ngFor="let radio of radiosDisponibles" [value]="radio">
+                        {{ radio }} km
+                      </mat-option>
+                    </mat-select>
+                    <mat-icon matSuffix>radar</mat-icon>
+                  </mat-form-field>
+                  <button mat-raised-button color="primary" (click)="buscarPorRadio()" [disabled]="cargando">
+                    <mat-icon>search</mat-icon>
+                    Buscar
+                  </button>
+                </div>
+              </div>
+
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Spinner carga partidos -->
+          <div class="lista-loading" *ngIf="cargando">
+            <mat-spinner diameter="36"></mat-spinner>
           </div>
 
-          <p class="creador">Creado por: {{ reserva.creador?.name }}</p>
-          <p class="horario">{{ reserva.hora_inicio }} - {{ reserva.hora_fin }}</p>
-          <p class="pista">📍 {{ reserva.pista }}</p>
-          <p class="ubicacion" *ngIf="reserva.ubicacion">🌍 {{ reserva.ubicacion }}</p>
-          <p class="distancia" *ngIf="reserva.distancia_km !== undefined">
-            📏 A {{ reserva.distancia_km }} km de ti
-          </p>
+          <!-- Lista de partidos disponibles -->
+          <div *ngIf="reservasDisponibles.length > 0 && !cargando" class="partidos-lista">
+            <h3 class="lista-titulo">
+              <mat-icon color="primary">sports</mat-icon>
+              Partidos disponibles
+              <span class="count-badge">{{ reservasDisponibles.length }}</span>
+            </h3>
 
-          <div class="jugadores" *ngIf="reserva.usuarios && reserva.usuarios.length > 0">
-            <p class="jugadores-titulo">Jugadores:</p>
-            <div class="jugadores-lista">
-              <span class="jugador" *ngFor="let usuario of reserva.usuarios">
-                {{ usuario.name }}
-              </span>
-            </div>
+            <mat-card class="partido-card" *ngFor="let reserva of reservasDisponibles">
+              <mat-card-content>
+                <div class="partido-header">
+                  <div class="partido-title-group">
+                    <h4 class="partido-fecha">{{ reserva.fecha }}</h4>
+                    <span class="partido-hora">{{ reserva.hora_inicio }} — {{ reserva.hora_fin }}</span>
+                  </div>
+                  <mat-chip class="jugadores-chip" [class.chip-completo]="reserva.estado === 'completo'">
+                    <mat-icon>group</mat-icon>
+                    {{ reserva.jugadores_actuales }}/{{ reserva.max_jugadores }}
+                  </mat-chip>
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <div class="partido-detalles">
+                  <div class="detalle-item">
+                    <mat-icon color="primary">person</mat-icon>
+                    <span>{{ reserva.creador?.name }}</span>
+                  </div>
+                  <div class="detalle-item">
+                    <mat-icon color="primary">location_on</mat-icon>
+                    <span>{{ reserva.pista }}</span>
+                  </div>
+                  <div class="detalle-item" *ngIf="reserva.ubicacion">
+                    <mat-icon color="primary">map</mat-icon>
+                    <span>{{ reserva.ubicacion }}</span>
+                  </div>
+                  <div class="detalle-item" *ngIf="reserva.distancia_km !== undefined">
+                    <mat-icon color="primary">near_me</mat-icon>
+                    <span>A {{ reserva.distancia_km }} km de ti</span>
+                  </div>
+                </div>
+
+                <div *ngIf="reserva.usuarios && reserva.usuarios.length > 0" class="jugadores-section">
+                  <p class="jugadores-label">Jugadores apuntados:</p>
+                  <mat-chip-set>
+                    <mat-chip *ngFor="let usuario of reserva.usuarios" class="jugador-chip">
+                      <mat-icon>person</mat-icon>
+                      {{ usuario.name }}
+                    </mat-chip>
+                  </mat-chip-set>
+                </div>
+              </mat-card-content>
+
+              <mat-card-actions align="end">
+                <button mat-raised-button
+                  [color]="reserva.estado !== 'completo' ? 'primary' : ''"
+                  (click)="unirseAReserva(reserva)"
+                  [disabled]="cargando || reserva.estado === 'completo'">
+                  <mat-icon>{{ reserva.estado === 'completo' ? 'block' : 'add_circle' }}</mat-icon>
+                  {{ reserva.estado === 'completo' ? 'Completo' : 'Unirse' }}
+                </button>
+              </mat-card-actions>
+            </mat-card>
           </div>
-        </div>
 
-        <button
-          class="btn-unirse"
-          (click)="unirseAReserva(reserva)"
-          [disabled]="cargando || reserva.estado === 'completo'"
-        >
-          {{ reserva.estado === 'completo' ? 'Completo' : 'Unirse' }}
-        </button>
-      </div>
+          <!-- Estado vacío -->
+          <div class="empty-partidos" *ngIf="reservasDisponibles.length === 0 && !cargando">
+            <mat-card class="empty-card">
+              <mat-card-content>
+                <mat-icon class="empty-icon">sports_off</mat-icon>
+                <h3>Sin partidos disponibles</h3>
+                <p>Usa el filtro para buscar partidos, o crea uno tú mismo</p>
+                <button mat-raised-button color="primary" (click)="cambiarModo('crear')">
+                  <mat-icon>add_circle</mat-icon>
+                  Crear Partido
+                </button>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
     </div>
 
-    <div class="no-partidos" *ngIf="reservasDisponibles.length === 0 && !cargando">
-      <p>Busca partidos disponibles usando el filtro de ubicación</p>
-      <p class="sugerencia">¿No encuentras ninguno? ¡Crea uno tú!</p>
-      <button class="btn-crear" (click)="cambiarModo('crear')">Crear Partido</button>
+    <!-- Mensaje feedback -->
+    <div class="snack-mensaje" *ngIf="mensaje"
+      [class.snack-error]="mensajeTipo === 'error'"
+      [class.snack-success]="mensajeTipo === 'success'"
+      [class.snack-info]="mensajeTipo === 'info'">
+      <mat-icon>{{ mensajeTipo === 'error' ? 'error_outline' : mensajeTipo === 'success' ? 'check_circle' : 'info' }}</mat-icon>
+      {{ mensaje }}
     </div>
-  </div>
 
-  <!-- Mensaje de feedback -->
-  <div class="mensaje" *ngIf="mensaje"
-       [class.error]="mensajeTipo === 'error'"
-       [class.success]="mensajeTipo === 'success'"
-       [class.info]="mensajeTipo === 'info'">
-    {{ mensaje }}
   </div>
-
-  <!-- Loader -->
-  <div class="loader" *ngIf="cargando">
-    <div class="spinner"></div>
-  </div>
-  </div>
+</div>
