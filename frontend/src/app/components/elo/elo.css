@@ -58,5 +58,10 @@
 .send-icon{color:#1976D2!important}
 .view-all-item{cursor:pointer!important;padding:16px!important;display:flex;align-items:center;justify-content:center;gap:12px;height:auto!important;color:#1976D2!important;font-weight:700!important}
 
+:host ::ng-deep .conversation-item.mdc-list-item{height:auto!important;min-height:78px!important;align-items:flex-start!important}
+:host ::ng-deep .conversation-item .mdc-list-item__content,
+:host ::ng-deep .conversation-item .mat-mdc-list-item-unscoped-content{display:flex!important;align-items:flex-start!important;width:100%;overflow:visible!important}
+:host ::ng-deep .conversation-item .mdc-list-item__primary-text{display:block!important;line-height:1.25!important;overflow:visible!important}
+
 
 @media (max-width:768px){.header{padding:0 16px!important}.elo-content{padding:20px 16px 48px}.deportes-grid{grid-template-columns:1fr}.messages-drawer{width:100%;right:-100%}}

@@ -75,6 +75,11 @@
 .send-icon{color:#1976D2!important}
 .view-all-item{cursor:pointer!important;padding:16px!important;display:flex;align-items:center;justify-content:center;gap:12px;height:auto!important;color:#1976D2!important;font-weight:700!important}
 
+:host ::ng-deep .conversation-item.mdc-list-item{height:auto!important;min-height:78px!important;align-items:flex-start!important}
+:host ::ng-deep .conversation-item .mdc-list-item__content,
+:host ::ng-deep .conversation-item .mat-mdc-list-item-unscoped-content{display:flex!important;align-items:flex-start!important;width:100%;overflow:visible!important}
+:host ::ng-deep .conversation-item .mdc-list-item__primary-text{display:block!important;line-height:1.25!important;overflow:visible!important}
+
 
 @media (max-width:600px){.header{padding:0 16px!important}.reservar-content{padding:0 16px 44px}.sport-icon-wrap{width:56px;height:56px}.sport-title{font-size:22px}.form-row{flex-direction:column}.horarios-grid{grid-template-columns:repeat(auto-fill,minmax(136px,1fr))}.snack-mensaje{left:16px;right:16px;transform:none;white-space:normal;bottom:16px}}
 @media (max-width:900px){.messages-drawer{width:100%;right:-100%}}
