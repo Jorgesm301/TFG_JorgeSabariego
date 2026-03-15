@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { BookingService, IBooking } from '../../services/booking';
 import { SportsService, Sport } from '../../services/sports.service';
 import { AuthService } from '../../services/auth';
+import { MessageService, IConversation } from '../../services/message.service';
+import { FriendshipService, IUser } from '../../services/friendship.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,6 +23,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatBadgeModule } from '@angular/material/badge';
 
 @Component({
   selector: 'app-reservar',
@@ -30,7 +33,7 @@ import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
     MatFormFieldModule, MatInputModule, MatSelectModule, MatCheckboxModule,
     MatProgressSpinnerModule, MatChipsModule, MatListModule,
     MatDividerModule, MatMenuModule, MatTooltipModule,
-    MatDatepickerModule, MatNativeDateModule
+    MatDatepickerModule, MatNativeDateModule, MatBadgeModule
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es-ES' }
@@ -74,6 +77,17 @@ export class Reservar implements OnInit, OnDestroy {
   // Debounce geocoding manual
   geocodingTimeout: any = null;
 
+  // Mensajeria
+  drawerAbierto = false;
+  conversaciones: IConversation[] = [];
+  cargandoConversaciones = false;
+  private intervaloMensajes: any;
+
+  // Nuevo mensaje
+  modoNuevoMensaje = false;
+  amigos: IUser[] = [];
+  cargandoAmigos = false;
+
   // ⚠️ Ajusta el puerto si tu Laravel corre en otro
   private readonly backendUrl = 'http://127.0.0.1:8000';
 
@@ -98,6 +112,8 @@ export class Reservar implements OnInit, OnDestroy {
     private bookingService: BookingService,
     private sportService: SportsService,
     private authService: AuthService,
+    private messageService: MessageService,
+    private friendshipService: FriendshipService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -116,6 +132,11 @@ export class Reservar implements OnInit, OnDestroy {
 
     this.cargarSport();
 
+    if (this.estaLogueado) {
+      this.cargarConversaciones();
+      this.iniciarActualizacionMensajes();
+    }
+
     setTimeout(() => {
       if (this.cargando && !this.sport) {
         this.cargando = false;
@@ -127,6 +148,100 @@ export class Reservar implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.geocodingTimeout) {
       clearTimeout(this.geocodingTimeout);
+    }
+
+    if (this.intervaloMensajes) {
+      clearInterval(this.intervaloMensajes);
+    }
+  }
+
+  cargarConversaciones(): void {
+    if (!this.estaLogueado) return;
+
+    this.cargandoConversaciones = true;
+    this.messageService.listarConversaciones().subscribe({
+      next: (data) => {
+        this.conversaciones = data;
+        this.cargandoConversaciones = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar conversaciones:', err);
+        this.cargandoConversaciones = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  iniciarActualizacionMensajes(): void {
+    this.intervaloMensajes = setInterval(() => {
+      this.cargarConversaciones();
+    }, 30000);
+  }
+
+  getTotalNoLeidos(): number {
+    return this.conversaciones.reduce((sum, conv) => sum + conv.no_leidos, 0);
+  }
+
+  toggleDrawer(): void {
+    this.drawerAbierto = !this.drawerAbierto;
+    if (this.drawerAbierto) {
+      this.cargarConversaciones();
+    }
+  }
+
+  cerrarDrawer(): void {
+    this.drawerAbierto = false;
+    this.modoNuevoMensaje = false;
+  }
+
+  abrirNuevoMensaje(): void {
+    this.modoNuevoMensaje = true;
+    this.cargarAmigos();
+  }
+
+  volverAConversaciones(): void {
+    this.modoNuevoMensaje = false;
+  }
+
+  cargarAmigos(): void {
+    this.cargandoAmigos = true;
+    this.friendshipService.listarAmigos().subscribe({
+      next: (data) => {
+        this.amigos = data;
+        this.cargandoAmigos = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar amigos:', err);
+        this.cargandoAmigos = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  abrirChat(amigoId: number): void {
+    this.cerrarDrawer();
+    this.router.navigate(['/chat', amigoId]);
+  }
+
+  irAMensajes(): void {
+    this.cerrarDrawer();
+    this.router.navigate(['/mensajes']);
+  }
+
+  formatearFecha(fecha: string): string {
+    const date = new Date(fecha);
+    const hoy = new Date();
+    const ayer = new Date(hoy);
+    ayer.setDate(hoy.getDate() - 1);
+
+    if (date.toDateString() === hoy.toDateString()) {
+      return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    } else if (date.toDateString() === ayer.toDateString()) {
+      return 'Ayer';
+    } else {
+      return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
     }
   }
 
