@@ -7,7 +7,6 @@ import { MatchService, IEquiposResponse, ICambioElo } from '../../services/match
 import { AuthService } from '../../services/auth';
 import { MessageService, IConversation } from '../../services/message.service';
 import { FriendshipService, IUser } from '../../services/friendship.service';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -17,13 +16,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
+import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 
 @Component({
   selector: 'app-partido-detalle',
   standalone: true,
   imports: [
     CommonModule, RouterModule, FormsModule,
-    MatToolbarModule, MatButtonModule, MatIconModule, MatCardModule,
+    SharedPageHeaderComponent, MatButtonModule, MatIconModule, MatCardModule,
     MatListModule, MatDividerModule, MatProgressSpinnerModule,
     MatMenuModule, MatTooltipModule, MatBadgeModule
   ],
@@ -348,3 +348,4 @@ export class PartidoDetalle implements OnInit {
     return Math.round(suma / equipo.length);
   }
 }
+

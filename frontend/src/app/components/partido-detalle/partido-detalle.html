@@ -1,47 +1,13 @@
 <div class="partido-page">
-  <mat-toolbar class="header">
-    <a routerLink="/" class="brand" aria-label="Inicio">
-      <div class="brand-icon">
-        <mat-icon>sports_soccer</mat-icon>
-      </div>
-    </a>
-    <span class="spacer"></span>
-    <div class="actions">
-      <ng-container *ngIf="!estaLogueado">
-        <button mat-button (click)="irALogin()">Iniciar sesión</button>
-        <button mat-raised-button color="primary" (click)="irARegistro()">Registrarse</button>
-      </ng-container>
-      <ng-container *ngIf="estaLogueado">
-        <button mat-icon-button (click)="toggleDrawer()" class="messages-btn" matTooltip="Mensajes">
-          <mat-icon [matBadge]="getTotalNoLeidos()" [matBadgeHidden]="getTotalNoLeidos() === 0" matBadgeColor="warn" matBadgeSize="small">mail</mat-icon>
-        </button>
-        <button mat-button (click)="irAPerfil()">
-          <mat-icon>account_circle</mat-icon>
-          <span class="user-name">{{ nombreUsuario }}</span>
-        </button>
-      </ng-container>
-    </div>
-  </mat-toolbar>
-
-  <nav class="subheader">
-    <div class="subheader-inner">
-      <button mat-button [matMenuTriggerFor]="reservarMenu" class="nav-button">
-        <mat-icon>event_available</mat-icon>
-        <span>Reservar</span>
-        <mat-icon>arrow_drop_down</mat-icon>
-      </button>
-      <mat-menu #reservarMenu="matMenu">
-        <button mat-menu-item *ngFor="let deporte of deportesMenu" (click)="navegarADeporte(deporte.ruta)">
-          <mat-icon>{{ deporte.icon }}</mat-icon>
-          <span>{{ deporte.nombre }}</span>
-        </button>
-      </mat-menu>
-      <button mat-button routerLink="/mis-reservas" class="nav-button nav-button-active">
-        <mat-icon>book_online</mat-icon>
-        <span>Mis Reservas</span>
-      </button>
-    </div>
-  </nav>
+  <app-shared-page-header
+    [estaLogueado]="estaLogueado"
+    [nombreUsuario]="nombreUsuario"
+    [deportesMenu]="deportesMenu"
+    [totalNoLeidos]="getTotalNoLeidos()"
+    [activeNav]="'mis-reservas'"
+    (messagesClick)="toggleDrawer()"
+    (deporteSelect)="navegarADeporte($event)"
+  ></app-shared-page-header>
 
   <div class="partido-content">
     <div class="page-title-row">

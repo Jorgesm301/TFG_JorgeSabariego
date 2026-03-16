@@ -7,7 +7,6 @@ import { SportsService, Sport } from '../../services/sports.service';
 import { AuthService } from '../../services/auth';
 import { MessageService, IConversation } from '../../services/message.service';
 import { FriendshipService, IUser } from '../../services/friendship.service';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -24,12 +23,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatBadgeModule } from '@angular/material/badge';
+import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 
 @Component({
   selector: 'app-reservar',
   imports: [
     CommonModule, FormsModule, RouterModule,
-    MatToolbarModule, MatButtonModule, MatIconModule, MatCardModule,
+    SharedPageHeaderComponent, MatButtonModule, MatIconModule, MatCardModule,
     MatFormFieldModule, MatInputModule, MatSelectModule, MatCheckboxModule,
     MatProgressSpinnerModule, MatChipsModule, MatListModule,
     MatDividerModule, MatMenuModule, MatTooltipModule,
@@ -830,3 +830,4 @@ export class Reservar implements OnInit, OnDestroy {
     return iconMap[this.sportSlug] || 'sports';
   }
 }
+

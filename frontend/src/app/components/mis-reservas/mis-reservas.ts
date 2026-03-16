@@ -5,7 +5,6 @@ import { AuthService } from '../../services/auth';
 import { BookingService, IBooking } from '../../services/booking';
 import { MessageService, IConversation } from '../../services/message.service';
 import { FriendshipService, IUser } from '../../services/friendship.service';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -14,17 +13,17 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatListModule } from '@angular/material/list';
+import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 
 @Component({
   selector: 'app-mis-reservas',
   standalone: true,
   imports: [
     CommonModule, RouterModule,
-    MatToolbarModule, MatButtonModule, MatIconModule, MatCardModule,
+    SharedPageHeaderComponent, MatButtonModule, MatIconModule, MatCardModule,
     MatChipsModule, MatDividerModule, MatProgressSpinnerModule,
-    MatMenuModule, MatTooltipModule, MatBadgeModule, MatListModule
+    MatMenuModule, MatTooltipModule, MatListModule
   ],
   templateUrl: './mis-reservas.html',
   styleUrl: './mis-reservas.css'
@@ -236,3 +235,4 @@ export class MisReservas implements OnInit {
     return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
   }
 }
+

@@ -3,13 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { MessageService, IConversation } from '../../services/message.service';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatCardModule } from '@angular/material/card';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 
 @Component({
   selector: 'app-mensajes',
@@ -17,12 +15,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   imports: [
     CommonModule,
     RouterModule,
-    MatToolbarModule,
+    SharedPageHeaderComponent,
     MatButtonModule,
     MatIconModule,
-    MatMenuModule,
     MatCardModule,
-    MatBadgeModule,
     MatProgressSpinnerModule
   ],
   templateUrl: './mensajes.html',
@@ -97,3 +93,4 @@ export class Mensajes implements OnInit {
     return senderId === this.authService.getUserData()?.id;
   }
 }
+

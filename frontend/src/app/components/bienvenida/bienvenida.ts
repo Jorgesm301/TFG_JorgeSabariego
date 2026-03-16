@@ -4,14 +4,13 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { MessageService, IConversation } from '../../services/message.service';
 import { FriendshipService, IUser } from '../../services/friendship.service';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
+import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 
 type Slide = {
   title: string;
@@ -25,12 +24,11 @@ type Slide = {
   imports: [
     CommonModule,
     RouterModule,
-    MatToolbarModule,
+    SharedPageHeaderComponent,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
     MatCardModule,
-    MatBadgeModule,
     MatListModule,
     MatDividerModule
   ],
@@ -325,3 +323,4 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     event.target.style.display = 'none';
   }
 }
+

@@ -1,67 +1,12 @@
 <div class="page">
-
-  <!-- HEADER MATERIAL TOOLBAR -->
-  <mat-toolbar class="header">
-    <a routerLink="/" class="brand">
-      <div class="brand-icon">
-        <mat-icon>sports_soccer</mat-icon>
-      </div>
-    </a>
-
-    <span class="spacer"></span>
-
-    <div class="actions">
-      <!-- Mostrar cuando NO está logueado -->
-      <ng-container *ngIf="!estaLogueado">
-        <button mat-button (click)="irALogin()">Iniciar sesión</button>
-        <button mat-raised-button color="primary" (click)="irARegistro()">Registrarse</button>
-      </ng-container>
-
-      <!-- Mostrar cuando SÍ está logueado -->
-      <ng-container *ngIf="estaLogueado">
-        <!-- Botón de mensajes con badge -->
-        <button mat-icon-button (click)="toggleDrawer()" class="messages-btn">
-          <mat-icon [matBadge]="getTotalNoLeidos()" [matBadgeHidden]="getTotalNoLeidos() === 0" matBadgeColor="warn" matBadgeSize="small">
-            mail
-          </mat-icon>
-        </button>
-
-        <!-- Botón de perfil -->
-        <button mat-button (click)="irAPerfil()">
-          <mat-icon>account_circle</mat-icon>
-          <span class="user-name">{{ nombreUsuario }}</span>
-        </button>
-      </ng-container>
-    </div>
-  </mat-toolbar>
-
-  <!-- SUBHEADER CON MATERIAL MENU -->
-  <nav class="subheader">
-    <div class="subheader-inner">
-      <!-- Menú Reservar -->
-      <button mat-button [matMenuTriggerFor]="reservarMenu" class="nav-button">
-        <mat-icon>event_available</mat-icon>
-        <span>Reservar</span>
-        <mat-icon class="arrow-icon">arrow_drop_down</mat-icon>
-      </button>
-      <mat-menu #reservarMenu="matMenu" class="deportes-menu">
-        <button
-          mat-menu-item
-          *ngFor="let deporte of deportesMenu"
-          (click)="navegarADeporte(deporte.ruta)"
-        >
-          <mat-icon>{{ deporte.icon }}</mat-icon>
-          <span>{{ deporte.nombre }}</span>
-        </button>
-      </mat-menu>
-
-      <!-- Menú Mis Reservas -->
-      <button mat-button routerLink="/mis-reservas" class="nav-button">
-        <mat-icon>book_online</mat-icon>
-        <span>Mis Reservas</span>
-      </button>
-    </div>
-  </nav>
+  <app-shared-page-header
+    [estaLogueado]="estaLogueado"
+    [nombreUsuario]="nombreUsuario"
+    [deportesMenu]="deportesMenu"
+    [totalNoLeidos]="getTotalNoLeidos()"
+    (messagesClick)="toggleDrawer()"
+    (deporteSelect)="navegarADeporte($event)"
+  ></app-shared-page-header>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="content">

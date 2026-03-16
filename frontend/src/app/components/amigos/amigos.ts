@@ -2,22 +2,21 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../services/auth';
 import { MessageService, IConversation } from '../../services/message.service';
 import { FriendshipService, IUser, IFriendship } from '../../services/friendship.service';
 import { BlockedUserService, IBlockedUser } from '../../services/blocked-user.service';
+import { MatMenuModule } from '@angular/material/menu';
+import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 
 @Component({
   selector: 'app-amigos',
@@ -26,7 +25,7 @@ import { BlockedUserService, IBlockedUser } from '../../services/blocked-user.se
     CommonModule,
     RouterModule,
     FormsModule,
-    MatToolbarModule,
+    SharedPageHeaderComponent,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
@@ -35,7 +34,6 @@ import { BlockedUserService, IBlockedUser } from '../../services/blocked-user.se
     MatMenuModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    MatBadgeModule,
     MatListModule,
     MatDividerModule
   ],
@@ -389,3 +387,4 @@ export class Amigos implements OnInit, OnDestroy {
     this.router.navigate([ruta]);
   }
 }
+

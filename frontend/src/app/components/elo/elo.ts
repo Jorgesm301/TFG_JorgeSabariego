@@ -5,18 +5,15 @@ import { AuthService } from '../../services/auth';
 import { EloService } from '../../services/elo.service';
 import { MessageService, IConversation } from '../../services/message.service';
 import { FriendshipService, IUser } from '../../services/friendship.service';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 
 interface ISportElo {
   sport_name: string;
@@ -30,16 +27,13 @@ interface ISportElo {
   imports: [
     CommonModule,
     RouterModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
+    SharedPageHeaderComponent,
     MatCardModule,
     MatProgressSpinnerModule,
-    MatBadgeModule,
     MatListModule,
     MatDividerModule,
-    MatTooltipModule,
+    MatButtonModule,
+    MatIconModule,
     MatChipsModule,
     MatProgressBarModule
   ],
@@ -286,3 +280,4 @@ export class Elo implements OnInit {
     return deporte ? deporte.ruta : null;
   }
 }
+
