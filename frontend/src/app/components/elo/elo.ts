@@ -15,6 +15,14 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+
+interface ISportElo {
+  sport_name: string;
+  matches_played: number;
+  elo: number;
+}
 
 @Component({
   selector: 'app-elo',
@@ -31,13 +39,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatBadgeModule,
     MatListModule,
     MatDividerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatChipsModule,
+    MatProgressBarModule
   ],
   templateUrl: './elo.html',
   styleUrl: './elo.css',
 })
 export class Elo implements OnInit {
-  deportesElo: any[] = [];
+  deportesElo: ISportElo[] = [];
   cargandoElo = false;
   usuario: any = null;
 
@@ -92,7 +102,8 @@ export class Elo implements OnInit {
     this.cargandoElo = true;
     this.eloService.getMyElo().subscribe({
       next: (data) => {
-        this.deportesElo = data.sports;
+        const sports = Array.isArray(data?.sports) ? data.sports : [];
+        this.deportesElo = sports.sort((a: ISportElo, b: ISportElo) => b.elo - a.elo);
         this.cargandoElo = false;
         this.cdr.detectChanges();
       },
@@ -217,5 +228,61 @@ export class Elo implements OnInit {
     }
 
     return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+  }
+
+  get totalPartidos(): number {
+    return this.deportesElo.reduce((acum, deporte) => acum + deporte.matches_played, 0);
+  }
+
+  get eloPromedio(): number {
+    if (!this.deportesElo.length) return 0;
+    const total = this.deportesElo.reduce((acum, deporte) => acum + deporte.elo, 0);
+    return Math.round(total / this.deportesElo.length);
+  }
+
+  get mejorDeporte(): ISportElo | null {
+    return this.deportesElo.length ? this.deportesElo[0] : null;
+  }
+
+  getNivelPorElo(elo: number): string {
+    if (elo < 900) return 'Inicial';
+    if (elo < 1100) return 'Principiante';
+    if (elo < 1300) return 'Intermedio';
+    if (elo < 1500) return 'Avanzado';
+    return 'Competitivo';
+  }
+
+  getColorNivel(elo: number): 'primary' | 'accent' | 'warn' {
+    if (elo >= 1300) return 'primary';
+    if (elo >= 1000) return 'accent';
+    return 'warn';
+  }
+
+  getProgresoElo(elo: number): number {
+    const minimo = 700;
+    const maximo = 1800;
+    const clamped = Math.min(Math.max(elo, minimo), maximo);
+    return Math.round(((clamped - minimo) / (maximo - minimo)) * 100);
+  }
+
+  getIconoDeporte(nombreDeporte: string): string {
+    const nombre = nombreDeporte.toLowerCase();
+
+    if (nombre.includes('futbol')) return 'sports_soccer';
+    if (nombre.includes('baloncesto')) return 'sports_basketball';
+    if (nombre.includes('tenis') || nombre.includes('padel')) return 'sports_tennis';
+    if (nombre.includes('voleibol')) return 'sports_volleyball';
+    if (nombre.includes('natacion')) return 'pool';
+    if (nombre.includes('atletismo')) return 'directions_run';
+
+    return 'emoji_events';
+  }
+
+  getRutaReserva(nombreDeporte: string): string | null {
+    const deporte = this.deportesMenu.find(
+      (item) => item.nombre.toLowerCase() === nombreDeporte.toLowerCase()
+    );
+
+    return deporte ? deporte.ruta : null;
   }
 }

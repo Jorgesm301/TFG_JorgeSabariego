@@ -60,21 +60,64 @@
       <p>Cargando tus niveles...</p>
     </div>
 
+    <div class="stats-grid" *ngIf="!cargandoElo && deportesElo.length > 0">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <span class="stat-label">ELO medio</span>
+          <span class="stat-value">{{ eloPromedio }}</span>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <span class="stat-label">Deportes activos</span>
+          <span class="stat-value">{{ deportesElo.length }}</span>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <span class="stat-label">Partidos jugados</span>
+          <span class="stat-value">{{ totalPartidos }}</span>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card" *ngIf="mejorDeporte">
+        <mat-card-content>
+          <span class="stat-label">Mejor deporte</span>
+          <span class="stat-value stat-value-name">{{ mejorDeporte.sport_name }}</span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
     <div class="deportes-grid" *ngIf="!cargandoElo && deportesElo.length > 0">
       <mat-card class="deporte-card" *ngFor="let deporte of deportesElo">
         <mat-card-content>
           <div class="deporte-header">
             <div class="deporte-icon-wrap">
-              <mat-icon>emoji_events</mat-icon>
+              <mat-icon>{{ getIconoDeporte(deporte.sport_name) }}</mat-icon>
             </div>
             <div class="deporte-titulo">
               <h3 class="deporte-nombre">{{ deporte.sport_name }}</h3>
               <p class="deporte-partidos">{{ deporte.matches_played }} partidos jugados</p>
             </div>
+            <mat-chip class="nivel-chip" [color]="getColorNivel(deporte.elo)" selected>
+              {{ getNivelPorElo(deporte.elo) }}
+            </mat-chip>
           </div>
+
           <div class="deporte-elo">
             <div class="elo-badge-large">{{ deporte.elo }}</div>
             <div class="elo-label">Nivel ELO</div>
+            <mat-progress-bar mode="determinate" [value]="getProgresoElo(deporte.elo)"></mat-progress-bar>
+            <span class="progress-label">Progreso competitivo: {{ getProgresoElo(deporte.elo) }}%</span>
+          </div>
+
+          <div class="deporte-actions" *ngIf="getRutaReserva(deporte.sport_name) as rutaReserva">
+            <button mat-stroked-button color="primary" (click)="navegarADeporte(rutaReserva)">
+              <mat-icon>event_available</mat-icon>
+              Reservar {{ deporte.sport_name }}
+            </button>
           </div>
         </mat-card-content>
       </mat-card>
