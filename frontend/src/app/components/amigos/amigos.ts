@@ -17,6 +17,7 @@ import { FriendshipService, IUser, IFriendship } from '../../services/friendship
 import { BlockedUserService, IBlockedUser } from '../../services/blocked-user.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
+import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
 
 @Component({
   selector: 'app-amigos',
@@ -35,7 +36,8 @@ import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-p
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatListModule,
-    MatDividerModule
+    MatDividerModule,
+    SharedMessagesDrawerComponent
   ],
   templateUrl: './amigos.html',
   styleUrl: './amigos.css'

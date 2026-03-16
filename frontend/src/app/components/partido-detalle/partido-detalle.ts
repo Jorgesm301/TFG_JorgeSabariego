@@ -17,6 +17,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
+import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
 
 @Component({
   selector: 'app-partido-detalle',
@@ -25,7 +26,8 @@ import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-p
     CommonModule, RouterModule, FormsModule,
     SharedPageHeaderComponent, MatButtonModule, MatIconModule, MatCardModule,
     MatListModule, MatDividerModule, MatProgressSpinnerModule,
-    MatMenuModule, MatTooltipModule, MatBadgeModule
+    MatMenuModule, MatTooltipModule, MatBadgeModule,
+    SharedMessagesDrawerComponent
   ],
   templateUrl: './partido-detalle.html',
   styleUrl: './partido-detalle.css'

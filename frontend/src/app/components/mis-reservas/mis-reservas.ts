@@ -15,6 +15,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatListModule } from '@angular/material/list';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
+import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
 
 @Component({
   selector: 'app-mis-reservas',
@@ -23,7 +24,7 @@ import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-p
     CommonModule, RouterModule,
     SharedPageHeaderComponent, MatButtonModule, MatIconModule, MatCardModule,
     MatChipsModule, MatDividerModule, MatProgressSpinnerModule,
-    MatMenuModule, MatTooltipModule, MatListModule
+    MatMenuModule, MatTooltipModule, MatListModule, SharedMessagesDrawerComponent
   ],
   templateUrl: './mis-reservas.html',
   styleUrl: './mis-reservas.css'

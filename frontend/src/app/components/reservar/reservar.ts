@@ -24,6 +24,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
+import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
 
 @Component({
   selector: 'app-reservar',
@@ -33,7 +34,8 @@ import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-p
     MatFormFieldModule, MatInputModule, MatSelectModule, MatCheckboxModule,
     MatProgressSpinnerModule, MatChipsModule, MatListModule,
     MatDividerModule, MatMenuModule, MatTooltipModule,
-    MatDatepickerModule, MatNativeDateModule, MatBadgeModule
+    MatDatepickerModule, MatNativeDateModule, MatBadgeModule,
+    SharedMessagesDrawerComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es-ES' }

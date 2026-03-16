@@ -14,6 +14,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
+import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
 
 interface ISportElo {
   sport_name: string;
@@ -35,7 +36,8 @@ interface ISportElo {
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    SharedMessagesDrawerComponent
   ],
   templateUrl: './elo.html',
   styleUrl: './elo.css',

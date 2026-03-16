@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
+import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
 
 @Component({
   selector: 'app-perfil',
@@ -31,7 +32,8 @@ import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-p
     MatDividerModule,
     MatChipsModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    SharedMessagesDrawerComponent
   ],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'

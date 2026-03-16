@@ -11,6 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
+import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
 
 type Slide = {
   title: string;
@@ -30,7 +31,8 @@ type Slide = {
     MatMenuModule,
     MatCardModule,
     MatListModule,
-    MatDividerModule
+    MatDividerModule,
+    SharedMessagesDrawerComponent
   ],
   templateUrl: './bienvenida.html',
   styleUrl: './bienvenida.css'
