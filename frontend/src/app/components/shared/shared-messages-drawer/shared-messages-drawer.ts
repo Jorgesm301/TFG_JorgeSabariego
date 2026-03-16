@@ -5,26 +5,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
-export interface IDrawerConversation {
-  amigo: {
-    id: number;
-    name: string;
-    last_name: string;
-  };
-  ultimo_mensaje: {
-    message: string;
-    created_at: string;
-  };
-  no_leidos: number;
-}
-
-export interface IDrawerFriend {
-  id: number;
-  name: string;
-  last_name: string;
-  email: string;
-}
+import { IConversation } from '../../../services/message.service';
+import { IUser } from '../../../services/friendship.service';
 
 @Component({
   selector: 'app-shared-messages-drawer',
@@ -45,10 +27,10 @@ export class SharedMessagesDrawerComponent {
   @Input() modoNuevoMensaje = false;
 
   @Input() cargandoConversaciones = false;
-  @Input() conversaciones: IDrawerConversation[] = [];
+  @Input() conversaciones: IConversation[] = [];
 
   @Input() cargandoAmigos = false;
-  @Input() amigos: IDrawerFriend[] = [];
+  @Input() amigos: IUser[] = [];
 
   @Output() cerrar = new EventEmitter<void>();
   @Output() abrirNuevoMensaje = new EventEmitter<void>();

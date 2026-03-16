@@ -244,21 +244,6 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['/mensajes']);
   }
 
-  formatearFecha(fecha: string): string {
-    const date = new Date(fecha);
-    const hoy = new Date();
-    const ayer = new Date(hoy);
-    ayer.setDate(hoy.getDate() - 1);
-
-    if (date.toDateString() === hoy.toDateString()) {
-      return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-    } else if (date.toDateString() === ayer.toDateString()) {
-      return 'Ayer';
-    } else {
-      return date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
-    }
-  }
-
   private startAutoSlide(): void {
     this.stopAutoSlide();
     this.timerId = setInterval(() => {
