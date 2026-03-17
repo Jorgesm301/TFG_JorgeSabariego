@@ -4,8 +4,8 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
 import { EloService } from '../../services/elo.service';
-import { MessageService, IConversation } from '../../services/message.service';
-import { FriendshipService, IUser } from '../../services/friendship.service';
+import { DrawerMessagesService } from '../../services/drawer-messages.service';
+import { DEPORTES_MENU } from '../../constants/sports.constants';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
@@ -43,30 +43,13 @@ export class Perfil implements OnInit, OnDestroy {
   deportesElo: any[] = [];
   cargandoElo = false;
   totalPartidos = 0;
-  drawerAbierto = false;
-  conversaciones: IConversation[] = [];
-  cargandoConversaciones = false;
-  modoNuevoMensaje = false;
-  amigosDrawer: IUser[] = [];
-  cargandoAmigosDrawer = false;
-  private intervaloMensajes: any;
-  deportesMenu = [
-    { nombre: 'Futbol', icon: 'sports_soccer', ruta: '/reservar/futbol' },
-    { nombre: 'Futbol Sala', icon: 'sports_soccer', ruta: '/reservar/futbol-sala' },
-    { nombre: 'Baloncesto', icon: 'sports_basketball', ruta: '/reservar/baloncesto' },
-    { nombre: 'Tenis', icon: 'sports_tennis', ruta: '/reservar/tenis' },
-    { nombre: 'Padel', icon: 'sports_tennis', ruta: '/reservar/padel' },
-    { nombre: 'Voleibol', icon: 'sports_volleyball', ruta: '/reservar/voleibol' },
-    { nombre: 'Natacion', icon: 'pool', ruta: '/reservar/natacion' },
-    { nombre: 'Atletismo', icon: 'directions_run', ruta: '/reservar/atletismo' }
-  ];
+  deportesMenu = DEPORTES_MENU;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private eloService: EloService,
-    private messageService: MessageService,
-    private friendshipService: FriendshipService,
+    private drawerMessagesService: DrawerMessagesService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -78,15 +61,13 @@ export class Perfil implements OnInit, OnDestroy {
       this.router.navigate(['/login']);
     } else {
       this.cargarElo();
-      this.cargarConversaciones();
-      this.iniciarActualizacionMensajes();
+      this.drawerMessagesService.cargarConversaciones();
+      this.drawerMessagesService.iniciarActualizacionMensajes();
     }
   }
 
   ngOnDestroy(): void {
-    if (this.intervaloMensajes) {
-      clearInterval(this.intervaloMensajes);
-    }
+    this.drawerMessagesService.detenerActualizacionMensajes();
   }
 
   get nombreUsuario(): string {
@@ -109,26 +90,28 @@ export class Perfil implements OnInit, OnDestroy {
     });
   }
 
-  cargarConversaciones(): void {
-    this.cargandoConversaciones = true;
-    this.messageService.listarConversaciones().subscribe({
-      next: (data) => {
-        this.conversaciones = data;
-        this.cargandoConversaciones = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error al cargar conversaciones:', err);
-        this.cargandoConversaciones = false;
-        this.cdr.detectChanges();
-      }
-    });
+  get drawerAbierto(): boolean {
+    return this.drawerMessagesService.drawerAbierto$.value;
   }
 
-  iniciarActualizacionMensajes(): void {
-    this.intervaloMensajes = setInterval(() => {
-      this.cargarConversaciones();
-    }, 30000);
+  get modoNuevoMensaje(): boolean {
+    return this.drawerMessagesService.modoNuevoMensaje$.value;
+  }
+
+  get cargandoConversaciones(): boolean {
+    return this.drawerMessagesService.cargandoConversaciones$.value;
+  }
+
+  get conversaciones() {
+    return this.drawerMessagesService.conversaciones$.value;
+  }
+
+  get cargandoAmigosDrawer(): boolean {
+    return this.drawerMessagesService.cargandoAmigos$.value;
+  }
+
+  get amigosDrawer() {
+    return this.drawerMessagesService.amigos$.value;
   }
 
   getTotalNoLeidos(): number {
@@ -136,50 +119,27 @@ export class Perfil implements OnInit, OnDestroy {
   }
 
   toggleDrawer(): void {
-    this.drawerAbierto = !this.drawerAbierto;
-    if (this.drawerAbierto) {
-      this.cargarConversaciones();
-    }
+    this.drawerMessagesService.toggleDrawer();
   }
 
   cerrarDrawer(): void {
-    this.drawerAbierto = false;
-    this.modoNuevoMensaje = false;
+    this.drawerMessagesService.cerrarDrawer();
   }
 
   abrirNuevoMensaje(): void {
-    this.modoNuevoMensaje = true;
-    this.cargarAmigosDrawer();
+    this.drawerMessagesService.abrirNuevoMensaje();
   }
 
   volverAConversaciones(): void {
-    this.modoNuevoMensaje = false;
-  }
-
-  cargarAmigosDrawer(): void {
-    this.cargandoAmigosDrawer = true;
-    this.friendshipService.listarAmigos().subscribe({
-      next: (data) => {
-        this.amigosDrawer = data;
-        this.cargandoAmigosDrawer = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error al cargar amigos:', err);
-        this.cargandoAmigosDrawer = false;
-        this.cdr.detectChanges();
-      }
-    });
+    this.drawerMessagesService.volverAConversaciones();
   }
 
   abrirChat(amigoId: number): void {
-    this.cerrarDrawer();
-    this.router.navigate(['/chat', amigoId]);
+    this.drawerMessagesService.abrirChat(amigoId);
   }
 
   irAMensajes(): void {
-    this.cerrarDrawer();
-    this.router.navigate(['/mensajes']);
+    this.drawerMessagesService.irAMensajes();
   }
 
   logout() {

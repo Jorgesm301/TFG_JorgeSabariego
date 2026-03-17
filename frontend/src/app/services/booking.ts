@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { AuthService } from './auth';
+import { HttpBaseService } from '../utils/http-base.service';
 
 export interface IBooking {
   id?: number;
@@ -30,25 +30,7 @@ export interface IBooking {
 export class BookingService {
   private apiUrl = 'http://localhost:8000/api';
 
-  constructor(private http: HttpClient, private auth: AuthService) {}
-
-  private authHeadersOrNull(): HttpHeaders | null {
-    const token = this.auth.getToken();
-    if (!token) return null;
-
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-  }
-
-  private requireAuthHeaders(): HttpHeaders {
-    const headers = this.authHeadersOrNull();
-    if (!headers) {
-      // error controlable desde el subscribe()
-      throw new Error('Debes iniciar sesión.');
-    }
-    return headers;
-  }
+  constructor(private http: HttpClient, private httpBase: HttpBaseService) {}
 
   // Endpoints públicos
   getReservasPorSportYFecha(sportId: number, fecha: string): Observable<IBooking[]> {
@@ -67,7 +49,7 @@ export class BookingService {
   crearReserva(reserva: Partial<IBooking>): Observable<any> {
     let headers: HttpHeaders;
     try {
-      headers = this.requireAuthHeaders();
+      headers = this.httpBase.requireAuthHeaders();
     } catch (e: any) {
       return throwError(() => e);
     }
@@ -77,7 +59,7 @@ export class BookingService {
   unirseAReserva(bookingId: number): Observable<any> {
     let headers: HttpHeaders;
     try {
-      headers = this.requireAuthHeaders();
+      headers = this.httpBase.requireAuthHeaders();
     } catch (e: any) {
       return throwError(() => e);
     }
@@ -87,7 +69,7 @@ export class BookingService {
   salirseDeReserva(bookingId: number): Observable<any> {
     let headers: HttpHeaders;
     try {
-      headers = this.requireAuthHeaders();
+      headers = this.httpBase.requireAuthHeaders();
     } catch (e: any) {
       return throwError(() => e);
     }
@@ -97,7 +79,7 @@ export class BookingService {
   getMisReservas(): Observable<IBooking[]> {
     let headers: HttpHeaders;
     try {
-      headers = this.requireAuthHeaders();
+      headers = this.httpBase.requireAuthHeaders();
     } catch (e: any) {
       return throwError(() => e);
     }

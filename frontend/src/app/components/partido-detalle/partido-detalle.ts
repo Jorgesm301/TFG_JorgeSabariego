@@ -1,12 +1,12 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BookingService, IBooking } from '../../services/booking';
 import { MatchService, IEquiposResponse, ICambioElo } from '../../services/match.service';
 import { AuthService } from '../../services/auth';
-import { MessageService, IConversation } from '../../services/message.service';
-import { FriendshipService, IUser } from '../../services/friendship.service';
+import { DrawerMessagesService } from '../../services/drawer-messages.service';
+import { DEPORTES_MENU } from '../../constants/sports.constants';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -32,7 +32,7 @@ import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/
   templateUrl: './partido-detalle.html',
   styleUrl: './partido-detalle.css'
 })
-export class PartidoDetalle implements OnInit {
+export class PartidoDetalle implements OnInit, OnDestroy {
   bookingId: number | null = null;
   booking: IBooking | null = null;
   equipos: IEquiposResponse | null = null;
@@ -47,25 +47,7 @@ export class PartidoDetalle implements OnInit {
   cambiosElo: ICambioElo[] = [];
   resultadoRegistrado = false;
 
-  drawerAbierto = false;
-  conversaciones: IConversation[] = [];
-  cargandoConversaciones = false;
-  private intervaloMensajes: any;
-
-  modoNuevoMensaje = false;
-  amigos: IUser[] = [];
-  cargandoAmigos = false;
-
-  deportesMenu = [
-    { nombre: 'Fútbol', icon: 'sports_soccer', ruta: '/reservar/futbol' },
-    { nombre: 'Fútbol Sala', icon: 'sports_soccer', ruta: '/reservar/futbol-sala' },
-    { nombre: 'Baloncesto', icon: 'sports_basketball', ruta: '/reservar/baloncesto' },
-    { nombre: 'Tenis', icon: 'sports_tennis', ruta: '/reservar/tenis' },
-    { nombre: 'Pádel', icon: 'sports_tennis', ruta: '/reservar/padel' },
-    { nombre: 'Voleibol', icon: 'sports_volleyball', ruta: '/reservar/voleibol' },
-    { nombre: 'Natación', icon: 'pool', ruta: '/reservar/natacion' },
-    { nombre: 'Atletismo', icon: 'directions_run', ruta: '/reservar/atletismo' }
-  ];
+  deportesMenu = DEPORTES_MENU;
 
   constructor(
     private route: ActivatedRoute,
@@ -73,8 +55,7 @@ export class PartidoDetalle implements OnInit {
     private bookingService: BookingService,
     private matchService: MatchService,
     private authService: AuthService,
-    private messageService: MessageService,
-    private friendshipService: FriendshipService,
+    private drawerMessagesService: DrawerMessagesService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -87,15 +68,13 @@ export class PartidoDetalle implements OnInit {
     });
 
     if (this.estaLogueado) {
-      this.cargarConversaciones();
-      this.iniciarActualizacionMensajes();
+      this.drawerMessagesService.cargarConversaciones();
+      this.drawerMessagesService.iniciarActualizacionMensajes();
     }
   }
 
   ngOnDestroy(): void {
-    if (this.intervaloMensajes) {
-      clearInterval(this.intervaloMensajes);
-    }
+    this.drawerMessagesService.detenerActualizacionMensajes();
   }
 
   cargarDetalles(): void {
@@ -241,27 +220,28 @@ export class PartidoDetalle implements OnInit {
     this.router.navigate([ruta]);
   }
 
-  cargarConversaciones(): void {
-    if (!this.estaLogueado) return;
-
-    this.cargandoConversaciones = true;
-    this.messageService.listarConversaciones().subscribe({
-      next: (data) => {
-        this.conversaciones = data;
-        this.cargandoConversaciones = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.cargandoConversaciones = false;
-        this.cdr.detectChanges();
-      }
-    });
+  get drawerAbierto(): boolean {
+    return this.drawerMessagesService.drawerAbierto$.value;
   }
 
-  iniciarActualizacionMensajes(): void {
-    this.intervaloMensajes = setInterval(() => {
-      this.cargarConversaciones();
-    }, 30000);
+  get modoNuevoMensaje(): boolean {
+    return this.drawerMessagesService.modoNuevoMensaje$.value;
+  }
+
+  get cargandoConversaciones(): boolean {
+    return this.drawerMessagesService.cargandoConversaciones$.value;
+  }
+
+  get conversaciones() {
+    return this.drawerMessagesService.conversaciones$.value;
+  }
+
+  get cargandoAmigos(): boolean {
+    return this.drawerMessagesService.cargandoAmigos$.value;
+  }
+
+  get amigos() {
+    return this.drawerMessagesService.amigos$.value;
   }
 
   getTotalNoLeidos(): number {
@@ -269,49 +249,27 @@ export class PartidoDetalle implements OnInit {
   }
 
   toggleDrawer(): void {
-    this.drawerAbierto = !this.drawerAbierto;
-    if (this.drawerAbierto) {
-      this.cargarConversaciones();
-    }
+    this.drawerMessagesService.toggleDrawer();
   }
 
   cerrarDrawer(): void {
-    this.drawerAbierto = false;
-    this.modoNuevoMensaje = false;
+    this.drawerMessagesService.cerrarDrawer();
   }
 
   abrirNuevoMensaje(): void {
-    this.modoNuevoMensaje = true;
-    this.cargarAmigos();
+    this.drawerMessagesService.abrirNuevoMensaje();
   }
 
   volverAConversaciones(): void {
-    this.modoNuevoMensaje = false;
-  }
-
-  cargarAmigos(): void {
-    this.cargandoAmigos = true;
-    this.friendshipService.listarAmigos().subscribe({
-      next: (data) => {
-        this.amigos = data;
-        this.cargandoAmigos = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.cargandoAmigos = false;
-        this.cdr.detectChanges();
-      }
-    });
+    this.drawerMessagesService.volverAConversaciones();
   }
 
   abrirChat(amigoId: number): void {
-    this.cerrarDrawer();
-    this.router.navigate(['/chat', amigoId]);
+    this.drawerMessagesService.abrirChat(amigoId);
   }
 
   irAMensajes(): void {
-    this.cerrarDrawer();
-    this.router.navigate(['/mensajes']);
+    this.drawerMessagesService.irAMensajes();
   }
 
   get puedeGenerarEquipos(): boolean {

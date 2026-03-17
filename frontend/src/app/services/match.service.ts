@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { AuthService } from './auth';
+import { HttpBaseService } from '../utils/http-base.service';
 
 export interface IEquipo {
   id: number;
@@ -60,21 +60,11 @@ export interface IPartidoHistorial {
 export class MatchService {
   private apiUrl = 'http://localhost:8000/api';
 
-  constructor(private http: HttpClient, private auth: AuthService) {}
-
-  private headersOrThrow(): HttpHeaders {
-    const token = this.auth.getToken(); // ✅ usa auth_token
-    if (!token) throw new Error('Debes iniciar sesión.');
-
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    });
-  }
+  constructor(private http: HttpClient, private httpBase: HttpBaseService) {}
 
   generarEquipos(bookingId: number): Observable<IGenerarEquiposResponse> {
     let headers: HttpHeaders;
-    try { headers = this.headersOrThrow(); } catch (e: any) { return throwError(() => e); }
+    try { headers = this.httpBase.requireAuthHeaders(); } catch (e: any) { return throwError(() => e); }
 
     return this.http.post<IGenerarEquiposResponse>(
       `${this.apiUrl}/matches/${bookingId}/generar-equipos`,
@@ -85,7 +75,7 @@ export class MatchService {
 
   obtenerEquipos(bookingId: number): Observable<IEquiposResponse> {
     let headers: HttpHeaders;
-    try { headers = this.headersOrThrow(); } catch (e: any) { return throwError(() => e); }
+    try { headers = this.httpBase.requireAuthHeaders(); } catch (e: any) { return throwError(() => e); }
 
     return this.http.get<IEquiposResponse>(
       `${this.apiUrl}/matches/${bookingId}/equipos`,
@@ -95,7 +85,7 @@ export class MatchService {
 
   registrarResultado(bookingId: number, team1Score: number, team2Score: number): Observable<IResultadoResponse> {
     let headers: HttpHeaders;
-    try { headers = this.headersOrThrow(); } catch (e: any) { return throwError(() => e); }
+    try { headers = this.httpBase.requireAuthHeaders(); } catch (e: any) { return throwError(() => e); }
 
     return this.http.post<IResultadoResponse>(
       `${this.apiUrl}/matches/${bookingId}/resultado`,
@@ -106,7 +96,7 @@ export class MatchService {
 
   getHistorialPartidos(): Observable<IPartidoHistorial[]> {
     let headers: HttpHeaders;
-    try { headers = this.headersOrThrow(); } catch (e: any) { return throwError(() => e); }
+    try { headers = this.httpBase.requireAuthHeaders(); } catch (e: any) { return throwError(() => e); }
 
     return this.http.get<IPartidoHistorial[]>(
       `${this.apiUrl}/mis-partidos`,
