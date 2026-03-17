@@ -4,12 +4,16 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth';
 import { MessageService, IConversation } from '../../services/message.service';
 import { FriendshipService, IUser } from '../../services/friendship.service';
+import { BookingService, IBooking } from '../../services/booking';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
 
@@ -32,6 +36,9 @@ type Slide = {
     MatCardModule,
     MatListModule,
     MatDividerModule,
+    MatChipsModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
     SharedMessagesDrawerComponent
   ],
   templateUrl: './bienvenida.html',
@@ -53,6 +60,18 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   modoNuevoMensaje = false;
   amigos: IUser[] = [];
   cargandoAmigos = false;
+
+  // Próximo partido y calendario
+  proximoPartido: IBooking | null = null;
+  misPartidos: IBooking[] = [];
+  cargandoPartidos = false;
+  partidosPorDia: Map<string, IBooking[]> = new Map();
+
+  // Calendario visual
+  mesActual = new Date().getMonth();
+  añoActual = new Date().getFullYear();
+  diasCalendario: (number | null)[] = [];
+  nombreMes = '';
 
   deportesMenu = [
 
@@ -117,6 +136,7 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     private authService: AuthService,
     private messageService: MessageService,
     private friendshipService: FriendshipService,
+    private bookingService: BookingService,
     private el: ElementRef
   ) {}
 
@@ -134,6 +154,13 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     if (this.estaLogueado) {
       this.cargarConversaciones();
       this.iniciarActualizacionMensajes();
+      this.cargarMisPartidos();
+      // Recargar partidos cada 60 segundos
+      setInterval(() => {
+        if (this.estaLogueado) {
+          this.cargarMisPartidos();
+        }
+      }, 60000);
     }
   }
 
@@ -147,6 +174,141 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     if (this.intervaloMensajes) {
       clearInterval(this.intervaloMensajes);
     }
+  }
+
+  // ===== PARTIDOS =====
+  cargarMisPartidos(): void {
+    this.cargandoPartidos = true;
+    this.bookingService.getMisReservas().subscribe({
+      next: (partidos) => {
+        // Filtrar solo los partidos canceleados
+        this.misPartidos = partidos.filter(p => p.estado !== 'cancelado' && p.fecha);
+        console.log('Partidos cargados:', this.misPartidos);
+        this.obtenerProximoPartido();
+        this.agruparPartidosPorDia();
+        this.cargandoPartidos = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar partidos:', err);
+        this.cargandoPartidos = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  obtenerProximoPartido(): void {
+    const ahora = new Date();
+    
+    // Primero intenta buscar partidos futuros
+    let proximoPartido = this.misPartidos
+      .filter(p => new Date(`${p.fecha}T${p.hora_inicio}`) >= ahora)
+      .sort((a, b) => {
+        const fechaA = new Date(`${a.fecha}T${a.hora_inicio}`).getTime();
+        const fechaB = new Date(`${b.fecha}T${b.hora_inicio}`).getTime();
+        return fechaA - fechaB;
+      })[0];
+
+    // Si no hay partidos futuros, muestra el más reciente
+    if (!proximoPartido && this.misPartidos.length > 0) {
+      proximoPartido = this.misPartidos
+        .sort((a, b) => {
+          const fechaA = new Date(`${a.fecha}T${a.hora_inicio}`).getTime();
+          const fechaB = new Date(`${b.fecha}T${b.hora_inicio}`).getTime();
+          return fechaB - fechaA; // Descendente (más reciente primero)
+        })[0];
+    }
+
+    this.proximoPartido = proximoPartido || null;
+  }
+
+  agruparPartidosPorDia(): void {
+    this.partidosPorDia.clear();
+    this.misPartidos.forEach(partido => {
+      // Normalizar la fecha: si tiene hora, extraer solo la parte YYYY-MM-DD
+      const fechaNormalizada = partido.fecha.split('T')[0];
+      if (!this.partidosPorDia.has(fechaNormalizada)) {
+        this.partidosPorDia.set(fechaNormalizada, []);
+      }
+      this.partidosPorDia.get(fechaNormalizada)?.push(partido);
+    });
+    console.log('Partidos agrupados:', Array.from(this.partidosPorDia.entries()));
+    this.generarCalendario();
+  }
+
+  generarCalendario(): void {
+    const primerDia = new Date(this.añoActual, this.mesActual, 1);
+    const ultimoDia = new Date(this.añoActual, this.mesActual + 1, 0);
+    let diaInicio = primerDia.getDay(); // 0 = domingo, 1 = lunes, ..., 6 = sábado
+
+    // Convertir a índice de lunes (0 = lunes, 6 = domingo)
+    diaInicio = diaInicio === 0 ? 6 : diaInicio - 1;
+
+    this.diasCalendario = [];
+
+    // Agregar días del mes anterior
+    for (let i = diaInicio; i > 0; i--) {
+      this.diasCalendario.push(null);
+    }
+
+    // Agregar días del mes actual
+    for (let i = 1; i <= ultimoDia.getDate(); i++) {
+      this.diasCalendario.push(i);
+    }
+
+    // Actualizar nombre del mes
+    const opciones: Intl.DateTimeFormatOptions = { month: 'long', year: 'numeric' };
+    this.nombreMes = primerDia.toLocaleDateString('es-ES', opciones);
+
+    // Debug: mostrar partidos agrupados
+    console.log('Partidos agrupados:', Array.from(this.partidosPorDia.entries()));
+  }
+
+  cambiarMes(direccion: number): void {
+    this.mesActual += direccion;
+    if (this.mesActual > 11) {
+      this.mesActual = 0;
+      this.añoActual++;
+    } else if (this.mesActual < 0) {
+      this.mesActual = 11;
+      this.añoActual--;
+    }
+    this.generarCalendario();
+  }
+
+  obtenerFechaCalendario(dia: number | null): string | null {
+    if (dia === null) return null;
+    const mes = String(this.mesActual + 1).padStart(2, '0');
+    const diaStr = String(dia).padStart(2, '0');
+    return `${this.añoActual}-${mes}-${diaStr}`;
+  }
+
+  tienePartidoEnDia(dia: number | null): boolean {
+    const fecha = this.obtenerFechaCalendario(dia);
+    return fecha !== null && this.partidosPorDia.has(fecha) && this.partidosPorDia.get(fecha)!.length > 0;
+  }
+
+  getPartidosPorDia(dia: number | null): IBooking[] {
+    const fecha = this.obtenerFechaCalendario(dia);
+    return fecha ? this.partidosPorDia.get(fecha) || [] : [];
+  }
+
+  formatearFecha(fecha: string): string {
+    const date = new Date(`${fecha}T00:00:00`);
+    return date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+
+  formatearHora(hora: string): string {
+    return hora.substring(0, 5);
+  }
+
+  irAPartidoDetalle(bookingId: number): void {
+    this.router.navigate(['/partido-detalle', bookingId]);
+  }
+
+  refrescarPartidos(): void {
+    console.log('Refrescando partidos...');
+    this.cargarMisPartidos();
   }
 
   private setupScrollAnimations(): void {

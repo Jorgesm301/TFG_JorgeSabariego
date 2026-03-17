@@ -20,15 +20,12 @@
         (click)="onMessagesClick()"
         class="messages-btn"
         matTooltip="Mensajes"
+        [matBadge]="totalNoLeidos"
+        [matBadgeHidden]="totalNoLeidos === 0"
+        matBadgeColor="warn"
+        matBadgeSize="small"
       >
-        <mat-icon
-          [matBadge]="totalNoLeidos"
-          [matBadgeHidden]="totalNoLeidos === 0"
-          matBadgeColor="warn"
-          matBadgeSize="small"
-        >
-          mail
-        </mat-icon>
+        <mat-icon>mail</mat-icon>
       </button>
 
       <button mat-button [routerLink]="profileRoute">
