@@ -55,47 +55,6 @@
           </mat-card>
         </ng-template>
       </div>
-
-      <!-- MINI CALENDARIO (columna derecha) -->
-      <div class="mini-calendario">
-        <h3 class="mini-title">Calendario</h3>
-        <mat-card class="mini-calendario-card" *ngIf="misPartidos.length > 0; else sinCalendario">
-          <div class="mini-mes-header">
-            <button mat-icon-button (click)="cambiarMes(-1)" class="mini-btn-nav">
-              <mat-icon>chevron_left</mat-icon>
-            </button>
-            <span class="mini-mes-nombre">{{ nombreMes | titlecase }}</span>
-            <button mat-icon-button (click)="cambiarMes(1)" class="mini-btn-nav">
-              <mat-icon>chevron_right</mat-icon>
-            </button>
-          </div>
-
-          <div class="mini-dias-semana">
-            <div *ngFor="let day of ['L', 'M', 'X', 'J', 'V', 'S', 'D']" class="mini-dia-semana">{{ day }}</div>
-          </div>
-
-          <div class="mini-dias-grid">
-            <div
-              *ngFor="let dia of diasCalendario"
-              class="mini-dia-cell"
-              [class.otro-mes]="dia === null"
-              [class.con-partido]="tienePartidoEnDia(dia)"
-              [class.hoy]="esHoy(dia)"
-              (click)="tienePartidoEnDia(dia) && dia ? irAPartidoDetalle(getPartidosPorDia(dia)[0]?.id!) : null"
-            >
-              {{ dia }}
-            </div>
-          </div>
-        </mat-card>
-        <ng-template #sinCalendario>
-          <mat-card class="mini-calendario-card empty">
-            <mat-card-content>
-              <mat-icon class="mini-empty-icon">calendar_today</mat-icon>
-              <p class="mini-empty-text">Vacío</p>
-            </mat-card-content>
-          </mat-card>
-        </ng-template>
-      </div>
     </div>
 
     <!-- SLIDER CON MATERIAL CARD -->
@@ -132,6 +91,59 @@
             [attr.aria-label]="'Ir a ' + s.title"
           ></button>
         </div>
+      </mat-card>
+    </section>
+
+    <!-- CALENDARIO SECCIÓN COMPLETA -->
+    <section class="calendario-section animate-on-scroll" *ngIf="estaLogueado">
+      <div class="calendario-header">
+        <h2 class="calendario-title">Mi Calendario de Reservas</h2>
+        <p class="calendario-subtitle">Visualiza todos tus partidos en el calendario</p>
+      </div>
+
+      <mat-card class="calendario-card-full">
+        <mat-card-content>
+          <!-- Controles de navegación -->
+          <div class="calendario-controls">
+            <button mat-icon-button (click)="cambiarMes(-1)" class="btn-nav-calendario">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <h3 class="mes-nombre-full">{{ nombreMes | titlecase }}</h3>
+            <button mat-icon-button (click)="cambiarMes(1)" class="btn-nav-calendario">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+
+          <!-- Días de la semana -->
+          <div class="dias-semana-full">
+            <div *ngFor="let day of ['L', 'M', 'X', 'J', 'V', 'S', 'D']" class="dia-semana-full">
+              {{ day }}
+            </div>
+          </div>
+
+          <!-- Grid de días -->
+          <div class="dias-grid-full">
+            <div
+              *ngFor="let dia of diasCalendario"
+              class="dia-cell-full"
+              [class.otro-mes]="dia === null"
+              [class.con-evento]="tienePartidoEnDia(dia)"
+              [class.hoy]="esHoy(dia)"
+              (click)="tienePartidoEnDia(dia) && dia ? irAPartidoDetalle(getPartidosPorDia(dia)[0]?.id!) : null"
+            >
+              <div class="dia-numero-full">{{ dia }}</div>
+              <div class="eventos-day" *ngIf="tienePartidoEnDia(dia)">
+                <div class="evento-item" *ngFor="let partido of getPartidosPorDia(dia).slice(0, 2)" [matTooltip]="partido.sport?.nombre">
+                  <mat-icon class="evento-icon">event</mat-icon>
+                  <span class="evento-deporte">{{ partido.sport?.nombre | slice:0:6 }}</span>
+                </div>
+                <div class="evento-mas" *ngIf="getPartidosPorDia(dia).length > 2">
+                  +{{ getPartidosPorDia(dia).length - 2 }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
       </mat-card>
     </section>
 

@@ -72,6 +72,7 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   añoActual = new Date().getFullYear();
   diaHoy = new Date().getDate();
   mesHoy = new Date().getMonth();
+  añoHoy = new Date().getFullYear();
   diasCalendario: (number | null)[] = [];
   nombreMes = '';
 
@@ -241,19 +242,10 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   generarCalendario(): void {
     const primerDia = new Date(this.añoActual, this.mesActual, 1);
     const ultimoDia = new Date(this.añoActual, this.mesActual + 1, 0);
-    let diaInicio = primerDia.getDay(); // 0 = domingo, 1 = lunes, ..., 6 = sábado
-
-    // Convertir a índice de lunes (0 = lunes, 6 = domingo)
-    diaInicio = diaInicio === 0 ? 6 : diaInicio - 1;
 
     this.diasCalendario = [];
 
-    // Agregar días del mes anterior
-    for (let i = diaInicio; i > 0; i--) {
-      this.diasCalendario.push(null);
-    }
-
-    // Agregar días del mes actual
+    // Agregar SOLO los días del mes actual (sin días anteriores/posteriores)
     for (let i = 1; i <= ultimoDia.getDate(); i++) {
       this.diasCalendario.push(i);
     }
@@ -261,21 +253,36 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     // Actualizar nombre del mes
     const opciones: Intl.DateTimeFormatOptions = { month: 'long', year: 'numeric' };
     this.nombreMes = primerDia.toLocaleDateString('es-ES', opciones);
-
-    // Debug: mostrar partidos agrupados
-    console.log('Partidos agrupados:', Array.from(this.partidosPorDia.entries()));
   }
 
   cambiarMes(direccion: number): void {
-    this.mesActual += direccion;
-    if (this.mesActual > 11) {
-      this.mesActual = 0;
-      this.añoActual++;
-    } else if (this.mesActual < 0) {
-      this.mesActual = 11;
-      this.añoActual--;
+    const nuevoMes = this.mesActual + direccion;
+    const nuevoAño = this.mesActual + direccion > 11 ? this.añoActual + 1 :
+                    this.mesActual + direccion < 0 ? this.añoActual - 1 : this.añoActual;
+
+    // No permitir ir a marzo atrás (antes del mes actual)
+    if (nuevoMes < this.mesHoy && nuevoAño === this.añoHoy) {
+      return; // No ir atrás del mes actual
     }
+
+    // No permitir ir más de 1 mes adelante
+    if (nuevoMes > this.mesHoy + 1 && nuevoAño === this.añoHoy) {
+      return; // No ir más de 1 mes adelante
+    }
+
+    this.mesActual = nuevoMes > 11 ? 0 : nuevoMes < 0 ? 11 : nuevoMes;
+    this.añoActual = nuevoAño;
     this.generarCalendario();
+  }
+
+  puedeIrAdelante(): boolean {
+    // Puedes ir adelante si no estás en el mes siguiente al actual
+    return !(this.mesActual > this.mesHoy || this.añoActual > this.añoHoy);
+  }
+
+  puedeIrAtras(): boolean {
+    // Puedes ir atrás si no estás en el mes actual
+    return !(this.mesActual === this.mesHoy && this.añoActual === this.añoHoy);
   }
 
   obtenerFechaCalendario(dia: number | null): string | null {

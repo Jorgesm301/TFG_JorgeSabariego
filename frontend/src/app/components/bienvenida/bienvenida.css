@@ -274,8 +274,10 @@
 .mini-dia-cell {
   aspect-ratio: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
   border: 1px solid #e8e8e8;
   border-radius: 8px;
   font-size: 12px;
@@ -284,7 +286,8 @@
   background: white;
   cursor: default;
   transition: all 0.2s ease;
-  padding: 0;
+  padding: 4px;
+  position: relative;
 }
 
 .mini-dia-cell:hover {
@@ -303,22 +306,51 @@
   border-color: #e8e8e8;
 }
 
+.dia-numero {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.indicador-reserva {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.icono-reserva {
+  color: #1565c0;
+  font-size: 12px !important;
+  width: 12px !important;
+  height: 12px !important;
+}
+
 .mini-dia-cell.con-partido {
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-  color: white;
-  font-weight: 700;
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.12), rgba(21, 101, 192, 0.08));
   border-color: #1565c0;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.2);
+  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.15);
 }
 
 .mini-dia-cell.con-partido:hover {
-  box-shadow: 0 3px 8px rgba(21, 101, 192, 0.3);
-  transform: scale(1.05);
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.2), rgba(21, 101, 192, 0.15));
+  box-shadow: 0 3px 8px rgba(21, 101, 192, 0.25);
+  transform: translateY(-2px);
+}
+
+.mini-dia-cell.con-partido .dia-numero {
+  color: #1565c0;
+  font-weight: 700;
 }
 
 .mini-dia-cell.hoy {
   border: 2px solid #42A5F5;
+  font-weight: 700;
+  background: linear-gradient(135deg, rgba(66, 165, 245, 0.08), rgba(25, 118, 210, 0.04));
+}
+
+.mini-dia-cell.hoy .dia-numero {
+  color: #1565c0;
   font-weight: 700;
 }
 
@@ -1171,6 +1203,203 @@
   margin-top: 1rem;
 }
 
+/* ===== CALENDARIO A ANCHO COMPLETO ===== */
+.calendario-section {
+  margin: 4rem 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.calendario-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.calendario-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1565c0;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.calendario-subtitle {
+  color: #999;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.calendario-card-full {
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  background: white !important;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.calendario-card-full:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+.calendario-card-full mat-card-content {
+  padding: 1.5rem !important;
+}
+
+.calendario-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-nav-calendario {
+  color: #1976d2 !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-nav-calendario:hover {
+  background-color: rgba(25, 118, 210, 0.15) !important;
+  transform: scale(1.1);
+}
+
+.btn-nav-calendario mat-icon {
+  font-size: 20px;
+}
+
+.mes-nombre-full {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1565c0;
+  margin: 0;
+  min-width: 200px;
+  text-align: center;
+  letter-spacing: -0.3px;
+}
+
+.dias-semana-full {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e8e8e8;
+}
+
+.dia-semana-full {
+  text-align: center;
+  font-weight: 700;
+  color: #1565c0;
+  font-size: 11px;
+  padding: 0.5rem 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dias-grid-full {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  min-height: 350px;
+}
+
+.dia-cell-full {
+  border: 2px solid #f0f0f0;
+  border-radius: 10px;
+  padding: 0.6rem;
+  min-height: 80px;
+  background: white;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.4, 0.0, 0.2, 1);
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.dia-cell-full:hover {
+  background: #f9f9f9;
+  border-color: #1976d2;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.1);
+}
+
+.dia-numero-full {
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.4rem;
+}
+
+.dia-cell-full.hoy {
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.08), rgba(66, 165, 245, 0.06));
+  border-color: #42A5F5;
+  border-width: 2px;
+}
+
+.dia-cell-full.hoy .dia-numero-full {
+  color: #1565c0;
+}
+
+.dia-cell-full.con-evento {
+  background: linear-gradient(135deg, rgba(21, 101, 192, 0.06), rgba(25, 118, 210, 0.04));
+  border-color: #1565c0;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.1);
+}
+
+.dia-cell-full.con-evento:hover {
+  background: linear-gradient(135deg, rgba(21, 101, 192, 0.12), rgba(25, 118, 210, 0.08));
+  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.18);
+  transform: translateY(-2px);
+}
+
+.eventos-day {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex-grow: 1;
+}
+
+.evento-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 11px;
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+  color: white;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.evento-icon {
+  font-size: 11px !important;
+  width: 11px !important;
+  height: 11px !important;
+  flex-shrink: 0;
+}
+
+.evento-deporte {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.evento-mas {
+  font-size: 10px;
+  color: #1565c0;
+  font-weight: 700;
+  padding: 0.2rem 0.4rem;
+}
+
 
 /* ====== RESPONSIVE ====== */
 @media (max-width: 768px) {
@@ -1220,5 +1449,76 @@
 
   .calendario-section {
     margin: 2rem 1rem;
+  }
+
+  .calendario-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .calendario-title {
+    font-size: 24px;
+  }
+
+  .calendario-subtitle {
+    font-size: 12px;
+  }
+
+  .calendario-controls {
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-nav-calendario {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .mes-nombre-full {
+    font-size: 18px;
+    min-width: 180px;
+  }
+
+  .dias-semana-full {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .dia-semana-full {
+    font-size: 11px;
+    padding: 0.5rem 0.25rem;
+  }
+
+  .dias-grid-full {
+    min-height: 300px;
+    gap: 0.4rem;
+  }
+
+  .dia-cell-full {
+    min-height: 70px;
+    padding: 0.5rem;
+  }
+
+  .dia-numero-full {
+    font-size: 12px;
+    margin-bottom: 0.2rem;
+  }
+
+  .evento-item {
+    font-size: 8px;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .evento-icon {
+    font-size: 8px !important;
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  .evento-mas {
+    font-size: 8px;
+  }
+
+  .calendario-card-full mat-card-content {
+    padding: 1rem !important;
   }
 }
