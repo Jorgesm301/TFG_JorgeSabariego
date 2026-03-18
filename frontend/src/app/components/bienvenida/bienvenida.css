@@ -76,6 +76,252 @@
   letter-spacing: 0.3px;
 }
 
+/* ====== RESUMEN COMPACTO: PRÓXIMO PARTIDO + MINI CALENDARIO ====== */
+.resumen-partidos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 3rem 0 4rem 0;
+  max-width: 100%;
+}
+
+.mini-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1565c0;
+  margin: 0 0 0.8rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+}
+
+/* PRÓXIMO PARTIDO MINI */
+.proximo-partido-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.proximo-partido-mini-card {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%) !important;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.proximo-partido-mini-card:hover {
+  box-shadow: 0 6px 16px rgba(21, 101, 192, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+.proximo-partido-mini-card.empty {
+  background: #f9f9f9 !important;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+}
+
+.proximo-partido-mini-card mat-card-content {
+  padding: 1.2rem !important;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.mini-partido-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mini-sport {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.mini-hora {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.mini-detail {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mini-label {
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+.mini-value {
+  font-weight: 600;
+}
+
+.mini-btn {
+  width: 100%;
+  margin-top: 0.4rem;
+  height: 36px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mini-empty-icon {
+  font-size: 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  opacity: 0.4;
+}
+
+.mini-empty-text {
+  margin: 0.8rem 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #999;
+}
+
+/* MINI CALENDARIO */
+.mini-calendario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.mini-calendario-card {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  padding: 1rem !important;
+  transition: all 0.3s ease;
+}
+
+.mini-calendario-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+.mini-calendario-card.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mini-calendario-card mat-card-content {
+  padding: 0 !important;
+}
+
+.mini-mes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid #e8e8e8;
+}
+
+.mini-mes-nombre {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1565c0;
+  flex: 1;
+  text-align: center;
+}
+
+.mini-btn-nav {
+  width: 32px;
+  height: 32px;
+  color: #1976d2 !important;
+}
+
+.mini-btn-nav mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.mini-dias-semana {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.mini-dia-semana {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1565c0;
+  padding: 0.3rem;
+}
+
+.mini-dias-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.mini-dia-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  background: white;
+  cursor: default;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.mini-dia-cell:hover {
+  background: #f9f9f9;
+  border-color: #1976d2;
+}
+
+.mini-dia-cell.otro-mes {
+  color: #ccc;
+  background: #fafafa;
+  cursor: default;
+}
+
+.mini-dia-cell.otro-mes:hover {
+  background: #fafafa;
+  border-color: #e8e8e8;
+}
+
+.mini-dia-cell.con-partido {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: white;
+  font-weight: 700;
+  border-color: #1565c0;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.2);
+}
+
+.mini-dia-cell.con-partido:hover {
+  box-shadow: 0 3px 8px rgba(21, 101, 192, 0.3);
+  transform: scale(1.05);
+}
+
+.mini-dia-cell.hoy {
+  border: 2px solid #42A5F5;
+  font-weight: 700;
+}
+
 /* ====== SLIDER CON MATERIAL CARD ====== */
 .slider {
   margin-top: 24px;
@@ -886,7 +1132,6 @@
   .badge-place {
     display: none;
   }
-}
 
 /* ===== SIN PARTIDOS CARDS ===== */
 .sin-partido-card {

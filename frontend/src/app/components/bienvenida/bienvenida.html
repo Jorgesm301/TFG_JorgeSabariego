@@ -17,6 +17,87 @@
       <p class="hero-subtitle">Gestiona reservas y juega con personas de tu mismo nivel</p>
     </div>
 
+    <!-- SECCIONES COMPACTAS: PRÓXIMO PARTIDO + CALENDARIO (2 COLUMNAS) -->
+    <div class="resumen-partidos animate-on-scroll" *ngIf="estaLogueado">
+      <!-- PRÓXIMO PARTIDO (columna izquierda - compacto) -->
+      <div class="proximo-partido-mini">
+        <h3 class="mini-title">Próximo Partido</h3>
+        <mat-card class="proximo-partido-mini-card" *ngIf="proximoPartido; else sinPartidoMini">
+          <mat-card-content>
+            <div class="mini-partido-header">
+              <div class="mini-sport">{{ proximoPartido.sport?.nombre }}</div>
+              <div class="mini-hora">{{ formatearHora(proximoPartido.hora_inicio) }}</div>
+            </div>
+            <div class="mini-detail">
+              <span class="mini-label">Fecha:</span>
+              <span class="mini-value">{{ formatearFecha(proximoPartido.fecha) }}</span>
+            </div>
+            <div class="mini-detail">
+              <span class="mini-label">Pista:</span>
+              <span class="mini-value">{{ proximoPartido.pista }}</span>
+            </div>
+            <div class="mini-detail">
+              <span class="mini-label">Jugadores:</span>
+              <span class="mini-value">{{ proximoPartido.jugadores_actuales }}/{{ proximoPartido.max_jugadores }}</span>
+            </div>
+            <button mat-raised-button class="mini-btn" color="primary" (click)="irAPartidoDetalle(proximoPartido.id!)">
+              <mat-icon>info</mat-icon>
+              Detalles
+            </button>
+          </mat-card-content>
+        </mat-card>
+        <ng-template #sinPartidoMini>
+          <mat-card class="proximo-partido-mini-card empty">
+            <mat-card-content>
+              <mat-icon class="mini-empty-icon">event_busy</mat-icon>
+              <p class="mini-empty-text">Sin partidos</p>
+            </mat-card-content>
+          </mat-card>
+        </ng-template>
+      </div>
+
+      <!-- MINI CALENDARIO (columna derecha) -->
+      <div class="mini-calendario">
+        <h3 class="mini-title">Calendario</h3>
+        <mat-card class="mini-calendario-card" *ngIf="misPartidos.length > 0; else sinCalendario">
+          <div class="mini-mes-header">
+            <button mat-icon-button (click)="cambiarMes(-1)" class="mini-btn-nav">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <span class="mini-mes-nombre">{{ nombreMes | titlecase }}</span>
+            <button mat-icon-button (click)="cambiarMes(1)" class="mini-btn-nav">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+
+          <div class="mini-dias-semana">
+            <div *ngFor="let day of ['L', 'M', 'X', 'J', 'V', 'S', 'D']" class="mini-dia-semana">{{ day }}</div>
+          </div>
+
+          <div class="mini-dias-grid">
+            <div
+              *ngFor="let dia of diasCalendario"
+              class="mini-dia-cell"
+              [class.otro-mes]="dia === null"
+              [class.con-partido]="tienePartidoEnDia(dia)"
+              [class.hoy]="esHoy(dia)"
+              (click)="tienePartidoEnDia(dia) && dia ? irAPartidoDetalle(getPartidosPorDia(dia)[0]?.id!) : null"
+            >
+              {{ dia }}
+            </div>
+          </div>
+        </mat-card>
+        <ng-template #sinCalendario>
+          <mat-card class="mini-calendario-card empty">
+            <mat-card-content>
+              <mat-icon class="mini-empty-icon">calendar_today</mat-icon>
+              <p class="mini-empty-text">Vacío</p>
+            </mat-card-content>
+          </mat-card>
+        </ng-template>
+      </div>
+    </div>
+
     <!-- SLIDER CON MATERIAL CARD -->
     <section class="slider animate-on-scroll" aria-label="Galería de deportes">
       <mat-card class="slider-card">
@@ -52,170 +133,6 @@
           ></button>
         </div>
       </mat-card>
-    </section>
-
-    <!-- PRÓXIMO PARTIDO -->
-    <section class="proximo-partido-section animate-on-scroll" *ngIf="estaLogueado">
-      <div class="section-header">
-        <h2 class="section-title">Tu Próximo Partido</h2>
-      </div>
-
-      <mat-card class="proximo-partido-card" *ngIf="proximoPartido; else sinProximoPartido">
-        <mat-card-content>
-          <div class="partido-header">
-            <mat-icon class="partido-icon">schedule</mat-icon>
-            <div class="partido-deporte">
-              <span class="deporte-nombre">{{ proximoPartido.sport?.nombre }}</span>
-              <span class="deporte-pista">Pista: {{ proximoPartido.pista }}</span>
-            </div>
-          </div>
-
-          <div class="partido-details">
-            <div class="detail-item">
-              <mat-icon>event</mat-icon>
-              <div>
-                <span class="detail-label">Fecha</span>
-                <span class="detail-value">{{ formatearFecha(proximoPartido.fecha) }}</span>
-              </div>
-            </div>
-
-            <div class="detail-item">
-              <mat-icon>access_time</mat-icon>
-              <div>
-                <span class="detail-label">Hora</span>
-                <span class="detail-value">{{ formatearHora(proximoPartido.hora_inicio) }}</span>
-              </div>
-            </div>
-
-            <div class="detail-item">
-              <mat-icon>person</mat-icon>
-              <div>
-                <span class="detail-label">Jugadores</span>
-                <span class="detail-value">{{ proximoPartido.jugadores_actuales }}/{{ proximoPartido.max_jugadores }}</span>
-              </div>
-            </div>
-
-            <div class="detail-item" *ngIf="proximoPartido.ubicacion">
-              <mat-icon>location_on</mat-icon>
-              <div>
-                <span class="detail-label">Ubicación</span>
-                <span class="detail-value">{{ proximoPartido.ubicacion }}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="partido-actions">
-            <button mat-raised-button color="primary" (click)="irAPartidoDetalle(proximoPartido.id!)">
-              <mat-icon>info</mat-icon>
-              Ver Detalles
-            </button>
-            <button mat-stroked-button color="accent" routerLink="/mis-reservas">
-              <mat-icon>list</mat-icon>
-              Todos mis partidos
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <ng-template #sinProximoPartido>
-        <mat-card class="sin-partido-card">
-          <mat-card-content>
-            <mat-icon class="empty-icon">event_busy</mat-icon>
-            <h3>Sin partidos próximos</h3>
-            <p>¡Reserva una pista y organiza un partido!</p>
-            <button mat-raised-button color="primary" routerLink="/reservar/futbol">
-              <mat-icon>sports_soccer</mat-icon>
-              Explorar Deportes
-            </button>
-          </mat-card-content>
-        </mat-card>
-      </ng-template>
-    </section>
-
-    <!-- CALENDARIO DE PARTIDOS -->
-    <section class="calendario-section animate-on-scroll" *ngIf="estaLogueado">
-      <div class="section-header">
-        <div class="section-header-top">
-          <h2 class="section-title">Tu Calendario de Partidos</h2>
-          <button
-            mat-icon-button
-            (click)="refrescarPartidos()"
-            [disabled]="cargandoPartidos"
-            matTooltip="Refrescar partidos">
-            <mat-icon [class.rotate]="cargandoPartidos">refresh</mat-icon>
-          </button>
-        </div>
-        <p class="section-subtitle" *ngIf="!cargandoPartidos">{{ misPartidos.length }} partidos próximos</p>
-        <p class="section-subtitle" *ngIf="cargandoPartidos">Cargando partidos...</p>
-      </div>
-
-      <div class="calendario-wrapper" *ngIf="misPartidos.length > 0 && !cargandoPartidos; else sinPartidosOCargando">
-        <!-- Controles de navegación de meses -->
-        <div class="calendario-controls">
-          <button mat-icon-button (click)="cambiarMes(-1)">
-            <mat-icon>chevron_left</mat-icon>
-          </button>
-          <h3 class="mes-actual">{{ nombreMes | titlecase }}</h3>
-          <button mat-icon-button (click)="cambiarMes(1)">
-            <mat-icon>chevron_right</mat-icon>
-          </button>
-        </div>
-
-        <!-- Calendario visual -->
-        <mat-card class="calendario-card">
-          <!-- Encabezado de días de la semana -->
-          <div class="dias-semana">
-            <div class="dia-semana">Lun</div>
-            <div class="dia-semana">Mar</div>
-            <div class="dia-semana">Mié</div>
-            <div class="dia-semana">Jue</div>
-            <div class="dia-semana">Vie</div>
-            <div class="dia-semana">Sáb</div>
-            <div class="dia-semana">Dom</div>
-          </div>
-
-          <!-- Grilla de días -->
-          <div class="dias-grid">
-            <div
-              *ngFor="let dia of diasCalendario"
-              class="dia-cell"
-              [class.otro-mes]="dia === null"
-              [class.con-partidos]="tienePartidoEnDia(dia)"
-            >
-              <div *ngIf="dia !== null" class="dia-numero">{{ dia }}</div>
-
-              <!-- Partidos del día -->
-              <div *ngIf="tienePartidoEnDia(dia)" class="partidos-en-dia">
-                <div
-                  *ngFor="let partido of getPartidosPorDia(dia)"
-                  class="partido-badge"
-                  (click)="irAPartidoDetalle(partido.id!)"
-                  [title]="partido.sport?.nombre + ' - ' + formatearHora(partido.hora_inicio)"
-                >
-                  <div class="badge-time">{{ formatearHora(partido.hora_inicio) }}</div>
-                  <div class="badge-sport">{{ partido.sport?.nombre }}</div>
-                  <div class="badge-place" *ngIf="partido.pista">{{ partido.pista }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </mat-card>
-      </div>
-
-      <ng-template #sinPartidosOCargando>
-        <mat-card class="sin-partido-card">
-          <mat-card-content>
-            <mat-spinner *ngIf="cargandoPartidos" diameter="48"></mat-spinner>
-            <mat-icon *ngIf="!cargandoPartidos" class="empty-icon">calendar_today</mat-icon>
-            <h3>{{ cargandoPartidos ? 'Cargando partidos...' : 'Tu calendario está vacío' }}</h3>
-            <p *ngIf="!cargandoPartidos">Aún no tienes partidos reservados</p>
-            <button *ngIf="!cargandoPartidos" mat-raised-button color="primary" routerLink="/reservar/futbol">
-              <mat-icon>sports_soccer</mat-icon>
-              Crear Primer Partido
-            </button>
-          </mat-card-content>
-        </mat-card>
-      </ng-template>
     </section>
 
   </main>

@@ -147,10 +147,6 @@ export class Perfil implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
-  volverInicio() {
-    this.router.navigate(['/']);
-  }
-
   navegarADeporte(ruta: string): void {
     this.router.navigate([ruta]);
   }

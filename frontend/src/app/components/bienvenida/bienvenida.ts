@@ -70,6 +70,8 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   // Calendario visual
   mesActual = new Date().getMonth();
   añoActual = new Date().getFullYear();
+  diaHoy = new Date().getDate();
+  mesHoy = new Date().getMonth();
   diasCalendario: (number | null)[] = [];
   nombreMes = '';
 
@@ -199,7 +201,7 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
 
   obtenerProximoPartido(): void {
     const ahora = new Date();
-    
+
     // Primero intenta buscar partidos futuros
     let proximoPartido = this.misPartidos
       .filter(p => new Date(`${p.fecha}T${p.hora_inicio}`) >= ahora)
@@ -285,12 +287,20 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
 
   tienePartidoEnDia(dia: number | null): boolean {
     const fecha = this.obtenerFechaCalendario(dia);
-    return fecha !== null && this.partidosPorDia.has(fecha) && this.partidosPorDia.get(fecha)!.length > 0;
+    const tiene = fecha !== null && this.partidosPorDia.has(fecha) && this.partidosPorDia.get(fecha)!.length > 0;
+    if (tiene) {
+      console.log(`Día ${dia} tiene partido (fecha: ${fecha})`);
+    }
+    return tiene;
   }
 
   getPartidosPorDia(dia: number | null): IBooking[] {
     const fecha = this.obtenerFechaCalendario(dia);
     return fecha ? this.partidosPorDia.get(fecha) || [] : [];
+  }
+
+  esHoy(dia: number | null): boolean {
+    return dia === this.diaHoy && this.mesActual === this.mesHoy;
   }
 
   formatearFecha(fecha: string): string {
