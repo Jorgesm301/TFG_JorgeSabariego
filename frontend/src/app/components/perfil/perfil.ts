@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
 import { EloService } from '../../services/elo.service';
+import { MatchService } from '../../services/match.service';
 import { DrawerMessagesService } from '../../services/drawer-messages.service';
 import { DEPORTES_MENU } from '../../constants/sports.constants';
 import { MatCardModule } from '@angular/material/card';
@@ -45,10 +46,20 @@ export class Perfil implements OnInit, OnDestroy {
   totalPartidos = 0;
   deportesMenu = DEPORTES_MENU;
 
+  // Victorias
+  cargandoPartidos = false;
+  victorias = 0;
+  totalPartidosJugados = 0;
+  tasaVictoria = 0;
+  rachaVictorias = 0;
+  nivel = '';
+  historialPartidos: any[] = [];
+
   constructor(
     private authService: AuthService,
     private router: Router,
     private eloService: EloService,
+    private matchService: MatchService,
     private drawerMessagesService: DrawerMessagesService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -61,6 +72,7 @@ export class Perfil implements OnInit, OnDestroy {
       this.router.navigate(['/login']);
     } else {
       this.cargarElo();
+      this.cargarPartidos();
       this.drawerMessagesService.cargarConversaciones();
       this.drawerMessagesService.iniciarActualizacionMensajes();
     }
@@ -94,6 +106,48 @@ export class Perfil implements OnInit, OnDestroy {
         this.cargandoElo = false;
       }
     });
+  }
+
+  cargarPartidos(): void {
+    this.cargandoPartidos = true;
+    this.matchService.getHistorialPartidos().subscribe({
+      next: (datos) => {
+        this.historialPartidos = datos;
+        this.totalPartidosJugados = datos.length;
+        this.victorias = datos.filter(p => p.gane).length;
+        this.tasaVictoria = this.totalPartidosJugados > 0
+          ? Math.round((this.victorias / this.totalPartidosJugados) * 100)
+          : 0;
+        this.rachaVictorias = this.calcularRachaVictorias(datos);
+        this.nivel = this.getNivelPorElo(this.eloPromedio);
+        this.cargandoPartidos = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar partidos:', err);
+        this.cargandoPartidos = false;
+      }
+    });
+  }
+
+  private calcularRachaVictorias(partidos: any[]): number {
+    let racha = 0;
+    // Los partidos vienen más recientes primero, así que iteramos desde el inicio
+    for (const partido of partidos) {
+      if (partido.gane) {
+        racha++;
+      } else {
+        break; // Rompe la racha en el primer partido perdido
+      }
+    }
+    return racha;
+  }
+
+  private getNivelPorElo(elo: number): string {
+    if (elo < 900) return 'Principiante';
+    if (elo < 1200) return 'Intermedio';
+    if (elo < 1500) return 'Profesional';
+    return 'Top';
   }
 
   get drawerAbierto(): boolean {

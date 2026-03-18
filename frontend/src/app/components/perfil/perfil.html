@@ -36,20 +36,11 @@
     <div class="stats-grid">
       <mat-card class="stat-card">
         <mat-card-content class="stat-content">
-          <mat-icon class="stat-icon" color="primary">calendar_today</mat-icon>
+          <mat-icon class="stat-icon" color="accent">trending_up</mat-icon>
           <div class="stat-info">
-            <div class="stat-value">{{ deportesElo.length }}</div>
-            <div class="stat-label">Deportes activos</div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="stat-card">
-        <mat-card-content class="stat-content">
-          <mat-icon class="stat-icon" color="primary">sports_soccer</mat-icon>
-          <div class="stat-info">
-            <div class="stat-value">{{ totalPartidos }}</div>
-            <div class="stat-label">Partidos jugados</div>
+            <div class="stat-value" *ngIf="!cargandoPartidos">{{ tasaVictoria }}%</div>
+            <mat-spinner *ngIf="cargandoPartidos" diameter="30"></mat-spinner>
+            <div class="stat-label">Tasa de victoria</div>
           </div>
         </mat-card-content>
       </mat-card>
@@ -69,6 +60,29 @@
       </mat-card>
     </div>
 
+    <!-- Información del nivel y racha -->
+    <div class="nivel-racha-grid">
+      <mat-card class="info-card">
+        <mat-card-content class="info-content">
+          <mat-icon class="info-icon">shield</mat-icon>
+          <div class="info-text">
+            <div class="info-label">Tu nivel</div>
+            <div class="info-value">{{ nivel }}</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="info-card">
+        <mat-card-content class="info-content">
+          <mat-icon class="info-icon">local_fire_department</mat-icon>
+          <div class="info-text">
+            <div class="info-label">Racha de victorias</div>
+            <div class="info-value">{{ rachaVictorias }}</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
     <!-- Opciones -->
     <mat-card class="opciones-card">
       <mat-card-header>
@@ -80,6 +94,13 @@
             <mat-icon matListItemIcon>people</mat-icon>
             <div matListItemTitle>Amigos</div>
             <div matListItemLine>Gestionar amigos y solicitudes</div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+
+          <mat-list-item routerLink="/niveles">
+            <mat-icon matListItemIcon>emoji_events</mat-icon>
+            <div matListItemTitle>Niveles por ELO</div>
+            <div matListItemLine>Ver rangos de ELO disponibles</div>
           </mat-list-item>
           <mat-divider></mat-divider>
 

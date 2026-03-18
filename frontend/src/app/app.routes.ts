@@ -6,6 +6,7 @@ import { Perfil } from './components/perfil/perfil';
 import { MisReservas } from './components/mis-reservas/mis-reservas';
 import { Reservar } from './components/reservar/reservar';
 import { Elo } from './components/elo/elo';
+import { Niveles } from './components/niveles/niveles';
 import { PartidoDetalle } from './components/partido-detalle/partido-detalle';
 import { Mensajes } from './components/mensajes/mensajes';
 import { Chat } from './components/chat/chat';
@@ -62,6 +63,12 @@ export const routes: Routes = [
   {
     path: 'amigos',
     component: Amigos,
+    canActivate: [authGuard]
+  },
+
+  {
+    path: 'niveles',
+    component: Niveles,
     canActivate: [authGuard]
   },
 
