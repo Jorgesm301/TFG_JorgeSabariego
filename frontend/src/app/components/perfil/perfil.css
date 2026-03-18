@@ -142,7 +142,7 @@
 /* ESTADÍSTICAS */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -196,22 +196,27 @@
 
 .stat-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .stat-value {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
   color: #1565C0;
-  margin-bottom: 4px;
   line-height: 1;
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  letter-spacing: -0.5px;
 }
 
 .stat-label {
-  font-size: 13px;
-  color: rgba(0, 0, 0, 0.55);
-  font-weight: 500;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.65);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  font-family: 'Roboto', sans-serif;
 }
 
 /* OPCIONES */
@@ -312,6 +317,10 @@
   animation-delay: 0.1s;
 }
 
+.info-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
 .info-card:hover {
   transform: translateY(-4px);
   box-shadow:
@@ -337,24 +346,33 @@
 
 .info-text {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .info-label {
-  font-size: 13px;
-  color: rgba(0, 0, 0, 0.55);
-  font-weight: 500;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.65);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
+  letter-spacing: 0.8px;
+  font-family: 'Roboto', sans-serif;
 }
 
 .info-value {
-  font-size: 22px;
+  font-size: 32px;
   font-weight: 700;
   color: #1565C0;
   line-height: 1;
+  font-family: 'Poppins', 'Roboto', sans-serif;
+  letter-spacing: -0.5px;
 }
 
+/* Icono de fuego con color rojo/naranja */
+.fire-icon {
+  color: #FF6B35 !important;
+}
 
 /* Responsive */
 @media (max-width: 768px) {

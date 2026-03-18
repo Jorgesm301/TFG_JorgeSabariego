@@ -32,39 +32,22 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Estadísticas -->
+    <!-- Estadísticas e Información -->
     <div class="stats-grid">
       <mat-card class="stat-card">
         <mat-card-content class="stat-content">
-          <mat-icon class="stat-icon" color="accent">trending_up</mat-icon>
+          <mat-icon class="stat-icon" color="accent">assessment</mat-icon>
           <div class="stat-info">
+            <div class="stat-label">Tasa de victoria</div>
             <div class="stat-value" *ngIf="!cargandoPartidos">{{ tasaVictoria }}%</div>
             <mat-spinner *ngIf="cargandoPartidos" diameter="30"></mat-spinner>
-            <div class="stat-label">Tasa de victoria</div>
           </div>
         </mat-card-content>
       </mat-card>
 
-      <mat-card class="stat-card clickable" routerLink="/elo">
-        <mat-card-content class="stat-content">
-          <mat-icon class="stat-icon" color="accent">emoji_events</mat-icon>
-          <div class="stat-info">
-            <div class="stat-value" *ngIf="!cargandoElo && deportesElo.length > 0">
-              {{ eloPromedio }}
-            </div>
-            <mat-spinner *ngIf="cargandoElo" diameter="30"></mat-spinner>
-            <div class="stat-value" *ngIf="!cargandoElo && deportesElo.length === 0">--</div>
-            <div class="stat-label">Nivel promedio</div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <!-- Información del nivel y racha -->
-    <div class="nivel-racha-grid">
       <mat-card class="info-card">
         <mat-card-content class="info-content">
-          <mat-icon class="info-icon">shield</mat-icon>
+          <mat-icon class="info-icon">{{ nivelIcon }}</mat-icon>
           <div class="info-text">
             <div class="info-label">Tu nivel</div>
             <div class="info-value">{{ nivel }}</div>
@@ -74,7 +57,7 @@
 
       <mat-card class="info-card">
         <mat-card-content class="info-content">
-          <mat-icon class="info-icon">local_fire_department</mat-icon>
+          <mat-icon class="info-icon fire-icon">local_fire_department</mat-icon>
           <div class="info-text">
             <div class="info-label">Racha de victorias</div>
             <div class="info-value">{{ rachaVictorias }}</div>
@@ -93,21 +76,27 @@
           <mat-list-item routerLink="/amigos">
             <mat-icon matListItemIcon>people</mat-icon>
             <div matListItemTitle>Amigos</div>
-            <div matListItemLine>Gestionar amigos y solicitudes</div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+
+          <mat-list-item routerLink="/elo" class="nivel-promedio-item">
+            <mat-icon matListItemIcon>leaderboard</mat-icon>
+            <div matListItemTitle>Tu ELO</div>
+            <div matListItemLine *ngIf="!cargandoElo && deportesElo.length > 0">{{ eloPromedio }}</div>
+            <div matListItemLine *ngIf="cargandoElo">Cargando...</div>
+            <div matListItemLine *ngIf="!cargandoElo && deportesElo.length === 0">Sin datos aún</div>
           </mat-list-item>
           <mat-divider></mat-divider>
 
           <mat-list-item routerLink="/niveles">
-            <mat-icon matListItemIcon>emoji_events</mat-icon>
-            <div matListItemTitle>Niveles por ELO</div>
-            <div matListItemLine>Ver rangos de ELO disponibles</div>
+            <mat-icon matListItemIcon>stars</mat-icon>
+            <div matListItemTitle>Ranking ELO</div>
           </mat-list-item>
           <mat-divider></mat-divider>
 
           <mat-list-item (click)="logout()" class="logout-item">
             <mat-icon matListItemIcon color="warn">logout</mat-icon>
             <div matListItemTitle>Cerrar Sesión</div>
-            <div matListItemLine>Salir de tu cuenta</div>
           </mat-list-item>
         </mat-nav-list>
       </mat-card-content>
