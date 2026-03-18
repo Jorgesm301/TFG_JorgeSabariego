@@ -14,10 +14,6 @@
         <h1 class="page-title">Mis Niveles ELO</h1>
         <p class="page-subtitle">Tu progreso por deporte y rendimiento histórico</p>
       </div>
-      <button mat-stroked-button color="primary" (click)="volverPerfil()">
-        <mat-icon>arrow_back</mat-icon>
-        Volver al perfil
-      </button>
     </div>
 
     <div class="loading-state" *ngIf="cargandoElo">
@@ -74,8 +70,6 @@
           <div class="deporte-elo">
             <div class="elo-badge-large">{{ deporte.elo }}</div>
             <div class="elo-label">Nivel ELO</div>
-            <mat-progress-bar mode="determinate" [value]="getProgresoElo(deporte.elo)"></mat-progress-bar>
-            <span class="progress-label">Progreso competitivo: {{ getProgresoElo(deporte.elo) }}%</span>
           </div>
 
           <div class="deporte-actions" *ngIf="getRutaReserva(deporte.sport_name) as rutaReserva">

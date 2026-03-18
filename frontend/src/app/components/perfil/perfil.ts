@@ -74,6 +74,12 @@ export class Perfil implements OnInit, OnDestroy {
     return this.authService.getUserData()?.name || '';
   }
 
+  get eloPromedio(): number {
+    if (!this.deportesElo.length) return 0;
+    const total = this.deportesElo.reduce((acum, deporte) => acum + deporte.elo, 0);
+    return Math.round(total / this.deportesElo.length);
+  }
+
   cargarElo(): void {
     this.cargandoElo = true;
     this.eloService.getMyElo().subscribe({

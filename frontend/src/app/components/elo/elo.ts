@@ -110,10 +110,6 @@ export class Elo implements OnInit {
     });
   }
 
-  volverPerfil(): void {
-    this.router.navigate(['/perfil']);
-  }
-
   get estaLogueado(): boolean {
     return this.authService.isAuthenticated();
   }
@@ -239,13 +235,6 @@ export class Elo implements OnInit {
     return 'warn';
   }
 
-  getProgresoElo(elo: number): number {
-    const minimo = 700;
-    const maximo = 1800;
-    const clamped = Math.min(Math.max(elo, minimo), maximo);
-    return Math.round(((clamped - minimo) / (maximo - minimo)) * 100);
-  }
-
   getIconoDeporte(nombreDeporte: string): string {
     const nombre = nombreDeporte.toLowerCase();
 
@@ -260,11 +249,20 @@ export class Elo implements OnInit {
   }
 
   getRutaReserva(nombreDeporte: string): string | null {
-    const deporte = this.deportesMenu.find(
-      (item) => item.nombre.toLowerCase() === nombreDeporte.toLowerCase()
-    );
+    const nombre = nombreDeporte.toLowerCase();
 
-    return deporte ? deporte.ruta : null;
+    // Búsqueda por palabra clave en lugar de coincidencia exacta
+    if (nombre.includes('futbol')) {
+      return nombre.includes('sala') ? '/reservar/futbol-sala' : '/reservar/futbol';
+    }
+    if (nombre.includes('baloncesto') || nombre.includes('basketball')) return '/reservar/baloncesto';
+    if (nombre.includes('tenis')) return '/reservar/tenis';
+    if (nombre.includes('padel') || nombre.includes('pádel')) return '/reservar/padel';
+    if (nombre.includes('voleibol') || nombre.includes('volleyball')) return '/reservar/voleibol';
+    if (nombre.includes('natacion') || nombre.includes('natación') || nombre.includes('swimming')) return '/reservar/natacion';
+    if (nombre.includes('atletismo') || nombre.includes('athletics') || nombre.includes('running')) return '/reservar/atletismo';
+
+    return null;
   }
 }
 

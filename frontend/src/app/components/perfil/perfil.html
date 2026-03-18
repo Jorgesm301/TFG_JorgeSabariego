@@ -59,7 +59,7 @@
           <mat-icon class="stat-icon" color="accent">emoji_events</mat-icon>
           <div class="stat-info">
             <div class="stat-value" *ngIf="!cargandoElo && deportesElo.length > 0">
-              {{ deportesElo[0]?.elo || 0 }}
+              {{ eloPromedio }}
             </div>
             <mat-spinner *ngIf="cargandoElo" diameter="30"></mat-spinner>
             <div class="stat-value" *ngIf="!cargandoElo && deportesElo.length === 0">--</div>
