@@ -10,23 +10,19 @@
 
   <!-- CARD PRÓXIMO PARTIDO - ESQUINA SUPERIOR DERECHA -->
   <div class="proximo-partido-flotante" *ngIf="estaLogueado && proximoPartido">
-    <mat-card class="proximo-partido-flotante-card">
+    <mat-card class="proximo-partido-flotante-card" (click)="proximoPartido.id && irAPartidoDetalle(proximoPartido.id)">
       <mat-card-content>
-        <div class="flotante-header">
-          <h3 class="flotante-title">Próximo Partido</h3>
-          <div class="flotante-sport">{{ proximoPartido.sport?.nombre }}</div>
+        <div class="partido-content">
+          <h3 class="partido-nombre">PRÓXIMO PARTIDO</h3>
+          <h4 class="partido-deporte">{{ proximoPartido.sport?.nombre }}</h4>
+          <div class="partido-rango">
+            {{ formatearHora(proximoPartido.hora_inicio) }} • {{ formatearFecha(proximoPartido.fecha) }}
+          </div>
+          <div class="partido-ubicacion">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ proximoPartido.pista }}</span>
+          </div>
         </div>
-        <div class="flotante-info">
-          <div class="flotante-hora">{{ formatearHora(proximoPartido.hora_inicio) }}</div>
-          <div class="flotante-fecha">{{ formatearFecha(proximoPartido.fecha) }}</div>
-        </div>
-        <div class="flotante-detail">
-          <mat-icon class="flotante-icon">location_on</mat-icon>
-          <span class="flotante-text">{{ proximoPartido.pista }}</span>
-        </div>
-        <button mat-icon-button class="flotante-btn" [routerLink]="['/partido', proximoPartido.id]" matTooltip="Ver detalles">
-          <mat-icon>info</mat-icon>
-        </button>
       </mat-card-content>
     </mat-card>
   </div>
@@ -36,8 +32,7 @@
 
     <!-- TÍTULO PRINCIPAL -->
     <div class="hero-text animate-on-scroll">
-      <h1 class="hero-title">Reserva pistas y únete a partidos equilibrados</h1>
-      <p class="hero-subtitle">Gestiona reservas y juega con personas de tu mismo nivel</p>
+      <h1 class="hero-title">¡Bienvenido de nuevo!</h1>
     </div>
 
     <!-- SLIDER CON MATERIAL CARD -->
@@ -80,8 +75,7 @@
     <!-- CALENDARIO SECCIÓN COMPLETA -->
     <section class="calendario-section animate-on-scroll" *ngIf="estaLogueado">
       <div class="calendario-header">
-        <h2 class="calendario-title">Mi Calendario de Reservas</h2>
-        <p class="calendario-subtitle">Visualiza todos tus partidos en el calendario</p>
+        <h2 class="calendario-title">Tus próximas reservas</h2>
       </div>
 
       <mat-card class="calendario-card-full">

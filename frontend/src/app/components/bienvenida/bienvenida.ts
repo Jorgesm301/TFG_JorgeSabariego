@@ -100,6 +100,27 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     'Atletismo': '#EF5350'
   };
 
+  /**
+   * Obtiene el color del deporte del próximo partido
+   */
+  getColorProximoPartido(): string {
+    if (this.proximoPartido?.sport?.nombre) {
+      return this.coloresDeporte[this.proximoPartido.sport.nombre] || '#1976D2';
+    }
+    return '#1976D2';
+  }
+
+  /**
+   * Obtiene el icono Material del deporte del próximo partido
+   */
+  getIconoProximoPartido(): string {
+    if (this.proximoPartido?.sport?.nombre) {
+      const deporte = this.deportesMenu.find(d => d.nombre === this.proximoPartido?.sport?.nombre);
+      return deporte ? deporte.icon : 'sports_soccer';
+    }
+    return 'sports_soccer';
+  }
+
   slides: Slide[] = [
     {
       title: 'Fútbol',
