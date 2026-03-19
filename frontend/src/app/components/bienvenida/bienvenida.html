@@ -13,7 +13,7 @@
     <mat-card class="proximo-partido-flotante-card">
       <mat-card-content>
         <div class="flotante-header">
-          <h3 class="flotante-title">Próximo</h3>
+          <h3 class="flotante-title">Próximo Partido</h3>
           <div class="flotante-sport">{{ proximoPartido.sport?.nombre }}</div>
         </div>
         <div class="flotante-info">
@@ -24,7 +24,7 @@
           <mat-icon class="flotante-icon">location_on</mat-icon>
           <span class="flotante-text">{{ proximoPartido.pista }}</span>
         </div>
-        <button mat-icon-button class="flotante-btn" (click)="irAPartidoDetalle(proximoPartido.id!)" matTooltip="Ver detalles">
+        <button mat-icon-button class="flotante-btn" [routerLink]="['/partido', proximoPartido.id]" matTooltip="Ver detalles">
           <mat-icon>info</mat-icon>
         </button>
       </mat-card-content>

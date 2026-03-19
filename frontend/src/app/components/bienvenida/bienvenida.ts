@@ -355,7 +355,7 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   }
 
   irAPartidoDetalle(bookingId: number): void {
-    this.router.navigate(['/partido-detalle', bookingId]);
+    this.router.navigate(['/partido', bookingId]);
   }
 
   refrescarPartidos(): void {

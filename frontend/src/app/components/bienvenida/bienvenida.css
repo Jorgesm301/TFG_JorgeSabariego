@@ -52,11 +52,12 @@
 
 /* ====== PRÓXIMO PARTIDO FLOTANTE (Esquina Superior Derecha) ====== */
 .proximo-partido-flotante {
-  position: fixed;
-  top: 90px;
-  right: 20px;
+  position: absolute;
+  top: 110px;
+  right: 25px;
   z-index: 100;
   max-width: 280px;
+  margin-top: 0;
 }
 
 .proximo-partido-flotante-card {
