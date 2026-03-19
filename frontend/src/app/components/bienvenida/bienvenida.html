@@ -8,6 +8,29 @@
     (deporteSelect)="navegarADeporte($event)"
   ></app-shared-page-header>
 
+  <!-- CARD PRÓXIMO PARTIDO - ESQUINA SUPERIOR DERECHA -->
+  <div class="proximo-partido-flotante" *ngIf="estaLogueado && proximoPartido">
+    <mat-card class="proximo-partido-flotante-card">
+      <mat-card-content>
+        <div class="flotante-header">
+          <h3 class="flotante-title">Próximo</h3>
+          <div class="flotante-sport">{{ proximoPartido.sport?.nombre }}</div>
+        </div>
+        <div class="flotante-info">
+          <div class="flotante-hora">{{ formatearHora(proximoPartido.hora_inicio) }}</div>
+          <div class="flotante-fecha">{{ formatearFecha(proximoPartido.fecha) }}</div>
+        </div>
+        <div class="flotante-detail">
+          <mat-icon class="flotante-icon">location_on</mat-icon>
+          <span class="flotante-text">{{ proximoPartido.pista }}</span>
+        </div>
+        <button mat-icon-button class="flotante-btn" (click)="irAPartidoDetalle(proximoPartido.id!)" matTooltip="Ver detalles">
+          <mat-icon>info</mat-icon>
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
   <!-- CONTENIDO PRINCIPAL -->
   <main class="content">
 
@@ -15,46 +38,6 @@
     <div class="hero-text animate-on-scroll">
       <h1 class="hero-title">Reserva pistas y únete a partidos equilibrados</h1>
       <p class="hero-subtitle">Gestiona reservas y juega con personas de tu mismo nivel</p>
-    </div>
-
-    <!-- SECCIONES COMPACTAS: PRÓXIMO PARTIDO + CALENDARIO (2 COLUMNAS) -->
-    <div class="resumen-partidos animate-on-scroll" *ngIf="estaLogueado">
-      <!-- PRÓXIMO PARTIDO (columna izquierda - compacto) -->
-      <div class="proximo-partido-mini">
-        <h3 class="mini-title">Próximo Partido</h3>
-        <mat-card class="proximo-partido-mini-card" *ngIf="proximoPartido; else sinPartidoMini">
-          <mat-card-content>
-            <div class="mini-partido-header">
-              <div class="mini-sport">{{ proximoPartido.sport?.nombre }}</div>
-              <div class="mini-hora">{{ formatearHora(proximoPartido.hora_inicio) }}</div>
-            </div>
-            <div class="mini-detail">
-              <span class="mini-label">Fecha:</span>
-              <span class="mini-value">{{ formatearFecha(proximoPartido.fecha) }}</span>
-            </div>
-            <div class="mini-detail">
-              <span class="mini-label">Pista:</span>
-              <span class="mini-value">{{ proximoPartido.pista }}</span>
-            </div>
-            <div class="mini-detail">
-              <span class="mini-label">Jugadores:</span>
-              <span class="mini-value">{{ proximoPartido.jugadores_actuales }}/{{ proximoPartido.max_jugadores }}</span>
-            </div>
-            <button mat-raised-button class="mini-btn" color="primary" (click)="irAPartidoDetalle(proximoPartido.id!)">
-              <mat-icon>info</mat-icon>
-              Detalles
-            </button>
-          </mat-card-content>
-        </mat-card>
-        <ng-template #sinPartidoMini>
-          <mat-card class="proximo-partido-mini-card empty">
-            <mat-card-content>
-              <mat-icon class="mini-empty-icon">event_busy</mat-icon>
-              <p class="mini-empty-text">Sin partidos</p>
-            </mat-card-content>
-          </mat-card>
-        </ng-template>
-      </div>
     </div>
 
     <!-- SLIDER CON MATERIAL CARD -->
@@ -133,7 +116,7 @@
             >
               <div class="dia-numero-full">{{ dia }}</div>
               <div class="eventos-day" *ngIf="tienePartidoEnDia(dia)">
-                <div class="evento-item" *ngFor="let partido of getPartidosPorDia(dia).slice(0, 2)" [matTooltip]="partido.sport?.nombre">
+                <div class="evento-item" *ngFor="let partido of getPartidosPorDia(dia).slice(0, 2)" [matTooltip]="obtenerDetallesPartido(partido)" matTooltipPosition="above" [style.backgroundColor]="obtenerColorDeporte(partido.sport?.nombre)">
                   <mat-icon class="evento-icon">event</mat-icon>
                   <span class="evento-deporte">{{ partido.sport?.nombre | slice:0:6 }}</span>
                 </div>

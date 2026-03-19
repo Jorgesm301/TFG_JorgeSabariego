@@ -88,6 +88,18 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     { nombre: 'Atletismo', icon: 'directions_run', ruta: '/reservar/atletismo' }
   ];
 
+  // Mapeo de colores por deporte
+  coloresDeporte: { [key: string]: string } = {
+    'Fútbol': '#E53935',
+    'Fútbol Sala': '#eeff00',
+    'Baloncesto': '#F57C00',
+    'Tenis': '#7CB342',
+    'Pádel': '#8c00ff',
+    'Voleibol': '#AB47BC',
+    'Natación': '#0288D1',
+    'Atletismo': '#EF5350'
+  };
+
   slides: Slide[] = [
     {
       title: 'Fútbol',
@@ -225,9 +237,17 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     this.proximoPartido = proximoPartido || null;
   }
 
+  esPartidoCompleto(partido: IBooking): boolean {
+    return partido.jugadores_actuales === partido.max_jugadores;
+  }
+
   agruparPartidosPorDia(): void {
     this.partidosPorDia.clear();
     this.misPartidos.forEach(partido => {
+      // Solo agrupar partidos completos
+      if (!this.esPartidoCompleto(partido)) {
+        return;
+      }
       // Normalizar la fecha: si tiene hora, extraer solo la parte YYYY-MM-DD
       const fechaNormalizada = partido.fecha.split('T')[0];
       if (!this.partidosPorDia.has(fechaNormalizada)) {
@@ -235,7 +255,7 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
       }
       this.partidosPorDia.get(fechaNormalizada)?.push(partido);
     });
-    console.log('Partidos agrupados:', Array.from(this.partidosPorDia.entries()));
+    console.log('Partidos agrupados (solo completos):', Array.from(this.partidosPorDia.entries()));
     this.generarCalendario();
   }
 
@@ -304,6 +324,21 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   getPartidosPorDia(dia: number | null): IBooking[] {
     const fecha = this.obtenerFechaCalendario(dia);
     return fecha ? this.partidosPorDia.get(fecha) || [] : [];
+  }
+
+  obtenerColorDeporte(nombreDeporte: string | undefined): string {
+    if (!nombreDeporte) return '#1976D2'; // Color azul por defecto
+    return this.coloresDeporte[nombreDeporte] || '#1976D2';
+  }
+
+  obtenerDetallesPartido(partido: IBooking): string {
+    const deporte = partido.sport?.nombre || 'Sin deporte';
+    const fecha = this.formatearFecha(partido.fecha);
+    const hora = this.formatearHora(partido.hora_inicio);
+    const pista = partido.pista || 'Sin asignar';
+    const jugadores = `${partido.jugadores_actuales}/${partido.max_jugadores}`;
+
+    return `${deporte}\n${fecha} - ${hora}\nPista: ${pista}\nJugadores: ${jugadores}`;
   }
 
   esHoy(dia: number | null): boolean {

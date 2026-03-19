@@ -50,6 +50,118 @@
   z-index: 1;
 }
 
+/* ====== PRÓXIMO PARTIDO FLOTANTE (Esquina Superior Derecha) ====== */
+.proximo-partido-flotante {
+  position: fixed;
+  top: 90px;
+  right: 20px;
+  z-index: 100;
+  max-width: 280px;
+}
+
+.proximo-partido-flotante-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.proximo-partido-flotante-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+.proximo-partido-flotante-card mat-card-content {
+  padding: 16px;
+  font-size: 13px;
+}
+
+.flotante-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.flotante-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1565c0;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.flotante-sport {
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  background-color: #1976D2;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.flotante-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.flotante-hora {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1565c0;
+}
+
+.flotante-fecha {
+  font-size: 11px;
+  color: #666;
+  text-align: right;
+  line-height: 1.4;
+}
+
+.flotante-detail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  color: #555;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flotante-icon {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  color: #1976D2;
+  flex-shrink: 0;
+}
+
+.flotante-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flotante-btn {
+  float: right;
+  width: 32px !important;
+  height: 32px !important;
+  margin-top: 4px;
+}
+
+.flotante-btn mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
 /* ====== HERO TEXT ====== */
 .hero-text {
   text-align: center;
@@ -1047,6 +1159,16 @@
     margin: 2.5rem 1rem;
   }
 
+  .proximo-partido-flotante {
+    position: static;
+    max-width: 100%;
+    margin: 0 0 2rem 0;
+  }
+
+  .proximo-partido-flotante-card {
+    width: 100%;
+  }
+
   .section-title {
     font-size: 22px;
   }
@@ -1370,13 +1492,18 @@
   align-items: center;
   gap: 0.4rem;
   font-size: 11px;
-  background: linear-gradient(135deg, #1976d2, #1565c0);
+  background-color: #1976d2;
   color: white;
   padding: 0.4rem 0.6rem;
   border-radius: 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: opacity 0.3s ease;
+}
+
+.evento-item:hover {
+  opacity: 0.85;
 }
 
 .evento-icon {
