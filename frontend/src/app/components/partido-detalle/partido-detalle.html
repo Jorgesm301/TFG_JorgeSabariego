@@ -12,13 +12,8 @@
   <div class="partido-content">
     <div class="page-title-row">
       <div>
-        <h1 class="page-title">Detalles del Partido</h1>
-        <p class="page-subtitle">Consulta equipos, resultado y cambios ELO</p>
+        <h1 class="page-title">Tu Partido</h1>
       </div>
-      <button mat-stroked-button color="primary" (click)="volver()">
-        <mat-icon>arrow_back</mat-icon>
-        Volver
-      </button>
     </div>
 
     <div class="loading-state" *ngIf="cargando">
@@ -37,26 +32,28 @@
       <mat-card class="info-card">
         <mat-card-content>
           <div class="info-header">
-            <h2>{{ booking.sport?.nombre }}</h2>
+            <div class="info-title-section">
+              <h2 class="deporte-nombre">{{ booking.sport?.nombre }}</h2>
+              <p class="info-subtitle">Detalles de tu partida</p>
+            </div>
             <span class="estado-badge" [class.completo]="booking.estado === 'completo'" [class.jugado]="booking.estado === 'jugado'" [class.abierto]="booking.estado === 'abierto'">
-              {{ booking.estado }}
+              {{ booking.estado | uppercase }}
             </span>
           </div>
           <div class="info-details">
-            <div class="detail-item"><mat-icon color="primary">event</mat-icon><span>{{ booking.fecha }}</span></div>
-            <div class="detail-item"><mat-icon color="primary">schedule</mat-icon><span>{{ booking.hora_inicio }} - {{ booking.hora_fin }}</span></div>
-            <div class="detail-item"><mat-icon color="primary">stadium</mat-icon><span>{{ booking.pista }}</span></div>
+            <div class="detail-item"><mat-icon color="primary">event</mat-icon><span>{{ formatearFechaLegible(booking.fecha) }}</span></div>
+            <div class="detail-item"><mat-icon color="primary">schedule</mat-icon><span>{{ formatearHora(booking.hora_inicio) }} - {{ formatearHora(booking.hora_fin) }}</span></div>
+            <div class="detail-item"><mat-icon color="primary">location_on</mat-icon><span>{{ booking.pista }}</span></div>
             <div class="detail-item"><mat-icon color="primary">group</mat-icon><span>{{ booking.jugadores_actuales }} / {{ booking.max_jugadores }} jugadores</span></div>
           </div>
         </mat-card-content>
       </mat-card>
 
       <div class="action-section" *ngIf="puedeGenerarEquipos">
-        <button mat-raised-button color="primary" (click)="generarEquipos()" [disabled]="generandoEquipos">
-          <mat-icon>auto_awesome</mat-icon>
+        <button mat-raised-button class="btn-generar-equipos" (click)="generarEquipos()" [disabled]="generandoEquipos">
           {{ generandoEquipos ? 'Generando...' : 'Generar Equipos Equilibrados' }}
         </button>
-        <p class="action-hint">Los equipos se generan segun el nivel ELO de cada jugador.</p>
+        <p class="action-hint">Los equipos se generan según el nivel ELO de cada jugador.</p>
       </div>
 
       <div class="equipos-section" *ngIf="equipos">
@@ -85,20 +82,23 @@
           </mat-card>
         </div>
 
-        <mat-card class="resultado-section" *ngIf="puedeRegistrarResultado && !partidoJugado">
-          <mat-card-content>
-            <h3 class="section-title">Registrar Resultado</h3>
-            <div class="resultado-form">
-              <div class="score-input"><label>Equipo 1</label><input type="number" [(ngModel)]="scoreEquipo1" min="0" placeholder="0"></div>
-              <span class="score-separator">-</span>
-              <div class="score-input"><label>Equipo 2</label><input type="number" [(ngModel)]="scoreEquipo2" min="0" placeholder="0"></div>
-            </div>
-            <button mat-raised-button color="primary" (click)="registrarResultado()" [disabled]="registrandoResultado">
-              <mat-icon>check_circle</mat-icon>
-              {{ registrandoResultado ? 'Registrando...' : 'Confirmar Resultado' }}
-            </button>
-          </mat-card-content>
-        </mat-card>
+        <div class="action-section" *ngIf="puedeRegistrarResultado && !partidoJugado">
+          <mat-card class="resultado-section">
+            <mat-card-content>
+              <h3 class="section-title">Registrar Resultado</h3>
+              <div class="resultado-form">
+                <div class="score-input"><label>Equipo 1</label><input type="number" [(ngModel)]="scoreEquipo1" min="0" placeholder="0"></div>
+                <span class="score-separator">-</span>
+                <div class="score-input"><label>Equipo 2</label><input type="number" [(ngModel)]="scoreEquipo2" min="0" placeholder="0"></div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+          <button mat-raised-button color="primary" class="btn-confirmar-resultado" (click)="registrarResultado()" [disabled]="registrandoResultado">
+            <mat-icon>check_circle</mat-icon>
+            {{ registrandoResultado ? 'Registrando...' : 'Confirmar Resultado' }}
+          </button>
+          <p class="action-hint">Ingresa el marcador final del partido.</p>
+        </div>
 
         <mat-card class="resultado-final" *ngIf="partidoJugado">
           <mat-card-content>

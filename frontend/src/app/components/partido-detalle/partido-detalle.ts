@@ -126,17 +126,12 @@ export class PartidoDetalle implements OnInit, OnDestroy {
     if (!this.bookingId || this.generandoEquipos)
        return;
 
-    if (!confirm('¿Generar equipos equilibrados para este partido?')) {
-      return;
-    }
-
     this.generandoEquipos = true;
     this.error = '';
 
     this.matchService.generarEquipos(this.bookingId).subscribe({
       next: (response) => {
         console.log('Equipos generados:', response);
-        alert('Equipos generados exitosamente');
         this.cargarEquipos();
         this.generandoEquipos = false;
         this.cdr.detectChanges();
@@ -155,11 +150,7 @@ export class PartidoDetalle implements OnInit, OnDestroy {
       return;
 
     if (this.scoreEquipo1 < 0 || this.scoreEquipo2 < 0) {
-      alert('Los marcadores no pueden ser negativos');
-      return;
-    }
-
-    if (!confirm(`¿Registrar resultado ${this.scoreEquipo1} - ${this.scoreEquipo2}?`)) {
+      this.error = 'Los marcadores no pueden ser negativos';
       return;
     }
 
@@ -291,6 +282,22 @@ export class PartidoDetalle implements OnInit, OnDestroy {
     const suma = equipo.reduce((acc, j) => acc + (j.elo || 1000), 0);
 
     return Math.round(suma / equipo.length);
+  }
+
+  formatearFechaLegible(fecha: string): string {
+    try {
+      // Extraer solo la parte de fecha (YYYY-MM-DD) si es un formato ISO completo
+      const fechaParte = fecha.includes('T') ? fecha.split('T')[0] : fecha;
+      const [year, month, day] = fechaParte.split('-');
+      return `${day}-${month}-${year}`;
+    } catch (e) {
+      return fecha;
+    }
+  }
+
+  formatearHora(hora: string): string {
+    if (!hora) return '';
+    return hora.substring(0, 5);
   }
 }
 
