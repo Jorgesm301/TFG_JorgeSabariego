@@ -1,7 +1,7 @@
 .header{background:rgba(255,255,255,.95)!important;backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.06)!important;box-shadow:0 1px 3px rgba(0,0,0,.04)!important;position:sticky!important;top:0;z-index:100;color:#1565C0!important;height:64px;padding:0 32px!important}
 .brand{display:flex;align-items:center;text-decoration:none;color:#1565C0}
-.brand-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1976D2 0%,#1565C0 100%);color:#fff;box-shadow:0 2px 8px rgba(21,101,192,.2)}
-.brand-icon mat-icon{font-size:24px;width:24px;height:24px}
+.brand-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:transparent;color:#fff;box-shadow:none}
+.brand-icon .logo-img{width:44px;height:44px;display:block}
 .spacer{flex:1}
 .actions{display:flex;gap:8px;align-items:center}
 .user-name{font-weight:600;font-size:14px}

@@ -1,0 +1,41 @@
+<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1976D2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1565C0;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.4"/>
+    </filter>
+    <filter id="textShadow">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Escudo -->
+  <path d="M 50 8 L 85 25 L 85 55 C 85 85 50 112 50 112 C 50 112 15 85 15 55 L 15 25 Z" 
+        fill="url(#shieldGradient)" 
+        stroke="rgba(255,255,255,0.4)" 
+        stroke-width="1.5"
+        filter="url(#shadow)"/>
+  
+  <!-- Texto JS con mejor tipografía -->
+  <text x="50" y="74" 
+        font-family="'Segoe UI', 'Helvetica Neue', sans-serif" 
+        font-size="48" 
+        font-weight="900"
+        letter-spacing="1"
+        fill="white" 
+        text-anchor="middle" 
+        dominant-baseline="middle"
+        filter="url(#textShadow)"
+        style="paint-order: stroke; stroke: rgba(255,255,255,0.2); stroke-width: 0.5;">JS</text>
+</svg>
