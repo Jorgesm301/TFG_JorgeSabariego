@@ -25,6 +25,7 @@ import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
+import { FormatFechaPipe } from '../../pipes/format-fecha.pipe';
 
 @Component({
   selector: 'app-reservar',
@@ -35,7 +36,7 @@ import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/
     MatProgressSpinnerModule, MatChipsModule, MatListModule,
     MatDividerModule, MatMenuModule, MatTooltipModule,
     MatDatepickerModule, MatNativeDateModule, MatBadgeModule,
-    SharedMessagesDrawerComponent
+    SharedMessagesDrawerComponent, FormatFechaPipe
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es-ES' }

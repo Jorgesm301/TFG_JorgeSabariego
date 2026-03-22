@@ -16,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
+import { FormatFechaPipe } from '../../pipes/format-fecha.pipe';
 
 type Slide = {
   title: string;
@@ -39,7 +40,8 @@ type Slide = {
     MatChipsModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    SharedMessagesDrawerComponent
+    SharedMessagesDrawerComponent,
+    FormatFechaPipe
   ],
   templateUrl: './bienvenida.html',
   styleUrl: './bienvenida.css'

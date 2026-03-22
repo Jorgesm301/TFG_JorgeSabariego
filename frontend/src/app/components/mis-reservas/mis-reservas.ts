@@ -17,6 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatListModule } from '@angular/material/list';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
+import { FormatFechaPipe } from '../../pipes/format-fecha.pipe';
 
 @Component({
   selector: 'app-mis-reservas',
@@ -25,7 +26,8 @@ import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/
     CommonModule, RouterModule,
     SharedPageHeaderComponent, MatButtonModule, MatIconModule, MatCardModule,
     MatChipsModule, MatDividerModule, MatProgressSpinnerModule,
-    MatMenuModule, MatTooltipModule, MatListModule, SharedMessagesDrawerComponent
+    MatMenuModule, MatTooltipModule, MatListModule, SharedMessagesDrawerComponent,
+    FormatFechaPipe
   ],
   templateUrl: './mis-reservas.html',
   styleUrl: './mis-reservas.css'

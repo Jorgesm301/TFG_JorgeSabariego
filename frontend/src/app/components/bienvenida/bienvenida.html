@@ -16,7 +16,7 @@
           <h3 class="partido-nombre">PRÓXIMO PARTIDO</h3>
           <h4 class="partido-deporte">{{ proximoPartido.sport?.nombre }}</h4>
           <div class="partido-rango">
-            {{ formatearHora(proximoPartido.hora_inicio) }} • {{ formatearFecha(proximoPartido.fecha) }}
+            {{ formatearHora(proximoPartido.hora_inicio) }} • {{ proximoPartido.fecha | formatFecha: 'corta' }}
           </div>
           <div class="partido-ubicacion">
             <mat-icon>location_on</mat-icon>

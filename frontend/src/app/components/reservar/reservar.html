@@ -306,7 +306,7 @@
               <mat-card-content>
                 <div class="partido-header">
                   <div class="partido-title-group">
-                    <h4 class="partido-fecha">{{ reserva.fecha }}</h4>
+                    <h4 class="partido-fecha">{{ reserva.fecha | formatFecha: 'corta' }}</h4>
                     <span class="partido-hora">{{ reserva.hora_inicio }} — {{ reserva.hora_fin }}</span>
                   </div>
                   <mat-chip class="jugadores-chip" [class.chip-completo]="reserva.estado === 'completo'">

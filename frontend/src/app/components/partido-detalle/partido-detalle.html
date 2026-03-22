@@ -41,7 +41,7 @@
             </span>
           </div>
           <div class="info-details">
-            <div class="detail-item"><mat-icon color="primary">event</mat-icon><span>{{ formatearFechaLegible(booking.fecha) }}</span></div>
+            <div class="detail-item"><mat-icon color="primary">event</mat-icon><span>{{ booking.fecha | formatFecha: 'larga' }}</span></div>
             <div class="detail-item"><mat-icon color="primary">schedule</mat-icon><span>{{ formatearHora(booking.hora_inicio) }} - {{ formatearHora(booking.hora_fin) }}</span></div>
             <div class="detail-item"><mat-icon color="primary">location_on</mat-icon><span>{{ booking.pista }}</span></div>
             <div class="detail-item"><mat-icon color="primary">group</mat-icon><span>{{ booking.jugadores_actuales }} / {{ booking.max_jugadores }} jugadores</span></div>

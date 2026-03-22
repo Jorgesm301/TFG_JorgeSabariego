@@ -97,7 +97,7 @@
           <div class="reserva-detalles">
             <div class="detalle-item">
               <mat-icon color="primary">event</mat-icon>
-              <span>{{ reserva.fecha }}</span>
+              <span>{{ reserva.fecha | formatFecha: 'corta' }}</span>
             </div>
             <div class="detalle-item">
               <mat-icon color="primary">schedule</mat-icon>

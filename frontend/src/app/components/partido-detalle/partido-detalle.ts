@@ -18,6 +18,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
+import { FormatFechaPipe } from '../../pipes/format-fecha.pipe';
 
 @Component({
   selector: 'app-partido-detalle',
@@ -27,7 +28,7 @@ import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/
     SharedPageHeaderComponent, MatButtonModule, MatIconModule, MatCardModule,
     MatListModule, MatDividerModule, MatProgressSpinnerModule,
     MatMenuModule, MatTooltipModule, MatBadgeModule,
-    SharedMessagesDrawerComponent
+    SharedMessagesDrawerComponent, FormatFechaPipe
   ],
   templateUrl: './partido-detalle.html',
   styleUrl: './partido-detalle.css'
