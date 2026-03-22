@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { BookingService, IBooking } from '../../services/booking';
+import { GoogleCalendarService } from '../../services/google-calendar.service';
 import { MessageService, IConversation } from '../../services/message.service';
 import { FriendshipService, IUser } from '../../services/friendship.service';
 import { MatButtonModule } from '@angular/material/button';
@@ -59,6 +60,7 @@ export class MisReservas implements OnInit {
     private authService: AuthService,
     private router: Router,
     private bookingService: BookingService,
+    private googleCalendarService: GoogleCalendarService,
     private messageService: MessageService,
     private friendshipService: FriendshipService,
     private cdr: ChangeDetectorRef
@@ -118,6 +120,10 @@ export class MisReservas implements OnInit {
         alert(error.error?.message || 'Error al salir de la reserva');
       }
     });
+  }
+
+  anadirAGoogleCalendar(reserva: IBooking): void {
+    this.googleCalendarService.abrirEnGoogleCalendar(reserva);
   }
 
   volverInicio() {

@@ -119,6 +119,10 @@
         </mat-card-content>
 
         <mat-card-actions align="end">
+          <button mat-stroked-button color="primary" (click)="anadirAGoogleCalendar(reserva)" [matTooltip]="'Añadir a Google Calendar'" *ngIf="reserva.estado === 'completo'">
+            <mat-icon>calendar_month</mat-icon>
+            Google Calendar
+          </button>
           <button mat-stroked-button color="primary" [routerLink]="['/partido', reserva.id]" *ngIf="reserva.estado === 'completo' || reserva.estado === 'jugado'">
             <mat-icon>visibility</mat-icon>
             Ver Partido
