@@ -184,6 +184,65 @@ mat-form-field {
   margin-right: 8px;
 }
 
+/* ====== Separador Google ====== */
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0 16px;
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.separator span {
+  padding: 0 12px;
+}
+
+/* ====== Botón Google ====== */
+.google-btn {
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: white !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  color: #1a1a1a !important;
+  transition: all 0.2s ease !important;
+}
+
+.google-btn:hover {
+  background: #f8fafc !important;
+  border-color: rgba(21, 101, 192, 0.25) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.google-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.google-error {
+  margin: 12px 0 0;
+  color: #d32f2f;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+}
+
 /* ====== Footer ====== */
 .card-footer {
   padding: 24px 32px !important;
@@ -257,6 +316,11 @@ mat-form-field {
     height: 44px !important;
     font-size: 15px !important;
   }
+
+  .google-btn {
+    height: 44px !important;
+    font-size: 14px !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -294,5 +358,14 @@ mat-form-field {
 
   .footer-text {
     font-size: 13px;
+  }
+
+  .google-btn {
+    height: 42px !important;
+    font-size: 14px !important;
+  }
+
+  .separator {
+    margin: 16px 0 14px;
   }
 }

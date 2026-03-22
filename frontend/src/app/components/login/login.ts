@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
@@ -20,14 +20,15 @@ import { MatCardModule } from '@angular/material/card';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatCardModule
+    MatCardModule,
   ],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  styleUrl: './login.css',
 })
-export class Login {
+export class Login implements OnInit {
   loginForm: FormGroup;
   private returnUrl: string = '/';
+  googleError = false;
 
   constructor(
     private fb: FormBuilder,
@@ -37,23 +38,31 @@ export class Login {
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required]],
     });
 
-    //Volvemos a donde estabamos antes de ir al login, o a la bienvenida si no hay returnUrl
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  onLogin() {
+  ngOnInit(): void {
+    const error = this.route.snapshot.queryParamMap.get('error');
+    this.googleError = error === 'google_auth_failed';
+  }
+
+  onLogin(): void {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
-        next: (res) => {
+        next: () => {
           this.router.navigateByUrl(this.returnUrl);
         },
-        error: (err) => {
+        error: () => {
           console.error('Credenciales incorrectas');
-        }
+        },
       });
     }
+  }
+
+  loginConGoogle(): void {
+    window.location.href = 'http://127.0.0.1:8000/auth/google/redirect';
   }
 }

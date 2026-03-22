@@ -12,8 +12,12 @@ import { Mensajes } from './components/mensajes/mensajes';
 import { Chat } from './components/chat/chat';
 import { Amigos } from './components/amigos/amigos';
 import { authGuard } from './guards/auth.guard';
+import { GoogleCallback } from './components/google-callback/google-callback';
 
 export const routes: Routes = [
+
+  //Ruta de callback de Google (DEBE estar ANTES de las demás rutas públicas)
+  { path: 'auth/google/callback', component: GoogleCallback },
 
   //Pagina principal, login y registro, endpoints publicos.
   { path: '', component: Bienvenida },
@@ -74,4 +78,5 @@ export const routes: Routes = [
 
   // Cualquier ruta no encontrada va a la pagina de bienvenida
   { path: '**', redirectTo: '' }
+
 ];

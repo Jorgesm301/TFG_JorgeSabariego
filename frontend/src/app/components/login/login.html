@@ -1,5 +1,4 @@
 <div class="page">
-  <!-- HEADER -->
   <header class="header">
     <div class="header-inner">
       <a routerLink="/" class="brand">
@@ -56,6 +55,23 @@
             Entrar
           </button>
         </form>
+
+        <div class="separator">
+          <span>o</span>
+        </div>
+
+        <button
+          mat-stroked-button
+          type="button"
+          class="full-width google-btn"
+          (click)="loginConGoogle()">
+          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="google-icon">
+          Continuar con Google
+        </button>
+
+        <p *ngIf="googleError" class="google-error">
+          No se pudo iniciar sesión con Google. Inténtalo de nuevo.
+        </p>
       </mat-card-content>
 
       <mat-card-footer class="card-footer">
