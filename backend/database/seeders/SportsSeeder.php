@@ -52,15 +52,15 @@ class SportsSeeder extends Seeder
             ],
             [
                 'nombre' => 'Natacion',
-                'max_jugadores' => 1,
-                'duracion_minutos' => 45,
-                'descripcion' => 'Sesion de natacion'
+                'max_jugadores' => 8,
+                'duracion_minutos' => 60,
+                'descripcion' => 'Carrera de natacion - 8 carriles'
             ],
             [
                 'nombre' => 'Atletismo',
-                'max_jugadores' => 1,
+                'max_jugadores' => 8,
                 'duracion_minutos' => 60,
-                'descripcion' => 'Sesion de atletismo'
+                'descripcion' => 'Carrera de atletismo - 8 carriles'
             ]
         ];
 
