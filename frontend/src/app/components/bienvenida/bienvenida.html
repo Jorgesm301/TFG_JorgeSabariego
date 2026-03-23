@@ -49,7 +49,6 @@
 
           <div class="slide-overlay">
             <div class="slide-title">{{ slides[currentIndex].title }}</div>
-            <div class="slide-sub">{{ slides[currentIndex].subtitle }}</div>
           </div>
 
           <button mat-icon-button class="nav-arrow left" (click)="prevSlide()" aria-label="Anterior">
@@ -129,49 +128,10 @@
   <!-- FOOTER -->
   <footer class="footer animate-on-scroll">
     <div class="footer-content">
-      <!-- Sección 1: Acerca de -->
       <div class="footer-section">
-        <h3 class="footer-title">Polideportivo Municipal</h3>
-        <p class="footer-text">
-          Sistema de reservas deportivas con clasificación ELO.
-          Juega con personas de tu mismo nivel.
-        </p>
-        <div class="footer-social">
-          <a href="#" class="social-link" aria-label="Facebook">
-            <mat-icon>facebook</mat-icon>
-          </a>
-          <a href="#" class="social-link" aria-label="Twitter">
-            <mat-icon>{{ 'X' }}</mat-icon>
-          </a>
-          <a href="#" class="social-link" aria-label="Instagram">
-            <mat-icon>camera_alt</mat-icon>
-          </a>
-        </div>
+        <h3 class="footer-title">Cookies</h3>
       </div>
 
-      <!-- Sección 2: Enlaces rápidos -->
-      <div class="footer-section">
-        <h3 class="footer-title">Enlaces Rápidos</h3>
-        <ul class="footer-links">
-          <li><a routerLink="/login">Iniciar Sesión</a></li>
-          <li><a routerLink="/registro">Registrarse</a></li>
-          <li><a routerLink="/mis-reservas">Mis Reservas</a></li>
-          <li><a routerLink="/perfil">Mi Perfil</a></li>
-        </ul>
-      </div>
-
-      <!-- Sección 3: Deportes -->
-      <div class="footer-section">
-        <h3 class="footer-title">Deportes</h3>
-        <ul class="footer-links">
-          <li><a routerLink="/reservar/futbol">Fútbol</a></li>
-          <li><a routerLink="/reservar/baloncesto">Baloncesto</a></li>
-          <li><a routerLink="/reservar/tenis">Tenis</a></li>
-          <li><a routerLink="/reservar/padel">Pádel</a></li>
-        </ul>
-      </div>
-
-      <!-- Sección 4: Contacto -->
       <div class="footer-section">
         <h3 class="footer-title">Contacto</h3>
         <ul class="footer-links">
@@ -189,12 +149,17 @@
           </li>
         </ul>
       </div>
+
+
+    <div class="footer-section">
+      <h3 class="footer-title">Terminos y condiciones</h3>
+    </div>
     </div>
 
     <!-- Copyright -->
     <div class="footer-bottom">
       <p class="copyright">
-        © {{ currentYear }} Polideportivo Municipal. Todos los derechos reservados.
+        © {{ currentYear }} Gestion de reservas JS. Todos los derechos reservados.
       </p>
     </div>
   </footer>

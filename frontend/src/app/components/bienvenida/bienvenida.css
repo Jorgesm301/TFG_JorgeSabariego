@@ -645,15 +645,32 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 60px 32px 40px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 60px;
 }
 
 .footer-section {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.footer-section:nth-child(1) {
+  text-align: left;
+  align-items: flex-start;
+}
+
+.footer-section:nth-child(2) {
+  text-align: center;
+  align-items: center;
+}
+
+.footer-section:nth-child(3) {
+  text-align: right;
+  align-items: flex-end;
 }
 
 .footer-title {
@@ -662,45 +679,6 @@
   margin: 0 0 12px;
   color: white;
   letter-spacing: 0.3px;
-}
-
-.footer-text {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0;
-}
-
-.footer-social {
-  display: flex;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.social-link {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.social-link:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.social-link mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
 }
 
 .footer-links {
@@ -740,6 +718,22 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+.footer-section:nth-child(2) .footer-links {
+  align-items: center;
+}
+
+.footer-section:nth-child(2) .footer-links li {
+  justify-content: center;
+}
+
+.footer-section:nth-child(3) .footer-links {
+  align-items: flex-end;
+}
+
+.footer-section:nth-child(3) .footer-links li {
+  justify-content: flex-end;
+}
+
 .footer-bottom {
   border-top: 1px solid rgba(255, 255, 255, 0.15);
   padding: 24px 32px;
@@ -756,24 +750,31 @@
 /* Responsive */
 @media (max-width: 768px) {
   .footer-content {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 32px;
     padding: 40px 24px 32px;
   }
 
-  .footer-section {
+  .footer-section,
+  .footer-section:nth-child(1),
+  .footer-section:nth-child(2),
+  .footer-section:nth-child(3) {
     text-align: center;
+    align-items: center;
   }
 
-  .footer-social {
-    justify-content: center;
+  .footer-links,
+  .footer-section:nth-child(2) .footer-links,
+  .footer-section:nth-child(3) .footer-links {
+    align-items: center;
   }
 
-  .footer-links li {
+  .footer-links li,
+  .footer-section:nth-child(2) .footer-links li,
+  .footer-section:nth-child(3) .footer-links li {
     justify-content: center;
   }
 }
-
 
 
 /* ===== PRÓXIMO PARTIDO ===== */

@@ -144,18 +144,18 @@ export class Perfil implements OnInit, OnDestroy {
   }
 
   private getNivelPorElo(elo: number): string {
-    if (elo < 800) return 'Principiante';
-    if (elo < 1000) return 'Amateur';
-    if (elo < 1200) return 'Intermedio';
-    if (elo < 1500) return 'Avanzado';
+    if (elo < 130) return 'Principiante';
+    if (elo < 170) return 'Amateur';
+    if (elo < 210) return 'Intermedio';
+    if (elo < 260) return 'Avanzado';
     return 'Profesional';
   }
 
   private getIconoPorElo(elo: number): string {
-    if (elo < 800) return 'school';
-    if (elo < 1000) return 'star_half';
-    if (elo < 1200) return 'star';
-    if (elo < 1500) return 'military_tech';
+    if (elo < 130) return 'school';
+    if (elo < 170) return 'star_half';
+    if (elo < 210) return 'star';
+    if (elo < 260) return 'military_tech';
     return 'emoji_events';
   }
 

@@ -19,7 +19,7 @@ return new class extends Migration
                   ->constrained('sports')
                   ->onDelete('cascade');
 
-            $table->integer('elo')->default(1000);
+            $table->integer('elo')->default(100);
             $table->integer('matches_played')->default(0);
 
             $table->timestamps();

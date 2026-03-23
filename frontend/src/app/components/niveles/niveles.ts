@@ -57,39 +57,39 @@ export class Niveles implements OnInit, OnDestroy {
 
   niveles: INivel[] = [
     {
-      nombre: 'Principiante',
-      rango: '< 800',
-      icon: 'school',
-      minElo: 0,
-      maxElo: 799
-    },
-    {
-      nombre: 'Amateur',
-      rango: '800 - 1000',
-      icon: 'star_half',
-      minElo: 800,
-      maxElo: 999
-    },
-    {
-      nombre: 'Intermedio',
-      rango: '1000 - 1200',
-      icon: 'star',
-      minElo: 1000,
-      maxElo: 1199
+      nombre: 'Profesional',
+      rango: '≥ 300',
+      icon: 'emoji_events',
+      minElo: 300,
+      maxElo: 9999
     },
     {
       nombre: 'Avanzado',
-      rango: '1200 - 1500',
+      rango: '200 - 300',
       icon: 'military_tech',
-      minElo: 1200,
-      maxElo: 1399
+      minElo: 200,
+      maxElo: 299
     },
     {
-      nombre: 'Profesional',
-      rango: '≥ 1500',
-      icon: 'emoji_events',
-      minElo: 1400,
-      maxElo: 9999
+      nombre: 'Intermedio',
+      rango: '100 - 200',
+      icon: 'star',
+      minElo: 100,
+      maxElo: 199
+    },
+    {
+      nombre: 'Amateur',
+      rango: '50-100',
+      icon: 'star_half',
+      minElo: 50,
+      maxElo: 99
+    },
+    {
+      nombre: 'Principiante',
+      rango: '< 50',
+      icon: 'school',
+      minElo: 0,
+      maxElo: 49
     }
   ];
 

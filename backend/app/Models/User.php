@@ -62,7 +62,7 @@ class User extends Authenticatable
 
         if (!$exists) {
             $this->sports()->attach($deporteId, [
-                'elo' => 1000,
+                'elo' => 100,
                 'matches_played' => 0
             ]);
         }

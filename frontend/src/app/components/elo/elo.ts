@@ -230,8 +230,8 @@ export class Elo implements OnInit {
   }
 
   getColorNivel(elo: number): 'primary' | 'accent' | 'warn' {
-    if (elo >= 1300) return 'primary';
-    if (elo >= 1000) return 'accent';
+    if (elo >= 260) return 'primary';
+    if (elo >= 170) return 'accent';
     return 'warn';
   }
 

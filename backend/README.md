@@ -22,30 +22,9 @@ php artisan key:generate
 php artisan migrate --seed
 ```
 
-4. **IMPORTANTE**: Iniciar el scheduler de Laravel para procesamiento automático de partidos:
-```bash
-php artisan schedule:work
-```
-
-Este comando debe ejecutarse en segundo plano para que el sistema procese automáticamente los partidos vencidos sin resultado (aplicando 0-0 después de 24 horas).
-
-### Alternativa: Configurar Cron (Linux/Mac)
-```bash
-* * * * * cd /ruta/al/proyecto/backend && php artisan schedule:run >> /dev/null 2>&1
-```
-
-### Alternativa: Task Scheduler (Windows)
-Crear tarea programada que ejecute cada minuto:
-```bash
-cd C:\ruta\al\proyecto\backend && php artisan schedule:run
-```
+4. Configurado - ¡Listo!
 
 ## Comandos útiles
-
-- **Procesar partidos vencidos manualmente**:
-```bash
-php artisan partidos:procesar-vencidos
-```
 
 - **Ver rutas disponibles**:
 ```bash
@@ -64,7 +43,6 @@ php artisan config:clear
 - Gestión de reservas deportivas
 - Sistema de ranking ERO (similar a ELO)
 - Búsqueda de partidos por ubicación y radio GPS
-- Procesamiento automático de partidos vencidos
 - Sistema de equipos equilibrados
 - Mensajería entre usuarios
 - Sistema de amistad

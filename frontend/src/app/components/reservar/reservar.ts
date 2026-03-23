@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { BookingService, IBooking } from '../../services/booking';
 import { SportsService, Sport } from '../../services/sports.service';
@@ -47,6 +48,7 @@ import { FormatFechaPipe } from '../../pipes/format-fecha.pipe';
 export class Reservar implements OnInit, OnDestroy {
   sportSlug: string = '';
   sport: Sport | null = null;
+  private routeParamsSubscription: Subscription | null = null;
 
   modo: 'crear' | 'unirse' = 'crear';
 
@@ -100,34 +102,48 @@ export class Reservar implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.sportSlug = this.route.snapshot.params['deporte'];
+    // Suscribirse a los cambios de parámetros
+    this.routeParamsSubscription = this.route.paramMap.subscribe((params) => {
+      this.sportSlug = params.get('deporte') || '';
 
-    // Fecha mínima hoy y máxima un mes
-    const hoy = this.normalizarFecha(new Date());
-    this.fechaMinimaDate = hoy;
-    this.fechaSeleccionadaDate = hoy;
-    this.fechaSeleccionada = this.formatearFechaLocal(hoy);
-
-    const fechaMax = new Date(hoy);
-    fechaMax.setMonth(fechaMax.getMonth() + 1);
-    this.fechaMaximaDate = this.normalizarFecha(fechaMax);
-
-    this.cargarSport();
-
-    if (this.estaLogueado) {
-      this.drawerMessagesService.cargarConversaciones();
-      this.drawerMessagesService.iniciarActualizacionMensajes();
-    }
-
-    setTimeout(() => {
-      if (this.cargando && !this.sport) {
-        this.cargando = false;
-        this.mostrarMensaje('Error: La carga del deporte tardó demasiado. Por favor, recarga la página.', 'error');
+      // Resetear variables cuando cambias de deporte
+      if (this.sport && this.normalizar(this.sport.nombre) !== this.sportSlug) {
+        this.sport = null;
+        this.reservasDelDia = [];
+        this.reservasDisponibles = [];
+        this.horariosDisponibles = [];
       }
-    }, 10000);
+
+      // Fecha mínima hoy y máxima un mes
+      const hoy = this.normalizarFecha(new Date());
+      this.fechaMinimaDate = hoy;
+      this.fechaSeleccionadaDate = hoy;
+      this.fechaSeleccionada = this.formatearFechaLocal(hoy);
+
+      const fechaMax = new Date(hoy);
+      fechaMax.setMonth(fechaMax.getMonth() + 1);
+      this.fechaMaximaDate = this.normalizarFecha(fechaMax);
+
+      this.cargarSport();
+
+      if (this.estaLogueado) {
+        this.drawerMessagesService.cargarConversaciones();
+        this.drawerMessagesService.iniciarActualizacionMensajes();
+      }
+
+      setTimeout(() => {
+        if (this.cargando && !this.sport) {
+          this.cargando = false;
+          this.mostrarMensaje('Error: La carga del deporte tardó demasiado. Por favor, recarga la página.', 'error');
+        }
+      }, 10000);
+    });
   }
 
   ngOnDestroy() {
+    if (this.routeParamsSubscription) {
+      this.routeParamsSubscription.unsubscribe();
+    }
     if (this.geocodingTimeout) {
       clearTimeout(this.geocodingTimeout);
     }

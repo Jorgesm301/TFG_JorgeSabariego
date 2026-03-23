@@ -61,7 +61,7 @@ class MatchController extends Controller
                     return [
                         'id' => $jugador->id,
                         'name' => $jugador->name,
-                        'elo' => $sport ? $sport->pivot->elo : 1000
+                        'elo' => $sport ? $sport->pivot->elo : 100
                     ];
                 });
 
@@ -76,7 +76,7 @@ class MatchController extends Controller
                     return [
                         'id' => $jugador->id,
                         'name' => $jugador->name,
-                        'elo' => $sport ? $sport->pivot->elo : 1000
+                        'elo' => $sport ? $sport->pivot->elo : 100
                     ];
                 });
 
@@ -125,7 +125,7 @@ class MatchController extends Controller
                     return [
                         'id' => $jugador->id,
                         'name' => $jugador->name,
-                        'elo' => $sport ? $sport->pivot->elo : 1000
+                        'elo' => $sport ? $sport->pivot->elo : 100
                     ];
                 });
 
@@ -140,7 +140,7 @@ class MatchController extends Controller
                     return [
                         'id' => $jugador->id,
                         'name' => $jugador->name,
-                        'elo' => $sport ? $sport->pivot->elo : 1000
+                        'elo' => $sport ? $sport->pivot->elo : 100
                     ];
                 });
 
@@ -242,7 +242,7 @@ class MatchController extends Controller
                 'id' => $jugador->id,
                 'name' => $jugador->name,
                 'team' => $jugador->pivot->team,
-                'nuevo_elo' => $sport ? $sport->pivot->elo : 1000,
+                'nuevo_elo' => $sport ? $sport->pivot->elo : 100,
                 'partidos_jugados' => $sport ? $sport->pivot->matches_played : 0,
                 'gano' => $jugador->pivot->team == $booking->winner_team
             ];
@@ -289,25 +289,6 @@ class MatchController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener historial',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    //Procesa partidos vencidos y les aplica resultado por defecto (0-0) sin actualizar ELO
-    public function procesarPartidosVencidos()
-    {
-        try {
-            $procesados = Booking::procesarPartidosVencidos();
-
-            return response()->json([
-                'message' => "Se procesaron {$procesados} partido(s) vencido(s)",
-                'partidos_procesados' => $procesados
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al procesar partidos vencidos',
                 'error' => $e->getMessage()
             ], 500);
         }

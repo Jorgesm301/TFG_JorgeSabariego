@@ -278,9 +278,9 @@ export class PartidoDetalle implements OnInit, OnDestroy {
 
   calcularEloPromedio(equipo: any[]): number {
     if (!equipo || equipo.length === 0)
-     return 1000;
+     return 100;
 
-    const suma = equipo.reduce((acc, j) => acc + (j.elo || 1000), 0);
+    const suma = equipo.reduce((acc, j) => acc + (j.elo || 100), 0);
 
     return Math.round(suma / equipo.length);
   }

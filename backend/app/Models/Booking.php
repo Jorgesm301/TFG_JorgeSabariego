@@ -162,10 +162,10 @@ class Booking extends Model
             }])
             ->get();
 
-        //Ordenamos los jugadores por orden de ELO de forma descendente. En caso de ser nuevo el jugador en ese deporte le asignamos 1000.
+        //Ordenamos los jugadores por orden de ELO de forma descendente. En caso de ser nuevo el jugador en ese deporte le asignamos 100.
         $jugadoresOrdenados = $jugadores->sortByDesc(function($jugador) {
             $sport = $jugador->sports->first();
-            return $sport ? $sport->pivot->elo : 1000;
+            return $sport ? $sport->pivot->elo : 100;
         })->values();
 
         //Usamos algoritmo serpentina para repartir los jugadores.
@@ -230,47 +230,7 @@ class Booking extends Model
         return true;
     }
 
-    //Aplica resultado por defecto (0-0) sin actualizar ELO a partidos vencidos
-    public function aplicarResultadoPorDefecto()
-    {
-        // Solo aplicar si no tiene resultado registrado
-        if ($this->team_1_score !== null || $this->team_2_score !== null) {
-            return false;
-        }
 
-        // Registrar 0-0 sin actualizar ELO
-        $this->registrarResultado(0, 0, false);
-
-        return true;
-    }
-
-    //Procesa partidos vencidos sin resultado y les aplica 0-0 por defecto
-    //Solo procesa partidos que lleven 1 día o más desde su hora de finalización
-    public static function procesarPartidosVencidos()
-    {
-        $now = \Carbon\Carbon::now();
-
-        // Buscar partidos completos que ya pasaron y no tienen resultado
-        $partidos = self::where('estado', 'completo')
-            ->whereNull('team_1_score')
-            ->whereNull('team_2_score')
-            ->get();
-
-        $procesados = 0;
-        foreach ($partidos as $partido) {
-            // Crear un Carbon con la fecha y hora de finalización del partido
-            $fechaHoraFin = \Carbon\Carbon::parse($partido->fecha->toDateString() . ' ' . $partido->hora_fin);
-
-            // Verificar que haya pasado 1 día completo (24 horas o más) desde la hora de fin
-            if ($fechaHoraFin->diffInHours($now) >= 24) {
-                if ($partido->aplicarResultadoPorDefecto()) {
-                    $procesados++;
-                }
-            }
-        }
-
-        return $procesados;
-    }
 
     //Actualizamos el ELO de los jugadores.
     private function actualizarEloJugadores()
@@ -281,11 +241,11 @@ class Booking extends Model
 
 
         $eloPromedioEquipo1 = $jugadoresEquipo1->avg(function($jugador) {
-            return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->elo ?? 1000;
+            return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->elo ?? 100;
         });
 
         $eloPromedioEquipo2 = $jugadoresEquipo2->avg(function($jugador) {
-            return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->elo ?? 1000;
+            return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->elo ?? 100;
         });
 
 
@@ -310,7 +270,7 @@ class Booking extends Model
 
 
             $cambioElo = round($kAjustado * ($resultadoEquipo1 - $probabilidadEquipo1));
-            $nuevoElo = max(100, $eloActual + $cambioElo);
+            $nuevoElo = max(0, $eloActual + $cambioElo);
 
 
             $jugador->sports()->updateExistingPivot($this->deporte_id, [
@@ -328,7 +288,7 @@ class Booking extends Model
             $kAjustado = $partidosJugados < 10 ? 40 : ($partidosJugados < 30 ? 32 : 24);
 
             $cambioElo = round($kAjustado * ($resultadoEquipo2 - $probabilidadEquipo2));
-            $nuevoElo = max(100, $eloActual + $cambioElo);
+            $nuevoElo = max(0, $eloActual + $cambioElo);
 
             $jugador->sports()->updateExistingPivot($this->deporte_id, [
                 'elo' => $nuevoElo,
