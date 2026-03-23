@@ -23,14 +23,39 @@ import { IUser } from '../../../services/friendship.service';
   styleUrl: './shared-messages-drawer.css'
 })
 export class SharedMessagesDrawerComponent {
-  @Input() abierto = false;
-  @Input() modoNuevoMensaje = false;
+  @Input() abierto: boolean | null = false;
+  @Input() modoNuevoMensaje: boolean | null = false;
 
-  @Input() cargandoConversaciones = false;
-  @Input() conversaciones: IConversation[] = [];
+  @Input() cargandoConversaciones: boolean | null = false;
+  @Input() conversaciones: IConversation[] | null = [];
 
-  @Input() cargandoAmigos = false;
-  @Input() amigos: IUser[] = [];
+  @Input() cargandoAmigos: boolean | null = false;
+  @Input() amigos: IUser[] | null = [];
+
+  // Getters para manejar null values de forma segura
+  get abiertoClear(): boolean {
+    return this.abierto ?? false;
+  }
+
+  get modoNuevoMensajeClear(): boolean {
+    return this.modoNuevoMensaje ?? false;
+  }
+
+  get cargandoConversacionesClear(): boolean {
+    return this.cargandoConversaciones ?? false;
+  }
+
+  get conversacionesClear(): IConversation[] {
+    return this.conversaciones ?? [];
+  }
+
+  get cargandoAmigosClear(): boolean {
+    return this.cargandoAmigos ?? false;
+  }
+
+  get amigosClear(): IUser[] {
+    return this.amigos ?? [];
+  }
 
   @Output() cerrar = new EventEmitter<void>();
   @Output() abrirNuevoMensaje = new EventEmitter<void>();

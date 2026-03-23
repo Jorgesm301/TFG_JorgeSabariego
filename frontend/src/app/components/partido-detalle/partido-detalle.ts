@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { map } from 'rxjs';
 import { BookingService, IBooking } from '../../services/booking';
 import { MatchService, IEquiposResponse, ICambioElo } from '../../services/match.service';
 import { AuthService } from '../../services/auth';
@@ -212,32 +213,34 @@ export class PartidoDetalle implements OnInit, OnDestroy {
     this.router.navigate([ruta]);
   }
 
-  get drawerAbierto(): boolean {
-    return this.drawerMessagesService.drawerAbierto$.value;
+  get drawerAbierto$() {
+    return this.drawerMessagesService.drawerAbierto$;
   }
 
-  get modoNuevoMensaje(): boolean {
-    return this.drawerMessagesService.modoNuevoMensaje$.value;
+  get modoNuevoMensaje$() {
+    return this.drawerMessagesService.modoNuevoMensaje$;
   }
 
-  get cargandoConversaciones(): boolean {
-    return this.drawerMessagesService.cargandoConversaciones$.value;
+  get cargandoConversaciones$() {
+    return this.drawerMessagesService.cargandoConversaciones$;
   }
 
-  get conversaciones() {
-    return this.drawerMessagesService.conversaciones$.value;
+  get conversaciones$() {
+    return this.drawerMessagesService.conversaciones$;
   }
 
-  get cargandoAmigos(): boolean {
-    return this.drawerMessagesService.cargandoAmigos$.value;
+  get cargandoAmigos$() {
+    return this.drawerMessagesService.cargandoAmigos$;
   }
 
-  get amigos() {
-    return this.drawerMessagesService.amigos$.value;
+  get amigos$() {
+    return this.drawerMessagesService.amigos$;
   }
 
-  getTotalNoLeidos(): number {
-    return this.conversaciones.reduce((sum, conv) => sum + conv.no_leidos, 0);
+  get totalNoLeidos$() {
+    return this.conversaciones$.pipe(
+      map(convs => convs.reduce((sum, conv) => sum + conv.no_leidos, 0))
+    );
   }
 
   toggleDrawer(): void {

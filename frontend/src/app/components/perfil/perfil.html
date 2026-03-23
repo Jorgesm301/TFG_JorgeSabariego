@@ -3,7 +3,7 @@
     [estaLogueado]="true"
     [nombreUsuario]="nombreUsuario"
     [deportesMenu]="deportesMenu"
-    [totalNoLeidos]="getTotalNoLeidos()"
+    [totalNoLeidos]="totalNoLeidos$ | async"
     (messagesClick)="toggleDrawer()"
     (deporteSelect)="navegarADeporte($event)"
   ></app-shared-page-header>
@@ -105,12 +105,12 @@
   </div>
 
   <app-shared-messages-drawer
-    [abierto]="drawerAbierto"
-    [modoNuevoMensaje]="modoNuevoMensaje"
-    [cargandoConversaciones]="cargandoConversaciones"
-    [conversaciones]="conversaciones"
-    [cargandoAmigos]="cargandoAmigosDrawer"
-    [amigos]="amigosDrawer"
+    [abierto]="drawerAbierto$ | async"
+    [modoNuevoMensaje]="modoNuevoMensaje$ | async"
+    [cargandoConversaciones]="cargandoConversaciones$ | async"
+    [conversaciones]="conversaciones$ | async"
+    [cargandoAmigos]="cargandoAmigos$ | async"
+    [amigos]="amigos$ | async"
     (cerrar)="cerrarDrawer()"
     (abrirNuevoMensaje)="abrirNuevoMensaje()"
     (volverAConversaciones)="volverAConversaciones()"

@@ -1,11 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { map } from 'rxjs';
 import { AuthService } from '../../services/auth';
 import { BookingService, IBooking } from '../../services/booking';
 import { GoogleCalendarService } from '../../services/google-calendar.service';
-import { MessageService, IConversation } from '../../services/message.service';
-import { FriendshipService, IUser } from '../../services/friendship.service';
+import { DrawerMessagesService } from '../../services/drawer-messages.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -32,20 +32,11 @@ import { FormatFechaPipe } from '../../pipes/format-fecha.pipe';
   templateUrl: './mis-reservas.html',
   styleUrl: './mis-reservas.css'
 })
-export class MisReservas implements OnInit {
+export class MisReservas implements OnInit, OnDestroy {
   usuario: any = null;
   reservas: IBooking[] = [];
   cargando: boolean = false;
   error: string = '';
-
-  drawerAbierto = false;
-  conversaciones: IConversation[] = [];
-  cargandoConversaciones = false;
-  private intervaloMensajes: any;
-
-  modoNuevoMensaje = false;
-  amigos: IUser[] = [];
-  cargandoAmigos = false;
 
   deportesMenu = [
     { nombre: 'Fútbol', icon: 'sports_soccer', ruta: '/reservar/futbol' },
@@ -63,8 +54,7 @@ export class MisReservas implements OnInit {
     private router: Router,
     private bookingService: BookingService,
     private googleCalendarService: GoogleCalendarService,
-    private messageService: MessageService,
-    private friendshipService: FriendshipService,
+    private drawerMessagesService: DrawerMessagesService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -78,14 +68,14 @@ export class MisReservas implements OnInit {
     }
 
     this.cargarReservas();
-    this.cargarConversaciones();
-    this.iniciarActualizacionMensajes();
+    if (this.estaLogueado) {
+      this.drawerMessagesService.cargarConversaciones();
+      this.drawerMessagesService.iniciarActualizacionMensajes();
+    }
   }
 
   ngOnDestroy(): void {
-    if (this.intervaloMensajes) {
-      clearInterval(this.intervaloMensajes);
-    }
+    this.drawerMessagesService.detenerActualizacionMensajes();
   }
 
   cargarReservas() {
@@ -156,77 +146,59 @@ export class MisReservas implements OnInit {
     this.router.navigate([ruta]);
   }
 
-  cargarConversaciones(): void {
-    if (!this.estaLogueado) return;
-
-    this.cargandoConversaciones = true;
-    this.messageService.listarConversaciones().subscribe({
-      next: (data) => {
-        this.conversaciones = data;
-        this.cargandoConversaciones = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.cargandoConversaciones = false;
-        this.cdr.detectChanges();
-      }
-    });
+  // ===== DRAWER MESSAGING =====
+  get drawerAbierto$() {
+    return this.drawerMessagesService.drawerAbierto$;
   }
 
-  iniciarActualizacionMensajes(): void {
-    this.intervaloMensajes = setInterval(() => {
-      this.cargarConversaciones();
-    }, 30000);
+  get modoNuevoMensaje$() {
+    return this.drawerMessagesService.modoNuevoMensaje$;
   }
 
-  getTotalNoLeidos(): number {
-    return this.conversaciones.reduce((sum, conv) => sum + conv.no_leidos, 0);
+  get cargandoConversaciones$() {
+    return this.drawerMessagesService.cargandoConversaciones$;
+  }
+
+  get conversaciones$() {
+    return this.drawerMessagesService.conversaciones$;
+  }
+
+  get cargandoAmigos$() {
+    return this.drawerMessagesService.cargandoAmigos$;
+  }
+
+  get amigos$() {
+    return this.drawerMessagesService.amigos$;
+  }
+
+  get totalNoLeidos$() {
+    return this.conversaciones$.pipe(
+      map(convs => convs.reduce((sum, conv) => sum + conv.no_leidos, 0))
+    );
   }
 
   toggleDrawer(): void {
-    this.drawerAbierto = !this.drawerAbierto;
-    if (this.drawerAbierto) {
-      this.cargarConversaciones();
-    }
+    this.drawerMessagesService.toggleDrawer();
   }
 
   cerrarDrawer(): void {
-    this.drawerAbierto = false;
-    this.modoNuevoMensaje = false;
+    this.drawerMessagesService.cerrarDrawer();
   }
 
   abrirNuevoMensaje(): void {
-    this.modoNuevoMensaje = true;
-    this.cargarAmigos();
+    this.drawerMessagesService.abrirNuevoMensaje();
   }
 
   volverAConversaciones(): void {
-    this.modoNuevoMensaje = false;
-  }
-
-  cargarAmigos(): void {
-    this.cargandoAmigos = true;
-    this.friendshipService.listarAmigos().subscribe({
-      next: (data) => {
-        this.amigos = data;
-        this.cargandoAmigos = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.cargandoAmigos = false;
-        this.cdr.detectChanges();
-      }
-    });
+    this.drawerMessagesService.volverAConversaciones();
   }
 
   abrirChat(amigoId: number): void {
-    this.cerrarDrawer();
-    this.router.navigate(['/chat', amigoId]);
+    this.drawerMessagesService.abrirChat(amigoId);
   }
 
   irAMensajes(): void {
-    this.cerrarDrawer();
-    this.router.navigate(['/mensajes']);
+    this.drawerMessagesService.irAMensajes();
   }
 }
 

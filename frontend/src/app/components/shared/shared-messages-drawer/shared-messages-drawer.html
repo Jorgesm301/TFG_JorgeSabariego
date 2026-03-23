@@ -1,16 +1,16 @@
-<div class="messages-drawer" [class.open]="abierto">
+<div class="messages-drawer" [class.open]="abiertoClear">
   <div class="drawer-header">
-    <button *ngIf="modoNuevoMensaje" mat-icon-button (click)="onVolverAConversaciones()" class="back-btn">
+    <button *ngIf="modoNuevoMensajeClear" mat-icon-button (click)="onVolverAConversaciones()" class="back-btn">
       <mat-icon>arrow_back</mat-icon>
     </button>
 
     <h2 class="drawer-title">
-      <mat-icon>{{ modoNuevoMensaje ? 'edit' : 'mail' }}</mat-icon>
-      {{ modoNuevoMensaje ? 'Nuevo Mensaje' : 'Mensajes' }}
+      <mat-icon>{{ modoNuevoMensajeClear ? 'edit' : 'mail' }}</mat-icon>
+      {{ modoNuevoMensajeClear ? 'Nuevo Mensaje' : 'Mensajes' }}
     </h2>
 
     <div class="header-actions">
-      <button *ngIf="!modoNuevoMensaje" mat-icon-button (click)="onAbrirNuevoMensaje()" class="new-msg-btn" matTooltip="Nuevo mensaje">
+      <button *ngIf="!modoNuevoMensajeClear" mat-icon-button (click)="onAbrirNuevoMensaje()" class="new-msg-btn" matTooltip="Nuevo mensaje">
         <mat-icon>edit</mat-icon>
       </button>
 
@@ -20,14 +20,14 @@
     </div>
   </div>
 
-  <div *ngIf="!modoNuevoMensaje">
-    <div *ngIf="cargandoConversaciones" class="drawer-loading">
+  <div *ngIf="!modoNuevoMensajeClear">
+    <div *ngIf="cargandoConversacionesClear" class="drawer-loading">
       <mat-icon class="spinner">refresh</mat-icon>
       <p>Cargando conversaciones...</p>
     </div>
 
-    <mat-list *ngIf="!cargandoConversaciones" class="conversations-list">
-      <div *ngIf="conversaciones.length === 0" class="empty-drawer-state">
+    <mat-list *ngIf="!cargandoConversacionesClear" class="conversations-list">
+      <div *ngIf="conversacionesClear.length === 0" class="empty-drawer-state">
         <mat-icon>forum</mat-icon>
         <p>No tienes conversaciones</p>
         <small>Envia un mensaje a tus amigos</small>
@@ -37,7 +37,7 @@
         </button>
       </div>
 
-      <mat-list-item *ngFor="let conv of conversaciones" (click)="onAbrirChat(conv.amigo.id)" class="conversation-item" [class.unread]="conv.no_leidos > 0">
+      <mat-list-item *ngFor="let conv of conversacionesClear" (click)="onAbrirChat(conv.amigo.id)" class="conversation-item" [class.unread]="conv.no_leidos > 0">
         <div class="conv-avatar">
           <mat-icon>account_circle</mat-icon>
         </div>
@@ -54,28 +54,28 @@
         </div>
       </mat-list-item>
 
-      <mat-divider *ngIf="conversaciones.length > 0"></mat-divider>
-      <mat-list-item *ngIf="conversaciones.length > 0" (click)="onIrAMensajes()" class="view-all-item">
+      <mat-divider *ngIf="conversacionesClear.length > 0"></mat-divider>
+      <mat-list-item *ngIf="conversacionesClear.length > 0" (click)="onIrAMensajes()" class="view-all-item">
         <mat-icon>open_in_new</mat-icon>
         <span>Ver todos los mensajes</span>
       </mat-list-item>
     </mat-list>
   </div>
 
-  <div *ngIf="modoNuevoMensaje">
-    <div *ngIf="cargandoAmigos" class="drawer-loading">
+  <div *ngIf="modoNuevoMensajeClear">
+    <div *ngIf="cargandoAmigosClear" class="drawer-loading">
       <mat-icon class="spinner">refresh</mat-icon>
       <p>Cargando amigos...</p>
     </div>
 
-    <mat-list *ngIf="!cargandoAmigos" class="friends-list">
-      <div *ngIf="amigos.length === 0" class="empty-drawer-state">
+    <mat-list *ngIf="!cargandoAmigosClear" class="friends-list">
+      <div *ngIf="amigosClear.length === 0" class="empty-drawer-state">
         <mat-icon>person_add</mat-icon>
         <p>No tienes amigos aun</p>
         <small>Anade amigos para enviarles mensajes</small>
       </div>
 
-      <mat-list-item *ngFor="let amigo of amigos" (click)="onAbrirChat(amigo.id)" class="friend-item">
+      <mat-list-item *ngFor="let amigo of amigosClear" (click)="onAbrirChat(amigo.id)" class="friend-item">
         <div class="friend-avatar">
           <mat-icon>account_circle</mat-icon>
         </div>

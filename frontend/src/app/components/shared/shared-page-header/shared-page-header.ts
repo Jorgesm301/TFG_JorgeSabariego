@@ -34,7 +34,7 @@ export class SharedPageHeaderComponent {
   @Input() estaLogueado = false;
   @Input() nombreUsuario = '';
   @Input() deportesMenu: IHeaderSport[] = [];
-  @Input() totalNoLeidos = 0;
+  @Input() totalNoLeidos: number | null = 0;
   @Input() showMessagesButton = true;
   @Input() showSubheader = true;
   @Input() showReservarMenu = true;
