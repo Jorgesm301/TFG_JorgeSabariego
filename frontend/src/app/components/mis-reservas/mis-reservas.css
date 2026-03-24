@@ -299,7 +299,48 @@ mat-card-actions.reserva-acciones {
 }
 
 /* ---- RESPONSIVE ---- */
-@media (max-width: 768px) {
+/* Mobile Pequeño (320px) */
+@media (max-width: 480px) {
+  .page-content {
+    padding: 16px 12px 40px;
+  }
+
+  .page-title-row {
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .reservas-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .estado-chip {
+    font-size: 11px !important;
+  }
+
+  .detalle-item {
+    font-size: 12px;
+  }
+
+  mat-card-actions.reserva-acciones {
+    flex-direction: column !important;
+    padding: 12px !important;
+  }
+
+  .action-btn {
+    width: 100% !important;
+    height: 36px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Tablet (768px) */
+@media (min-width: 481px) and (max-width: 768px) {
   .page-content {
     padding: 20px 16px 48px;
   }
@@ -319,5 +360,26 @@ mat-card-actions.reserva-acciones {
   .action-btn {
     width: 100% !important;
   }
+}
 
+/* Tablet Grande (1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .page-content {
+    padding: 28px 24px 56px;
+  }
+
+  .reservas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop (1360px+) */
+@media (min-width: 1360px) {
+  .page-content {
+    padding: 40px 40px 80px;
+  }
+
+  .reservas-grid {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  }
 }

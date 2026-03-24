@@ -273,40 +273,8 @@
 
 
 
-@media (max-width: 768px) {
-  .amigos-content {
-    padding: 20px 12px;
-  }
-
-  .tab-pane {
-    padding: 14px;
-  }
-
-  .tabs-row {
-    padding: 10px;
-    gap: 8px;
-  }
-
-  .tab-btn {
-    width: calc(50% - 4px);
-    justify-content: center;
-    font-size: 13px;
-    padding: 0 8px;
-  }
-
-  .card-content {
-    flex-wrap: wrap;
-    align-items: flex-start;
-  }
-
-  .actions-wrap {
-    width: 100%;
-    justify-content: flex-end;
-  }
-
-
-  .state-badge {
-    font-size: 11px;
-  }
-}
+@media (max-width:480px){.amigos-content{padding:16px 12px 30px}.page-title{font-size:28px}.tabs-row{padding:8px;gap:6px}.tab-btn{width:calc(50% - 3px);font-size:12px;padding:0 6px}.tab-pane{padding:12px}.cards-list{gap:12px}.friend-card{border-radius:12px}.card-content{padding:12px !important;gap:10px}.avatar-wrap{width:48px;height:48px}.avatar-wrap mat-icon{font-size:24px;width:24px;height:24px}.person-info h3{font-size:14px;gap:4px}.person-info p{font-size:12px}.person-info small{font-size:11px}.actions-wrap{gap:6px}.detalle-item{font-size:12px}.state-badge{font-size:11px;padding:4px 10px}.search-card{margin-bottom:12px}.empty-state{padding:32px 16px}.empty-state mat-icon,.error-state mat-icon{font-size:40px;width:40px;height:40px}}
+@media (min-width:481px) and (max-width:768px){.amigos-content{padding:20px 12px}.page-title{font-size:32px}.tabs-row{padding:10px}.tab-btn{width:calc(50% - 5px);justify-content:center}.card-content{gap:12px}.person-info h3{font-size:15px}.person-info p{font-size:13px}.empty-state{padding:40px 20px}}
+@media (min-width:769px) and (max-width:1024px){.amigos-content{padding:22px 18px;max-width:960px}}
+@media (min-width:1360px){.amigos-content{padding:32px 40px;max-width:1100px}}
 

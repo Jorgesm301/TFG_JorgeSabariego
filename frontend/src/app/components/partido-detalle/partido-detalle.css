@@ -136,5 +136,7 @@
   cursor: not-allowed;
 }
 
-@media (max-width:900px){.equipos-grid{grid-template-columns:1fr}.vs-divider{display:none}.score-separator{display:none}.resultado-form{flex-direction:column;gap:10px}}
-@media (max-width:768px){.partido-content{padding:20px 16px 48px}.page-title{font-size:24px}.final-score{font-size:30px}}
+@media (max-width:480px){.partido-content{padding:16px 12px 40px}.page-title{font-size:28px}.final-score{font-size:24px}.equipos-grid{grid-template-columns:1fr}.vs-divider{display:none}.score-separator{display:none}.resultado-form{flex-direction:column;gap:8px}.score-input input{width:70px;font-size:18px}.equipo-header h4{font-size:16px}.jugador-nombre{font-size:13px}.elo-promedio{font-size:11px;padding:2px 8px}.cambios-grid{grid-template-columns:1fr}}
+@media (min-width:481px) and (max-width:768px){.partido-content{padding:20px 16px 48px}.page-title{font-size:24px}.final-score{font-size:30px}.equipos-grid{grid-template-columns:1fr}.vs-divider{display:none}.score-separator{display:none}.resultado-form{flex-direction:column;gap:10px}}
+@media (min-width:769px) and (max-width:1024px){.partido-content{padding:28px 20px 52px}.equipos-grid{grid-template-columns:1fr}}
+@media (min-width:1360px){.partido-content{padding:40px 40px 80px;max-width:1200px}}

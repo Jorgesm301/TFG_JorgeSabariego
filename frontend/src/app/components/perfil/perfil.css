@@ -375,7 +375,59 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+/* Mobile Pequeño (320px) */
+@media (max-width: 480px) {
+  .perfil-content {
+    padding: 16px 12px 30px;
+  }
+
+  .perfil-card {
+    margin-bottom: 16px;
+  }
+
+  .perfil-card-content {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px !important;
+    gap: 16px;
+  }
+
+  .perfil-avatar {
+    width: 72px;
+    height: 72px;
+  }
+
+  .avatar-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .perfil-nombre {
+    font-size: 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-value {
+    font-size: 18px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .nivel-racha-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* Tablet (768px) */
+@media (min-width: 481px) and (max-width: 768px) {
   .perfil-content {
     padding: 20px 12px;
   }
@@ -400,12 +452,35 @@
   .perfil-nombre {
     font-size: 24px;
   }
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
 
   .stat-value {
     font-size: 24px;
+  }
+
+  .nivel-racha-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablet Grande (1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .perfil-content {
+    padding: 26px 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Desktop (1360px+) */
+@media (min-width: 1360px) {
+  .perfil-content {
+    padding: 32px 40px;
   }
 }
 

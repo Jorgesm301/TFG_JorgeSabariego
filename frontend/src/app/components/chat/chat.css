@@ -314,7 +314,76 @@
 }
 
 /* ====== RESPONSIVE ====== */
-@media (max-width: 768px) {
+/* Mobile Pequeño (320px) */
+@media (max-width: 480px) {
+  .chat-header {
+    padding: 6px 8px !important;
+  }
+
+  .header-user {
+    gap: 8px;
+    margin-left: 4px;
+  }
+
+  .user-avatar mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .user-name {
+    font-size: 14px;
+  }
+
+  .user-status {
+    font-size: 11px;
+  }
+
+  .messages-container {
+    padding: 12px 8px;
+    max-width: 100%;
+  }
+
+  .messages-list {
+    gap: 8px;
+  }
+
+  .message-bubble {
+    max-width: 90%;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .bubble-content {
+    font-size: 13px;
+  }
+
+  .message-time {
+    font-size: 10px;
+  }
+
+  .chat-input-container {
+    padding: 8px;
+  }
+
+  .chat-input-wrapper {
+    gap: 8px;
+  }
+
+  .chat-input {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .btn-enviar {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+}
+
+/* Tablet (768px) */
+@media (min-width: 481px) and (max-width: 768px) {
   .chat-header {
     padding: 8px 12px !important;
   }
@@ -334,6 +403,25 @@
   .send-btn {
     width: 48px !important;
     height: 48px !important;
+  }
+}
+
+/* Tablet Grande (1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .messages-container {
+    padding: 20px 16px;
+    max-width: 100%;
+  }
+
+  .message-bubble {
+    max-width: 70%;
+  }
+}
+
+/* Desktop (1360px+) */
+@media (min-width: 1360px) {
+  .messages-container {
+    padding: 24px 20px;
   }
 }
 

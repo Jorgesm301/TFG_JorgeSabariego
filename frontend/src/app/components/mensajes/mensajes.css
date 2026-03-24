@@ -243,16 +243,7 @@
   color: rgba(21, 101, 192, 0.7);
 }
 
-@media (max-width: 768px) {
-  .mensajes-content {
-    padding: 20px 12px;
-  }
-
-  .page-title {
-    font-size: 30px;
-  }
-
-  .conv-card-content {
-    gap: 12px;
-  }
-}
+@media (max-width:480px){.mensajes-content{padding:16px 12px 30px}.page-title{font-size:24px}.title-wrap{margin-bottom:12px}.page-subtitle{font-size:13px}.conv-card-content{gap:10px;padding:12px !important}.info-badge{padding:10px 12px;font-size:12px}.loading-state,.error-state,.empty-state{padding:24px 16px}}
+@media (min-width:481px) and (max-width:768px){.mensajes-content{padding:20px 12px}.page-title{font-size:30px}.conv-card-content{gap:12px}}
+@media (min-width:769px) and (max-width:1024px){.mensajes-content{padding:26px 18px;max-width:900px}.page-title{font-size:32px}}
+@media (min-width:1360px){.mensajes-content{padding:32px 40px;max-width:1100px}.page-title{font-size:36px}}

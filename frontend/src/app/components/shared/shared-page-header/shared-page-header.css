@@ -14,6 +14,7 @@
 .nav-button:hover{color:#1976D2!important;background:rgba(25,118,210,.06)!important}
 .nav-button-active{color:#1565C0!important;background:rgba(25,118,210,.1)!important}
 
-@media (max-width:768px){
-  .header{padding:0 16px!important}
-}
+@media (max-width:480px){.header{padding:0 8px !important;height:56px}.brand{gap:6px}.brand-icon{width:36px;height:36px}.user-name{font-size:12px;font-weight:500}.actions{gap:4px}.messages-btn{width:40px;height:40px}.subheader-inner{padding:0 12px}.nav-button{font-size:12px;padding:8px 6px !important}.subheader{top:56px}}
+@media (min-width:481px) and (max-width:768px){.header{padding:0 12px !important}.brand-icon{width:40px;height:40px}.user-name{font-size:13px}.subheader-inner{padding:0 16px}}
+@media (min-width:769px) and (max-width:1024px){.header{padding:0 16px !important;height:66px}.subheader{top:66px}}
+@media (min-width:1360px){.header{padding:0 32px !important}}

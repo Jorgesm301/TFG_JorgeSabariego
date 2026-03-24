@@ -261,7 +261,68 @@ mat-form-field {
 }
 
 /* ====== RESPONSIVE ====== */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
+  .header-inner {
+    padding: 10px 12px;
+  }
+
+  .brand-text {
+    display: none;
+  }
+
+  .brand-name {
+    font-size: 12px;
+  }
+
+  .brand-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
+  }
+
+  .registro-container {
+    padding: 16px 12px;
+    max-width: 100%;
+  }
+
+  .card-header {
+    padding: 24px 20px 16px !important;
+    gap: 6px;
+  }
+
+  .title {
+    font-size: 22px !important;
+  }
+
+  .subtitle {
+    font-size: 12px !important;
+  }
+
+  mat-card-content {
+    padding: 0 20px 20px !important;
+  }
+
+  .submit-btn {
+    height: 40px !important;
+    font-size: 14px !important;
+  }
+
+  .google-btn {
+    height: 40px !important;
+    font-size: 13px !important;
+  }
+
+  .card-footer {
+    padding: 16px 20px !important;
+  }
+
+  .footer-text {
+    font-size: 12px;
+  }
+}
+
+/* Tablet (768px) */
+@media (min-width: 481px) and (max-width: 768px) {
   .header-inner {
     padding: 12px 16px;
   }
@@ -308,36 +369,30 @@ mat-form-field {
     height: 44px !important;
     font-size: 15px !important;
   }
+
+  .google-btn {
+    height: 44px !important;
+    font-size: 14px !important;
+  }
 }
 
-@media (max-width: 480px) {
+/* Tablet Grande (1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
   .header-inner {
-    padding: 10px 12px;
-  }
-
-  .brand-text {
-    display: none;
+    padding: 14px 24px;
   }
 
   .registro-container {
-    padding: 16px 12px;
+    padding: 40px 24px;
   }
+}
 
-  .card-header {
-    padding: 24px 20px 16px !important;
+/* Desktop (1360px+) */
+@media (min-width: 1360px) {
+  .registro-container {
+    padding: 60px 40px;
   }
-
-  .title {
-    font-size: 22px !important;
-  }
-
-  .subtitle {
-    font-size: 12px !important;
-  }
-
-  mat-card-content {
-    padding: 0 20px 20px !important;
-  }
+}
 
   .card-footer {
     padding: 16px 20px !important;
@@ -346,4 +401,3 @@ mat-form-field {
   .footer-text {
     font-size: 13px;
   }
-}

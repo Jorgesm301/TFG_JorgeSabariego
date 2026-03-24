@@ -41,4 +41,7 @@
 :host ::ng-deep .conversation-item .mat-mdc-list-item-unscoped-content{display:flex!important;align-items:flex-start!important;width:100%;overflow:visible!important}
 :host ::ng-deep .conversation-item .mdc-list-item__primary-text{display:block!important;line-height:1.25!important;overflow:visible!important}
 
-@media (max-width:900px){.messages-drawer{width:100%;right:-100%}}
+@media (max-width:480px){.messages-drawer{width:100%;right:-100%;max-height:calc(100vh - 56px)}.drawer-header{padding:10px 12px;gap:6px}.drawer-title{font-size:14px}.drawer-title mat-icon{font-size:16px;width:16px;height:16px}.conversation-item,.friend-item{padding:12px !important;min-height:60px}.conv-avatar,.friend-avatar mat-icon,.friend-avatar{font-size:32px;width:32px;height:32px}.conv-name,.friend-name{font-size:13px}.conv-time{font-size:11px}.message-text,.friend-email{font-size:12px}.unread-badge{font-size:10px;min-width:18px;height:18px}}
+@media (min-width:481px) and (max-width:900px){.messages-drawer{width:100%;right:-100%}}
+@media (min-width:901px) and (max-width:1024px){.messages-drawer{width:380px}}
+@media (min-width:1360px){.messages-drawer{width:420px}}

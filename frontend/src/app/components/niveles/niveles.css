@@ -285,8 +285,102 @@
   }
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
+/* ====== RESPONSIVE ====== */
+/* Mobile Pequeño (320px) */
+@media (max-width: 480px) {
+  .niveles-container {
+    padding: 16px 12px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .hero p {
+    font-size: 14px;
+  }
+
+  .tu-nivel-section {
+    margin-bottom: 32px;
+  }
+
+  .tu-nivel-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .tu-nivel-icon-box {
+    width: 56px;
+    height: 56px;
+    font-size: 32px;
+  }
+
+  .tu-nivel-valor {
+    font-size: 32px;
+  }
+
+  .tu-nivel-label {
+    font-size: 11px;
+  }
+
+  .nivel-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+    padding: 16px;
+    margin-bottom: 0;
+  }
+
+  .nivel-item::before {
+    height: 2px;
+  }
+
+  .nivel-item:hover {
+    transform: translateY(-2px);
+  }
+
+  .nivel-header-info {
+    justify-content: center;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .nivel-rank {
+    width: 52px;
+    height: 52px;
+  }
+
+  .nivel-icon-badge {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .nivel-nombre {
+    font-size: 17px;
+  }
+
+  .nivel-rango {
+    font-size: 11px;
+    padding: 2px 10px;
+  }
+
+  .nivel-descripcion {
+    font-size: 13px;
+  }
+
+  .icono-check {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Tablet (768px) */
+@media (min-width: 481px) and (max-width: 768px) {
   .niveles-container {
     padding: 24px 16px;
   }
@@ -303,6 +397,12 @@
     flex-direction: column;
     text-align: center;
     padding: 24px;
+    gap: 16px;
+  }
+
+  .tu-nivel-icon-box {
+    width: 64px;
+    height: 64px;
   }
 
   .tu-nivel-valor {
@@ -338,5 +438,31 @@
 
   .nivel-nombre {
     font-size: 18px;
+  }
+}
+
+/* Tablet Grande (1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .niveles-container {
+    padding: 40px 24px;
+    max-width: 950px;
+  }
+
+  .tu-nivel-card {
+    gap: 20px;
+    padding: 28px;
+  }
+
+  .nivel-item {
+    gap: 18px;
+    padding: 22px;
+  }
+}
+
+/* Desktop Grande (1360px+) */
+@media (min-width: 1360px) {
+  .niveles-container {
+    padding: 60px 40px;
+    max-width: 1200px;
   }
 }
