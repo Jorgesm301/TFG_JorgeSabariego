@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class BlockedUser extends Model
 {
-    // Solo usar created_at, no updated_at
     const UPDATED_AT = null;
 
     protected $fillable = [

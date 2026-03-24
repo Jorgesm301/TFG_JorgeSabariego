@@ -68,8 +68,6 @@ class User extends Authenticatable
         }
     }
 
-    // ========== RELACIONES DE AMISTAD ==========
-
     // Solicitudes de amistad que YO envío
     public function sentFriendRequests()
     {
@@ -82,7 +80,7 @@ class User extends Authenticatable
         return $this->hasMany(Friendship::class, 'friend_id');
     }
 
-    // Mis amigos (solo los aceptados)
+    // Mis amigos (solo los que YO he aceptado)
     public function friends()
     {
         return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')
@@ -90,8 +88,6 @@ class User extends Authenticatable
                     ->withPivot('status')
                     ->withTimestamps();
     }
-
-    // ========== RELACIONES DE MENSAJES ==========
 
     // Mensajes que YO envío
     public function sentMessages()
@@ -105,8 +101,6 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'receiver_id');
     }
 
-    // ========== RELACIONES DE BLOQUEOS ==========
-
     // Usuarios que YO bloqueo
     public function blockedUsers()
     {
@@ -114,7 +108,7 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
-    // Usuarios que ME bloquean
+    // Usuarios que me bloquean
     public function blockedBy()
     {
         return $this->belongsToMany(User::class, 'blocked_users', 'blocked_user_id', 'user_id')

@@ -43,7 +43,7 @@ class Booking extends Model
         return $this->belongsTo(User::class, 'creador_id');
     }
 
-    //Una reserva tiene muchos usuarios. Aqui usamos la tbla pivote booking_user
+    //Una reserva tiene muchos usuarios. Aqui usamos la tabla pivote booking_user
     public function usuarios()
     {
         return $this->belongsToMany(User::class, 'booking_user')
@@ -60,12 +60,11 @@ class Booking extends Model
             ->where('fecha', $fecha)
             ->where('estado', '!=', 'cancelado');
 
-        // Si se proporciona pista, filtramos por ella
+
         if ($pista !== null) {
             $query->where('pista', $pista);
         }
 
-        // Si se proporciona ubicación, filtramos por ella
         if ($ubicacion !== null) {
             $query->where('ubicacion', $ubicacion);
         }
@@ -80,15 +79,8 @@ class Booking extends Model
         return !$query->exists();
     }
 
-    /**
-     * Calcula la distancia en kilómetros entre dos coordenadas usando la fórmula Haversine
-     *
-     * @param float $lat1 Latitud del punto 1
-     * @param float $lon1 Longitud del punto 1
-     * @param float $lat2 Latitud del punto 2
-     * @param float $lon2 Longitud del punto 2
-     * @return float Distancia en kilómetros
-     */
+
+    //Funcion que calcula la distancia entre dos puntos usando la fórmula Haversine.
     public static function calcularDistancia($lat1, $lon1, $lat2, $lon2)
     {
         $radioTierra = 6371; // Radio de la Tierra en kilómetros
@@ -114,6 +106,8 @@ class Booking extends Model
      * @param float $radioKm Radio de búsqueda en kilómetros
      * @return \Illuminate\Database\Eloquent\Collection
      */
+
+    //Funcion que busca reservas disponibles dentro de un radio desde una ubicación. Para esto usamos la función calcularDistancia.
     public static function buscarPorRadio($deporteId, $latitud, $longitud, $radioKm)
     {
         // Obtenemos todas las reservas disponibles con coordenadas
@@ -141,7 +135,7 @@ class Booking extends Model
         return $this->jugadores_actuales >= $this->max_jugadores;
     }
 
-    //Verificamos si el usuario esta apuntado en la reserva. Aqui usamos la tabla booking_user para ver si dicho usuario esta apuntado.
+    //Funcion que verifica si el usuario esta apuntado en la reserva. Aqui usamos la tabla booking_user para ver si dicho usuario esta apuntado.
     public function tieneUsuario($userId)
     {
         return $this->usuarios()->where('user_id', $userId)->exists();
@@ -230,15 +224,13 @@ class Booking extends Model
         return true;
     }
 
-
-
-    //Actualizamos el ELO de los jugadores.
+    //Funcion para actualizar el ELO de los jugadores.
     private function actualizarEloJugadores()
     {
         $jugadoresEquipo1 = $this->usuarios()->wherePivot('team', 1)->get();
         $jugadoresEquipo2 = $this->usuarios()->wherePivot('team', 2)->get();
 
-        // Determinamos ganadores y perdedores
+        // Calculamos los ganadores y los perdedores
         $equipoGanador = $this->winner_team; // 1 o 2, o null si es empate
 
         // Actualizamos ELO del equipo 1
