@@ -53,7 +53,6 @@ export class Perfil implements OnInit, OnDestroy {
   totalPartidosJugados = 0;
   tasaVictoria = 0;
   rachaVictorias = 0;
-  nivel = '';
   historialPartidos: any[] = [];
 
   constructor(
@@ -120,7 +119,6 @@ export class Perfil implements OnInit, OnDestroy {
           ? Math.round((this.victorias / this.totalPartidosJugados) * 100)
           : 0;
         this.rachaVictorias = this.calcularRachaVictorias(datos);
-        this.nivel = this.getNivelPorElo(this.eloPromedio);
         this.cargandoPartidos = false;
         this.cdr.detectChanges();
       },
@@ -145,23 +143,27 @@ export class Perfil implements OnInit, OnDestroy {
   }
 
   private getNivelPorElo(elo: number): string {
-    if (elo < 130) return 'Principiante';
-    if (elo < 170) return 'Amateur';
-    if (elo < 210) return 'Intermedio';
-    if (elo < 260) return 'Avanzado';
+    if (elo < 50) return 'Principiante';
+    if (elo < 100) return 'Amateur';
+    if (elo < 200) return 'Intermedio';
+    if (elo < 300) return 'Avanzado';
     return 'Profesional';
   }
 
   private getIconoPorElo(elo: number): string {
-    if (elo < 130) return 'school';
-    if (elo < 170) return 'star_half';
-    if (elo < 210) return 'star';
-    if (elo < 260) return 'military_tech';
+    if (elo < 50) return 'school';
+    if (elo < 100) return 'star_half';
+    if (elo < 200) return 'star';
+    if (elo < 300) return 'military_tech';
     return 'emoji_events';
   }
 
   get nivelIcon(): string {
     return this.getIconoPorElo(this.eloPromedio);
+  }
+
+  get nivel(): string {
+    return this.getNivelPorElo(this.eloPromedio);
   }
 
   get drawerAbierto$() {
