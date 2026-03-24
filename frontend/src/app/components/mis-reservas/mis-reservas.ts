@@ -118,6 +118,12 @@ export class MisReservas implements OnInit, OnDestroy {
     this.googleCalendarService.abrirEnGoogleCalendar(reserva);
   }
 
+  mostrarSegundaFila(reserva: IBooking): boolean {
+    const tieneGoogleCalendar = reserva.estado === 'completo';
+    const tieneSalir = reserva.estado !== 'cancelado' && reserva.estado !== 'jugado';
+    return tieneGoogleCalendar || tieneSalir;
+  }
+
   volverInicio() {
     this.router.navigate(['/']);
   }

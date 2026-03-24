@@ -253,6 +253,51 @@
   flex-shrink: 0;
 }
 
+
+/* ---- RESERVA ACCIONES (BOTONES) ---- */
+mat-card-actions.reserva-acciones {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 16px !important;
+  justify-content: flex-start !important;
+}
+
+.acciones-row {
+  display: flex !important;
+  gap: 10px !important;
+  width: 100%;
+}
+
+.action-btn {
+  flex: 1 1 auto !important;
+  min-width: 120px !important;
+  height: 40px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 12px 16px !important;
+}
+
+.btn-full-width {
+  width: 100% !important;
+  flex: none !important;
+}
+
+.action-btn mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.action-btn span {
+  font-weight: 600;
+}
+
 /* ---- RESPONSIVE ---- */
 @media (max-width: 768px) {
   .page-content {
@@ -265,6 +310,14 @@
 
   .page-title-row {
     flex-direction: column;
+  }
+
+  mat-card-actions.reserva-acciones {
+    flex-direction: column !important;
+  }
+
+  .action-btn {
+    width: 100% !important;
   }
 
 }
