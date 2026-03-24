@@ -70,31 +70,4 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function updateProfile(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'nullable|string|max:255',
-            'last_name' => 'nullable|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-
-        $user = $request->user();
-
-        if ($request->has('name')) {
-            $user->name = $request->name;
-        }
-        if ($request->has('last_name')) {
-            $user->last_name = $request->last_name;
-        }
-
-        $user->save();
-
-        return response()->json([
-            'message' => 'Perfil actualizado correctamente',
-            'user' => $user
-        ], 200);
-    }
 }

@@ -44,8 +44,7 @@ Route::get('/geocode', [GeocodeController::class, 'search']);
 
 // Rutas protegidas para reservas (requieren autenticación)
 Route::middleware('auth:sanctum')->group(function () {
-    // Ruta para actualizar perfil
-    Route::put('/profile', [AuthController::class, 'updateProfile']);
+
 
     Route::post('/bookings', [BookingController::class, 'crearReserva']);
     Route::post('/bookings/{bookingId}/unirse', [BookingController::class, 'unirseAReserva']);

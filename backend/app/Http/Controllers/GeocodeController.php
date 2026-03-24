@@ -8,6 +8,7 @@ use Illuminate\Http\Client\Response;
 
 class GeocodeController extends Controller
 {
+    //Funcion para buscar coordenadas a partir de una dirección usando Nominatim
     public function search(Request $request)
     {
         $q = trim($request->query('q', ''));

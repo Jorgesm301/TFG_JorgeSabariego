@@ -12,7 +12,7 @@ use Carbon\Carbon;
 
 class BookingController extends Controller
 {
-    //Obtenemos las reservas de un deporte por una fecha concreta. Endpoint publico.
+    //Obtenemos las reservas de un deporte para una fecha concreta. Endpoint publico.
     public function getReservasPorSportYFecha($sportId, $fecha)
     {
         try {
@@ -44,7 +44,7 @@ class BookingController extends Controller
 
             $userId = Auth::id();
 
-            //Inicializamos el ELO del usuario en este deporte si no existe
+            //Inicializamos el ELO del usuario en este deporte si no existe (incializamos a 100)
             /** @var User $user */
             $user = Auth::user();
             $user->initSportElo((int) $request->deporte_id);
@@ -83,7 +83,7 @@ class BookingController extends Controller
                 'estado' => 'abierto',
             ];
 
-            // Añadir coordenadas si se proporcionan
+            // Añadimos las coordenadas si es por coordenadas
             if ($request->has('latitud') && $request->has('longitud')) {
                 $bookingData['latitud'] = $request->latitud;
                 $bookingData['longitud'] = $request->longitud;
@@ -192,13 +192,15 @@ class BookingController extends Controller
             DB::beginTransaction();
 
             if ($esCreador) {
+
                 // Si es el creador, asignamos la reserva a otro usuario aleatorio
                 $otrosUsuarios = $booking->usuarios()
                     ->where('user_id', '!=', $userId)
                     ->get();
 
                 if ($otrosUsuarios->isEmpty()) {
-                    // Si no hay otros usuarios, cancelamos la reserva
+
+                    // Si no hay otros usuarios para asignar la reserva, cancelamos la reserva
                     $booking->update(['estado' => 'cancelado']);
                     $booking->usuarios()->detach();
 
@@ -210,19 +212,17 @@ class BookingController extends Controller
                     ]);
                 }
 
-                // Seleccionar un usuario aleatorio para ser el nuevo creador
+                // Seleccionamos un usuario aleatorio para ser el nuevo creador
                 $nuevoCreador = $otrosUsuarios->random();
 
-                // Actualizar el creador en la tabla bookings
+                // Actualizamos el creador en la tabla bookings
                 $booking->update(['creador_id' => $nuevoCreador->id]);
 
-                // Actualizar el pivot: quitar es_creador del antiguo creador
+                // Actualizamos el pivot. Quitamos es_creador del antiguo creador y ponemos al nuevo creador.
                 $booking->usuarios()->updateExistingPivot($userId, ['es_creador' => false]);
-
-                // Poner es_creador al nuevo creador
                 $booking->usuarios()->updateExistingPivot($nuevoCreador->id, ['es_creador' => true]);
 
-                // Quitar al antiguo creador de la reserva
+                // Quitamos al antiguo creador de la reserva
                 $booking->usuarios()->detach($userId);
                 $booking->decrement('jugadores_actuales');
 
@@ -238,6 +238,7 @@ class BookingController extends Controller
                     'cancelado' => false
                 ]);
             } else {
+
                 //En caso de no ser creador, solo quitamos dicho usuario de la reserva
                 $booking->usuarios()->detach($userId);
                 $booking->decrement('jugadores_actuales');
@@ -357,14 +358,14 @@ class BookingController extends Controller
         }
     }
 
-    //Función para buscar reservas disponibles por radio desde coordenadas
+    //Función para buscar reservas disponibles por radio de coordenadas
     public function reservasPorRadio(Request $request, $sportId)
     {
         try {
             $request->validate([
                 'latitud' => 'required|numeric|between:-90,90',
                 'longitud' => 'required|numeric|between:-180,180',
-                'radio' => 'required|numeric|min:1|max:500', // Radio en kilómetros
+                'radio' => 'required|numeric|min:1|max:500',
             ]);
 
             $hoy = Carbon::today()->format('Y-m-d');
@@ -384,7 +385,7 @@ class BookingController extends Controller
                 })
                 ->get();
 
-            // Filtramos por distancia y añadimos el campo de distancia
+            // Filtramos por distancia
             $reservasFiltradas = $reservas->filter(function ($reserva) use ($request) {
                 $distancia = Booking::calcularDistancia(
                     $request->latitud,
@@ -397,7 +398,7 @@ class BookingController extends Controller
                 return $distancia <= $request->radio;
             })->values();
 
-            // Ordenamos por distancia
+            // Ordenamos por distancia (mas cercana a mas lejana)
             $reservasOrdenadas = $reservasFiltradas->sortBy('distancia_km')->values();
 
             // Cargamos las relaciones necesarias

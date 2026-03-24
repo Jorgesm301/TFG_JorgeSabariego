@@ -11,9 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class FriendshipController extends Controller
 {
-    // Enviar solicitud de amistad
+    // Funcion pora enviar una solicitud de amistad a otro usuario.
     public function enviarSolicitud(Request $request)
     {
+
         try {
             $request->validate([
                 'friend_id' => 'required|exists:users,id',
@@ -22,12 +23,12 @@ class FriendshipController extends Controller
             $userId = Auth::id();
             $friendId = $request->friend_id;
 
-            // No puedes enviarte solicitud a ti mismo
+
             if ($userId == $friendId) {
                 return response()->json(['message' => 'No puedes enviarte solicitud a ti mismo'], 400);
             }
 
-            // Verificar si el usuario está bloqueado
+            // Verificamos si el usuario está bloqueado
             $estaBloqueado = BlockedUser::where(function ($query) use ($userId, $friendId) {
                 $query->where('user_id', $userId)->where('blocked_user_id', $friendId);
             })->orWhere(function ($query) use ($userId, $friendId) {
@@ -38,7 +39,7 @@ class FriendshipController extends Controller
                 return response()->json(['message' => 'No puedes enviar solicitud a este usuario'], 403);
             }
 
-            // Verificar si ya existe una solicitud
+            // Verificamos si ya existe una solicitud
             $solicitudExistente = Friendship::where(function ($query) use ($userId, $friendId) {
                 $query->where('user_id', $userId)->where('friend_id', $friendId);
             })->orWhere(function ($query) use ($userId, $friendId) {
@@ -52,7 +53,7 @@ class FriendshipController extends Controller
                 return response()->json(['message' => 'Ya existe una solicitud pendiente'], 400);
             }
 
-            // Crear la solicitud
+            // Creamos la solicitud de amistad
             $friendship = Friendship::create([
                 'user_id' => $userId,
                 'friend_id' => $friendId,
@@ -69,7 +70,7 @@ class FriendshipController extends Controller
         }
     }
 
-    // Aceptar solicitud de amistad
+    // Funcio para aceptar una solicitud de amistad
     public function aceptarSolicitud($id)
     {
         try {
@@ -77,7 +78,7 @@ class FriendshipController extends Controller
 
             $friendship = Friendship::findOrFail($id);
 
-            // Solo el receptor puede aceptar
+            //Solo el receptor puede aceptarla
             if ($friendship->friend_id != $userId) {
                 return response()->json(['message' => 'No tienes permiso para aceptar esta solicitud'], 403);
             }
@@ -98,7 +99,7 @@ class FriendshipController extends Controller
         }
     }
 
-    // Rechazar solicitud de amistad
+    // Funcion para rechazar una solicitud de amistad
     public function rechazarSolicitud($id)
     {
         try {
@@ -106,7 +107,7 @@ class FriendshipController extends Controller
 
             $friendship = Friendship::findOrFail($id);
 
-            // Solo el receptor puede rechazar
+            // Solo el receptor puede rechazarla
             if ($friendship->friend_id != $userId) {
                 return response()->json(['message' => 'No tienes permiso para rechazar esta solicitud'], 403);
             }
@@ -124,7 +125,7 @@ class FriendshipController extends Controller
         }
     }
 
-    // Listar mis amigos
+    // Funcion para listar a los amigos de un usuario
     public function listarAmigos()
     {
         try {
@@ -141,7 +142,6 @@ class FriendshipController extends Controller
                     $friendId = $friendship->user_id == $userId ? $friendship->friend_id : $friendship->user_id;
                     $amigo = User::find($friendId);
 
-                    // Verificar si está bloqueado
                     $estaBloqueado = BlockedUser::where('user_id', $userId)
                         ->where('blocked_user_id', $friendId)
                         ->exists();
@@ -160,7 +160,7 @@ class FriendshipController extends Controller
         }
     }
 
-    // Listar solicitudes pendientes (recibidas)
+    // Funcion para listar las solicitudes pendientes (recibidas)
     public function listarSolicitudesPendientes()
     {
         try {
@@ -178,7 +178,7 @@ class FriendshipController extends Controller
         }
     }
 
-    // Eliminar amistad
+    // Funcion para eliminar la amistad con un usuario
     public function eliminarAmistad($id)
     {
         try {
@@ -186,7 +186,6 @@ class FriendshipController extends Controller
 
             $friendship = Friendship::findOrFail($id);
 
-            // Solo los involucrados pueden eliminar la amistad
             if ($friendship->user_id != $userId && $friendship->friend_id != $userId) {
                 return response()->json(['message' => 'No tienes permiso para eliminar esta amistad'], 403);
             }
@@ -200,13 +199,13 @@ class FriendshipController extends Controller
         }
     }
 
-    // Eliminar amistad por userId del amigo
+    // Funcion para eliminar la amistad por userId del amigo
     public function eliminarAmigoPorUserId($friendId)
     {
         try {
             $userId = Auth::id();
 
-            // Buscar la amistad
+            //Buscamos la amistad
             $friendship = Friendship::where('status', 'accepted')
                 ->where(function ($query) use ($userId, $friendId) {
                     $query->where(function ($q) use ($userId, $friendId) {
@@ -229,7 +228,7 @@ class FriendshipController extends Controller
         }
     }
 
-    // Buscar usuarios
+    // Funcion para buscar usuarios (y luego posteriormente mandarle solicitud de amistad)
     public function buscarUsuarios(Request $request)
     {
         try {
@@ -240,7 +239,6 @@ class FriendshipController extends Controller
             $userId = Auth::id();
             $query = $request->query('query');
 
-            // Buscar usuarios por nombre o email (excluir el usuario actual y bloqueados)
             $usuariosEncontrados = User::where('id', '!=', $userId)
                 ->where(function ($q) use ($query) {
                     $q->where('name', 'LIKE', "%{$query}%")
@@ -250,7 +248,7 @@ class FriendshipController extends Controller
                 ->limit(20)
                 ->get();
 
-            // Obtener IDs de usuarios con los que ya hay relación (amigos o solicitudes pendientes)
+            // Obtenemos los IDs de usuarios con los que ya hay relación (amigos o solicitudes pendientes)
             $relacionesExistentes = Friendship::where(function ($q) use ($userId) {
                 $q->where('user_id', $userId)->orWhere('friend_id', $userId);
             })->get();
@@ -259,15 +257,13 @@ class FriendshipController extends Controller
                 return $rel->user_id == $userId ? $rel->friend_id : $rel->user_id;
             })->toArray();
 
-            // Verificar usuarios bloqueados
             $usuariosBloqueados = BlockedUser::where('user_id', $userId)
                 ->orWhere('blocked_user_id', $userId)
                 ->pluck('blocked_user_id')
                 ->toArray();
 
-            // Filtrar y agregar información de relación
             $usuarios = $usuariosEncontrados->map(function ($usuario) use ($userId, $relacionesExistentes, $idsConRelacion, $usuariosBloqueados) {
-                $relacion = 'none'; // none, pending, accepted, blocked
+                $relacion = 'none';
 
                 if (in_array($usuario->id, $usuariosBloqueados)) {
                     $relacion = 'blocked';

@@ -21,7 +21,7 @@ class BlockedUserController extends Controller
             $userId = Auth::id();
             $blockedUserId = $request->blocked_user_id;
 
-            // No puedes bloquearte a ti mismo
+            // Para que un usuario no se bloquee a sí mismo
             if ($userId == $blockedUserId) {
                 return response()->json(['message' => 'No puedes bloquearte a ti mismo'], 400);
             }
@@ -35,7 +35,7 @@ class BlockedUserController extends Controller
                 return response()->json(['message' => 'Este usuario ya está bloqueado'], 400);
             }
 
-            // Bloquear usuario (mantiene la amistad)
+            // Bloquear usuario pero manteniendo la amistad
             $bloqueo = BlockedUser::create([
                 'user_id' => $userId,
                 'blocked_user_id' => $blockedUserId,

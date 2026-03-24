@@ -8,6 +8,8 @@ use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
 {
+
+    //Funcio que redirige al usuario a Google para autenticarse
     public function redirectToGoogle()
     {
         return Socialite::driver('google')
@@ -15,6 +17,7 @@ class GoogleController extends Controller
             ->redirect();
     }
 
+    //Funcion para manejar la devolución de llamada de Google
     public function handleGoogleCallback()
     {
         try {

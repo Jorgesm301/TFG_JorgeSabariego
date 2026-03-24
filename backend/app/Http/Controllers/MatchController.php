@@ -103,7 +103,7 @@ class MatchController extends Controller
         try {
             $booking = Booking::findOrFail($bookingId);
 
-            // Verificar si hay equipos generados
+            // Verificamos si hay equipos generados
             $tieneEquipos = $booking->usuarios()
                 ->wherePivotNotNull('team')
                 ->exists();
