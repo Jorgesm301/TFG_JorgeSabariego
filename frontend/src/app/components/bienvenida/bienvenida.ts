@@ -56,6 +56,7 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   conversaciones: IConversation[] = [];
   cargandoConversaciones = false;
   private intervaloMensajes: any;
+  private intervaloProximoPartido: any;
 
   // Nuevo mensaje
   modoNuevoMensaje = false;
@@ -203,6 +204,9 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     if (this.intervaloMensajes) {
       clearInterval(this.intervaloMensajes);
     }
+    if (this.intervaloProximoPartido) {
+      clearInterval(this.intervaloProximoPartido);
+    }
   }
 
   // ===== PARTIDOS =====
@@ -215,6 +219,8 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
         console.log('Partidos cargados:', this.misPartidos);
         this.obtenerProximoPartido();
         this.agruparPartidosPorDia();
+        // Iniciar chequeo automático del próximo partido
+        this.iniciarCheckProximoPartido();
         this.cargandoPartidos = false;
         this.cdr.detectChanges();
       },
@@ -229,18 +235,19 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   obtenerProximoPartido(): void {
     const ahora = new Date();
 
-    // Primero intenta buscar partidos futuros
+    // Primero intenta buscar partidos futuros con estado COMPLETO
     let proximoPartido = this.misPartidos
-      .filter(p => new Date(`${p.fecha}T${p.hora_inicio}`) >= ahora)
+      .filter(p => p.estado === 'completo' && new Date(`${p.fecha}T${p.hora_inicio}`) >= ahora)
       .sort((a, b) => {
         const fechaA = new Date(`${a.fecha}T${a.hora_inicio}`).getTime();
         const fechaB = new Date(`${b.fecha}T${b.hora_inicio}`).getTime();
         return fechaA - fechaB;
       })[0];
 
-    // Si no hay partidos futuros, muestra el más reciente
+    // Si no hay partidos futuros completos, muestra el más reciente con estado completo
     if (!proximoPartido && this.misPartidos.length > 0) {
       proximoPartido = this.misPartidos
+        .filter(p => p.estado === 'completo')
         .sort((a, b) => {
           const fechaA = new Date(`${a.fecha}T${a.hora_inicio}`).getTime();
           const fechaB = new Date(`${b.fecha}T${b.hora_inicio}`).getTime();
@@ -253,6 +260,32 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
 
   esPartidoCompleto(partido: IBooking): boolean {
     return partido.jugadores_actuales === partido.max_jugadores;
+  }
+
+  /**
+   * Inicia un chequeo automático cada minuto para actualizar el próximo partido
+   * si la hora actual ha pasado la hora final del partido mostrado
+   */
+  iniciarCheckProximoPartido(): void {
+    // Limpiar intervalo anterior si existe
+    if (this.intervaloProximoPartido) {
+      clearInterval(this.intervaloProximoPartido);
+    }
+
+    // Chequear cada minuto (60000 ms)
+    this.intervaloProximoPartido = setInterval(() => {
+      if (!this.proximoPartido) return;
+
+      const ahora = new Date();
+      const horaFinPartido = new Date(`${this.proximoPartido.fecha}T${this.proximoPartido.hora_fin}`);
+
+      // Si la hora actual ha pasado la hora final del partido, obtener el siguiente
+      if (ahora > horaFinPartido) {
+        console.log('Hora del partido pasada, actualizando al siguiente...');
+        this.obtenerProximoPartido();
+        this.cdr.detectChanges();
+      }
+    }, 60000); // 60000 ms = 1 minuto
   }
 
   agruparPartidosPorDia(): void {
