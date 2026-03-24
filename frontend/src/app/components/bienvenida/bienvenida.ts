@@ -380,12 +380,11 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
 
   obtenerDetallesPartido(partido: IBooking): string {
     const deporte = partido.sport?.nombre || 'Sin deporte';
-    const fecha = this.formatearFecha(partido.fecha);
     const hora = this.formatearHora(partido.hora_inicio);
     const pista = partido.pista || 'Sin asignar';
     const jugadores = `${partido.jugadores_actuales}/${partido.max_jugadores}`;
 
-    return `${deporte}\n${fecha} - ${hora}\nPista: ${pista}\nJugadores: ${jugadores}`;
+    return `${deporte}\n${hora}\nPista: ${pista}\nJugadores: ${jugadores}`;
   }
 
   esHoy(dia: number | null): boolean {
@@ -393,7 +392,9 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   }
 
   formatearFecha(fecha: string): string {
-    const date = new Date(`${fecha}T00:00:00`);
+    // Extraer solo la parte de fecha si es ISO completo (2026-03-22T00:00:00.000000Z)
+    const fechaParte = fecha.includes('T') ? fecha.split('T')[0] : fecha;
+    const date = new Date(fechaParte + 'T00:00:00');
     return date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
   }
 

@@ -235,43 +235,27 @@ class Booking extends Model
     //Actualizamos el ELO de los jugadores.
     private function actualizarEloJugadores()
     {
-
         $jugadoresEquipo1 = $this->usuarios()->wherePivot('team', 1)->get();
         $jugadoresEquipo2 = $this->usuarios()->wherePivot('team', 2)->get();
 
+        // Determinamos ganadores y perdedores
+        $equipoGanador = $this->winner_team; // 1 o 2, o null si es empate
 
-        $eloPromedioEquipo1 = $jugadoresEquipo1->avg(function($jugador) {
-            return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->elo ?? 100;
-        });
-
-        $eloPromedioEquipo2 = $jugadoresEquipo2->avg(function($jugador) {
-            return $jugador->sports()->where('sport_id', $this->deporte_id)->first()->pivot->elo ?? 100;
-        });
-
-
-        $probabilidadEquipo1 = 1 / (1 + pow(10, ($eloPromedioEquipo2 - $eloPromedioEquipo1) / 400));
-        $probabilidadEquipo2 = 1 - $probabilidadEquipo1;
-
-        // 1 victoria, 0.5 empate, 0 derrota.
-        $resultadoEquipo1 = $this->winner_team == 1 ? 1 : ($this->winner_team == 2 ? 0 : 0.5);
-        $resultadoEquipo2 = 1 - $resultadoEquipo1;
-
-
-        $kFactor = 32;
-
-        //Actualizamos el ELO de los jugadores del equipo 1
+        // Actualizamos ELO del equipo 1
         foreach ($jugadoresEquipo1 as $jugador) {
             $sportPivot = $jugador->sports()->where('sport_id', $this->deporte_id)->first();
             $eloActual = $sportPivot->pivot->elo;
             $partidosJugados = $sportPivot->pivot->matches_played;
 
-            // Ajustamos el kFactor segun la experiencia.
-            $kAjustado = $partidosJugados < 10 ? 40 : ($partidosJugados < 30 ? 32 : 24);
+            // +10 si ganó, -10 si perdió, +0 si empate
+            $cambioElo = 0;
+            if ($equipoGanador == 1) {
+                $cambioElo = 10;
+            } elseif ($equipoGanador == 2) {
+                $cambioElo = -10;
+            }
 
-
-            $cambioElo = round($kAjustado * ($resultadoEquipo1 - $probabilidadEquipo1));
             $nuevoElo = max(0, $eloActual + $cambioElo);
-
 
             $jugador->sports()->updateExistingPivot($this->deporte_id, [
                 'elo' => $nuevoElo,
@@ -279,15 +263,20 @@ class Booking extends Model
             ]);
         }
 
-        //Actualizamos el ELO de los jugadores del equipo 2
+        // Actualizamos ELO del equipo 2
         foreach ($jugadoresEquipo2 as $jugador) {
             $sportPivot = $jugador->sports()->where('sport_id', $this->deporte_id)->first();
             $eloActual = $sportPivot->pivot->elo;
             $partidosJugados = $sportPivot->pivot->matches_played;
 
-            $kAjustado = $partidosJugados < 10 ? 40 : ($partidosJugados < 30 ? 32 : 24);
+            // +10 si ganó, -10 si perdió, +0 si empate
+            $cambioElo = 0;
+            if ($equipoGanador == 2) {
+                $cambioElo = 10;
+            } elseif ($equipoGanador == 1) {
+                $cambioElo = -10;
+            }
 
-            $cambioElo = round($kAjustado * ($resultadoEquipo2 - $probabilidadEquipo2));
             $nuevoElo = max(0, $eloActual + $cambioElo);
 
             $jugador->sports()->updateExistingPivot($this->deporte_id, [
