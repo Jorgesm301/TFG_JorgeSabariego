@@ -1,7 +1,4 @@
-/**
- * Constantes compartidas del menú de deportes
- * Usado en múltiples componentes para evitar duplicación
- */
+//Constantes de deportes para el menú de reserva
 export const DEPORTES_MENU = [
   { nombre: 'Fútbol', icon: 'sports_soccer', ruta: '/reservar/futbol' },
   { nombre: 'Fútbol Sala', icon: 'sports_soccer', ruta: '/reservar/futbol-sala' },
