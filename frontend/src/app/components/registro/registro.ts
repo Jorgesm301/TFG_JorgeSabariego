@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-registro',
@@ -20,13 +21,16 @@ import { MatCardModule } from '@angular/material/card';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatCardModule
+    MatCardModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './registro.html',
   styleUrl: './registro.css'
 })
 export class Registro {
   registroForm: FormGroup;
+  registroError = '';
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -43,6 +47,8 @@ export class Registro {
 
   onSubmit() {
     if (this.registroForm.valid) {
+      this.registroError = '';
+      this.isLoading = true;
       this.authService.registrar(this.registroForm.value).subscribe({
         next: (res) => {
           this.authService.login({
@@ -50,15 +56,32 @@ export class Registro {
             password: this.registroForm.value.password
           }).subscribe({
             next: () => {
+              this.isLoading = false;
               this.router.navigate(['/']);
             },
-            error: () => {
+            error: (err) => {
+              this.isLoading = false;
+              this.registroError = 'No se pudo iniciar sesión después del registro.';
               this.router.navigate(['/login']);
             }
           });
         },
         error: (err) => {
-          console.error('Error al crear la cuenta:', err);
+          this.isLoading = false;
+          if (err.status === 422) {
+            // Error de validación - probablemente email duplicado
+            const errors = err.error.errors;
+            if (errors?.email) {
+              this.registroError = 'Este email ya está registrado';
+            } else {
+              this.registroError = Object.values(errors || {}).flat().join(', ') as string;
+            }
+          } else if (err.status === 0) {
+            this.registroError = 'No se pudo conectar con el servidor';
+          } else {
+            this.registroError = 'Error al crear la cuenta. Intenta de nuevo.';
+          }
+          console.error('Error al registrar:', err);
         }
       });
     }

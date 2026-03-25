@@ -17,6 +17,11 @@
 
       <mat-card-content>
         <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+          <div *ngIf="registroError" class="error-message">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ registroError }}</span>
+          </div>
+
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Nombre</mat-label>
             <mat-icon matPrefix>person</mat-icon>
@@ -83,10 +88,11 @@
             mat-raised-button
             color="primary"
             type="submit"
-            [disabled]="registroForm.invalid"
+            [disabled]="registroForm.invalid || isLoading"
             class="full-width submit-btn">
-            <mat-icon>person_add</mat-icon>
-            Registrar Atleta
+            <mat-icon *ngIf="!isLoading">person_add</mat-icon>
+            <mat-spinner *ngIf="isLoading" diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+            {{ isLoading ? 'Cargando...' : 'Registrar Usuario' }}
           </button>
         </form>
 
