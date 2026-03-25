@@ -16,10 +16,8 @@ import { GoogleCallback } from './components/google-callback/google-callback';
 
 export const routes: Routes = [
 
-  //Ruta de callback de Google (DEBE estar ANTES de las demás rutas públicas)
   { path: 'auth/google/callback', component: GoogleCallback },
 
-  //Pagina principal, login y registro, endpoints publicos.
   { path: '', component: Bienvenida },
   { path: 'login', component: Login },
   { path: 'registro', component: Registro },
@@ -76,7 +74,6 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
 
-  // Cualquier ruta no encontrada va a la pagina de bienvenida
   { path: '**', redirectTo: '' }
 
 ];

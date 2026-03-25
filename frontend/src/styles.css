@@ -1,13 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
-
-/* Importar el tema de Angular Material */
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
-/* Importar fuentes de Google */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
-/* Reset básico */
 * {
   margin: 0;
   padding: 0;
@@ -23,7 +19,6 @@ body {
   margin: 0;
 }
 
-/* Estilos para notificaciones SnackBar */
 .success-snackbar {
   background: #4caf50 !important;
   color: white !important;
