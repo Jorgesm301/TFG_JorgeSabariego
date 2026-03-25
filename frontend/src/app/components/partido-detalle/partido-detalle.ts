@@ -45,7 +45,6 @@ export class PartidoDetalle implements OnInit, OnDestroy {
   scoreEquipo1: number = 0;
   scoreEquipo2: number = 0;
 
-  //Para actualizar el ELO despues del resultado
   cambiosElo: ICambioElo[] = [];
   resultadoRegistrado = false;
 
@@ -91,7 +90,6 @@ export class PartidoDetalle implements OnInit, OnDestroy {
         this.booking = reservas.find(r => r.id === this.bookingId) || null;
 
         if (this.booking && this.booking.estado !== 'abierto') {
-          //Si esta completo el partido, generamos los equipos
           this.cargarEquipos();
         }
 
@@ -116,7 +114,6 @@ export class PartidoDetalle implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: (error) => {
-        //Error por si no hay equipos generados.
         if (error.status !== 400) {
           console.error('Error al cargar equipos:', error);
         }
@@ -165,7 +162,6 @@ export class PartidoDetalle implements OnInit, OnDestroy {
         this.cambiosElo = response.cambios_elo;
         this.resultadoRegistrado = true;
 
-        // Actualizamos el booking con los nuevos datos
         if (this.booking) {
           this.booking.team_1_score = response.resultado.team_1_score;
           this.booking.team_2_score = response.resultado.team_2_score;
@@ -185,28 +181,12 @@ export class PartidoDetalle implements OnInit, OnDestroy {
     });
   }
 
-  volver(): void {
-    this.router.navigate(['/mis-reservas']);
-  }
-
   get estaLogueado(): boolean {
     return this.authService.isAuthenticated();
   }
 
   get nombreUsuario(): string {
     return this.authService.getUserData()?.name || '';
-  }
-
-  irALogin() {
-    this.router.navigate(['/login']);
-  }
-
-  irARegistro() {
-    this.router.navigate(['/registro']);
-  }
-
-  irAPerfil() {
-    this.router.navigate(['/perfil']);
   }
 
   navegarADeporte(ruta: string) {
@@ -290,7 +270,6 @@ export class PartidoDetalle implements OnInit, OnDestroy {
 
   formatearFechaLegible(fecha: string): string {
     try {
-      // Extraer solo la parte de fecha (YYYY-MM-DD) si es un formato ISO completo
       const fechaParte = fecha.includes('T') ? fecha.split('T')[0] : fecha;
       const [year, month, day] = fechaParte.split('-');
       return `${day}-${month}-${year}`;
