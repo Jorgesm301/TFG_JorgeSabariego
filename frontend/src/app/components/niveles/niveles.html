@@ -13,7 +13,6 @@
       <h1>Ranking ELO</h1>
     </div>
 
-    <!-- TU NIVEL ACTUAL -->
     <div class="tu-nivel-section" *ngIf="eloPromedio > 0">
       <div class="tu-nivel-card">
         <div class="tu-nivel-icon-box">
@@ -26,7 +25,6 @@
       </div>
     </div>
 
-    <!-- LISTA DE NIVELES -->
     <div class="niveles-list">
       <div class="nivel-item" *ngFor="let nivel of niveles" [class.activo]="getNivelActual(nivel)">
         <div class="nivel-rank">

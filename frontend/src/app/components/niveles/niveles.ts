@@ -44,13 +44,11 @@ export class Niveles implements OnInit, OnDestroy {
   eloPromedio = 0;
   deportesMenu = DEPORTES_MENU;
 
-  // Mensajería
   drawerAbierto = false;
   conversaciones: IConversation[] = [];
   cargandoConversaciones = false;
   private intervaloMensajes: any;
 
-  // Nuevo mensaje
   modoNuevoMensaje = false;
   amigos: IUser[] = [];
   cargandoAmigos = false;
