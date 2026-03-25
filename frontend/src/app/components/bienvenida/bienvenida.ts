@@ -47,7 +47,6 @@ type Slide = {
 })
 export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   private timerId: any;
-  menuReservarAbierto = false;
   currentYear = new Date().getFullYear();
   private observer?: IntersectionObserver;
 
@@ -69,7 +68,7 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   cargandoPartidos = false;
   partidosPorDia: Map<string, IBooking[]> = new Map();
 
-  // Calendario visual
+  // Calendario
   mesActual = new Date().getMonth();
   añoActual = new Date().getFullYear();
   diaHoy = new Date().getDate();
@@ -90,7 +89,7 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     { nombre: 'Atletismo', icon: 'directions_run', ruta: '/reservar/atletismo' }
   ];
 
-  // Mapeo de colores por deporte
+  // Cada deporte tiene un color distinto para que sea mas facil de identificar en el calendario
   coloresDeporte: { [key: string]: string } = {
     'Fútbol': '#E53935',
     'Fútbol Sala': '#eeff00',
@@ -102,9 +101,6 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     'Atletismo': '#EF5350'
   };
 
-  /**
-   * Obtiene el color del deporte del próximo partido
-   */
   getColorProximoPartido(): string {
     if (this.proximoPartido?.sport?.nombre) {
       return this.coloresDeporte[this.proximoPartido.sport.nombre] || '#1976D2';
@@ -112,9 +108,6 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     return '#1976D2';
   }
 
-  /**
-   * Obtiene el icono Material del deporte del próximo partido
-   */
   getIconoProximoPartido(): string {
     if (this.proximoPartido?.sport?.nombre) {
       const deporte = this.deportesMenu.find(d => d.nombre === this.proximoPartido?.sport?.nombre);
@@ -170,7 +163,6 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     private el: ElementRef
   ) {}
 
-  //Verificamos si el usuario esta logeado
   get estaLogueado(): boolean {
     return this.authService.isAuthenticated();
   }
@@ -185,7 +177,7 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
       this.cargarConversaciones();
       this.iniciarActualizacionMensajes();
       this.cargarMisPartidos();
-      // Recargar partidos cada 60 segundos
+      // Recargamos partidos cada 60 segundos
       setInterval(() => {
         if (this.estaLogueado) {
           this.cargarMisPartidos();
@@ -209,17 +201,16 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // ===== PARTIDOS =====
   cargarMisPartidos(): void {
     this.cargandoPartidos = true;
     this.bookingService.getMisReservas().subscribe({
       next: (partidos) => {
-        // Filtrar solo los partidos canceleados
+        // Filtramos solo los partidos canceleados
         this.misPartidos = partidos.filter(p => p.estado !== 'cancelado' && p.fecha);
         console.log('Partidos cargados:', this.misPartidos);
         this.obtenerProximoPartido();
         this.agruparPartidosPorDia();
-        // Iniciar chequeo automático del próximo partido
+
         this.iniciarCheckProximoPartido();
         this.cargandoPartidos = false;
         this.cdr.detectChanges();
@@ -235,7 +226,6 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   obtenerProximoPartido(): void {
     const ahora = new Date();
 
-    // Primero intenta buscar partidos futuros con estado COMPLETO
     let proximoPartido = this.misPartidos
       .filter(p => p.estado === 'completo' && new Date(`${p.fecha}T${p.hora_inicio}`) >= ahora)
       .sort((a, b) => {
@@ -244,14 +234,13 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
         return fechaA - fechaB;
       })[0];
 
-    // Si no hay partidos futuros completos, muestra el más reciente con estado completo
-    if (!proximoPartido && this.misPartidos.length > 0) {
+      if (!proximoPartido && this.misPartidos.length > 0) {
       proximoPartido = this.misPartidos
         .filter(p => p.estado === 'completo')
         .sort((a, b) => {
           const fechaA = new Date(`${a.fecha}T${a.hora_inicio}`).getTime();
           const fechaB = new Date(`${b.fecha}T${b.hora_inicio}`).getTime();
-          return fechaB - fechaA; // Descendente (más reciente primero)
+          return fechaB - fechaA;
         })[0];
     }
 
@@ -262,40 +251,33 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     return partido.jugadores_actuales === partido.max_jugadores;
   }
 
-  /**
-   * Inicia un chequeo automático cada minuto para actualizar el próximo partido
-   * si la hora actual ha pasado la hora final del partido mostrado
-   */
   iniciarCheckProximoPartido(): void {
-    // Limpiar intervalo anterior si existe
     if (this.intervaloProximoPartido) {
       clearInterval(this.intervaloProximoPartido);
     }
 
-    // Chequear cada minuto (60000 ms)
     this.intervaloProximoPartido = setInterval(() => {
       if (!this.proximoPartido) return;
 
       const ahora = new Date();
       const horaFinPartido = new Date(`${this.proximoPartido.fecha}T${this.proximoPartido.hora_fin}`);
 
-      // Si la hora actual ha pasado la hora final del partido, obtener el siguiente
       if (ahora > horaFinPartido) {
         console.log('Hora del partido pasada, actualizando al siguiente...');
         this.obtenerProximoPartido();
         this.cdr.detectChanges();
       }
-    }, 60000); // 60000 ms = 1 minuto
+    }, 60000);
   }
 
   agruparPartidosPorDia(): void {
     this.partidosPorDia.clear();
     this.misPartidos.forEach(partido => {
-      // Solo agrupar partidos completos
+
       if (!this.esPartidoCompleto(partido)) {
         return;
       }
-      // Normalizar la fecha: si tiene hora, extraer solo la parte YYYY-MM-DD
+
       const fechaNormalizada = partido.fecha.split('T')[0];
       if (!this.partidosPorDia.has(fechaNormalizada)) {
         this.partidosPorDia.set(fechaNormalizada, []);
@@ -309,15 +291,12 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   generarCalendario(): void {
     const primerDia = new Date(this.añoActual, this.mesActual, 1);
     const ultimoDia = new Date(this.añoActual, this.mesActual + 1, 0);
-
     this.diasCalendario = [];
 
-    // Agregar SOLO los días del mes actual (sin días anteriores/posteriores)
     for (let i = 1; i <= ultimoDia.getDate(); i++) {
       this.diasCalendario.push(i);
     }
 
-    // Actualizar nombre del mes
     const opciones: Intl.DateTimeFormatOptions = { month: 'long', year: 'numeric' };
     this.nombreMes = primerDia.toLocaleDateString('es-ES', opciones);
   }
@@ -327,29 +306,19 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     const nuevoAño = this.mesActual + direccion > 11 ? this.añoActual + 1 :
                     this.mesActual + direccion < 0 ? this.añoActual - 1 : this.añoActual;
 
-    // No permitir ir a marzo atrás (antes del mes actual)
+    //Para no ir mas de 1 mes hacia atras
     if (nuevoMes < this.mesHoy && nuevoAño === this.añoHoy) {
-      return; // No ir atrás del mes actual
+      return;
     }
 
-    // No permitir ir más de 1 mes adelante
+    //Para no ir mas de 1 mes adelante
     if (nuevoMes > this.mesHoy + 1 && nuevoAño === this.añoHoy) {
-      return; // No ir más de 1 mes adelante
+      return;
     }
 
     this.mesActual = nuevoMes > 11 ? 0 : nuevoMes < 0 ? 11 : nuevoMes;
     this.añoActual = nuevoAño;
     this.generarCalendario();
-  }
-
-  puedeIrAdelante(): boolean {
-    // Puedes ir adelante si no estás en el mes siguiente al actual
-    return !(this.mesActual > this.mesHoy || this.añoActual > this.añoHoy);
-  }
-
-  puedeIrAtras(): boolean {
-    // Puedes ir atrás si no estás en el mes actual
-    return !(this.mesActual === this.mesHoy && this.añoActual === this.añoHoy);
   }
 
   obtenerFechaCalendario(dia: number | null): string | null {
@@ -374,7 +343,7 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   }
 
   obtenerColorDeporte(nombreDeporte: string | undefined): string {
-    if (!nombreDeporte) return '#1976D2'; // Color azul por defecto
+    if (!nombreDeporte) return '#1976D2';
     return this.coloresDeporte[nombreDeporte] || '#1976D2';
   }
 
@@ -391,24 +360,12 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     return dia === this.diaHoy && this.mesActual === this.mesHoy;
   }
 
-  formatearFecha(fecha: string): string {
-    // Extraer solo la parte de fecha si es ISO completo (2026-03-22T00:00:00.000000Z)
-    const fechaParte = fecha.includes('T') ? fecha.split('T')[0] : fecha;
-    const date = new Date(fechaParte + 'T00:00:00');
-    return date.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
-  }
-
   formatearHora(hora: string): string {
     return hora.substring(0, 5);
   }
 
   irAPartidoDetalle(bookingId: number): void {
     this.router.navigate(['/partido', bookingId]);
-  }
-
-  refrescarPartidos(): void {
-    console.log('Refrescando partidos...');
-    this.cargarMisPartidos();
   }
 
   private setupScrollAnimations(): void {
@@ -429,7 +386,6 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     elements.forEach((el: Element) => this.observer?.observe(el));
   }
 
-  // ===== MENSAJERÍA =====
   cargarConversaciones(): void {
     if (!this.estaLogueado) return;
 
@@ -449,7 +405,6 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
   }
 
   iniciarActualizacionMensajes(): void {
-    // Actualizar cada 30 segundos
     this.intervaloMensajes = setInterval(() => {
       this.cargarConversaciones();
     }, 30000);
@@ -521,32 +476,7 @@ export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  irALogin() {
-    this.router.navigate(['/login']);
-  }
-
-  irARegistro() {
-    this.router.navigate(['/registro']);
-  }
-
-  irAPerfil() {
-    this.router.navigate(['/perfil']);
-  }
-
-  abrirMenuReservar() {
-    this.menuReservarAbierto = true;
-  }
-
-  cerrarMenuReservar() {
-    this.menuReservarAbierto = false;
-  }
-
-  cerrarMenus() {
-    this.menuReservarAbierto = false;
-  }
-
   navegarADeporte(ruta: string) {
-    this.cerrarMenus();
     this.router.navigate([ruta]);
   }
 
