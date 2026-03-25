@@ -1,43 +1,642 @@
-﻿.reservar-page{min-height:100vh;background:#fafafa;position:relative;overflow-x:hidden;color:#0f172a}
+﻿.reservar-page {
+  min-height: 100vh;
+  background: #fafafa;
+  position: relative;
+  overflow-x: hidden;
+  color: #0f172a;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 80px 24px;
+  color: #1976D2;
+}
+
+.loading-state p {
+  font-size: 16px;
+  color: #555;
+}
+
+.error-state {
+  display: flex;
+  justify-content: center;
+  padding: 56px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.error-card {
+  max-width: 420px;
+  width: 100%;
+  border-radius: 16px !important;
+  text-align: center;
+  padding: 24px;
+}
+
+.error-icon {
+  font-size: 56px !important;
+  width: 56px !important;
+  height: 56px !important;
+  display: block;
+  margin: 0 auto 16px;
+}
 
 
-.loading-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:80px 24px;color:#1976D2}.loading-state p{font-size:16px;color:#555}
-.error-state{display:flex;justify-content:center;padding:56px 24px;position:relative;z-index:1}.error-card{max-width:420px;width:100%;border-radius:16px!important;text-align:center;padding:24px}.error-icon{font-size:56px!important;width:56px!important;height:56px!important;display:block;margin:0 auto 16px}
-.reservar-content{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 24px 56px}
-.sport-hero{padding:28px 0 20px}.sport-hero-inner{display:flex;align-items:center;gap:18px}.sport-icon-wrap{width:68px;height:68px;border-radius:18px;background:linear-gradient(135deg,#1976D2 0%,#1565C0 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(21,101,192,.25);flex-shrink:0}
-.sport-hero-icon{font-size:34px!important;width:34px!important;height:34px!important;color:#fff}.sport-title{font-size:28px;font-weight:800;margin:0 0 10px;color:#0f172a}
-.meta-chip{background:rgba(25,118,210,.1)!important;color:#1565C0!important;font-weight:600}.meta-chip mat-icon{font-size:16px!important;width:16px!important;height:16px!important;margin-right:4px;vertical-align:middle}
-.modo-switch{display:flex;gap:12px;padding:18px;background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);flex-wrap:wrap}
-.modo-switch-btn{border-radius:999px!important;border-color:rgba(25,118,210,.22)!important;color:#1565C0!important;font-weight:700!important}.modo-switch-btn-active{background:linear-gradient(135deg,#1976D2 0%,#1565C0 100%)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 6px 18px rgba(21,101,192,.2)}.modo-switch-btn-active mat-icon{color:#fff!important}
-.tab-content{padding:20px 0;display:flex;flex-direction:column;gap:16px}
-.form-card,.resumen-card{border-radius:12px!important;box-shadow:0 1px 4px rgba(0,0,0,.06)!important;border:1px solid rgba(0,0,0,.06)!important}
-.section-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}.section-header h3{font-size:17px;font-weight:700;margin:0;color:#0f172a}.fecha-label{font-weight:500;color:#1976D2;font-size:14px}
-.form-row{display:flex;gap:14px;flex-wrap:wrap}.flex-field{flex:1;min-width:200px}.full-width{width:100%}
-.checkbox-label{display:flex;align-items:center;gap:4px;font-size:14px}.hint-icon{font-size:16px!important;width:16px!important;height:16px!important;color:#888;cursor:help}
-.horarios-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-.horario-btn{display:flex!important;flex-direction:column!important;align-items:center!important;gap:4px!important;padding:11px 8px!important;height:auto!important;line-height:1.2!important;border-radius:10px!important}
-.horario-btn mat-icon{font-size:18px;width:18px;height:18px;color:#1976D2}.hora-info{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:600}.hora-inicio,.hora-fin{color:#0f172a}.hora-guion{color:#aaa}
-.horario-seleccionado{background:#1976D2!important;border-color:#1976D2!important;color:#fff!important}.horario-seleccionado mat-icon,.horario-seleccionado .hora-inicio,.horario-seleccionado .hora-fin,.horario-seleccionado .hora-guion{color:#fff!important}
-.horario-ocupado{background:#fef2f2!important;border-color:#fca5a5!important;color:#ef4444!important;cursor:not-allowed!important}.horario-ocupado mat-icon{color:#ef4444!important}
-.empty-horarios{display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px;color:#888}.empty-horarios mat-icon{font-size:40px;width:40px;height:40px}
-.resumen-card{border-left:4px solid #1976D2!important}.btn-confirmar{display:flex!important;align-items:center!important;gap:8px!important}
-.busqueda-toggle{display:flex;gap:10px;flex-wrap:wrap}.active-toggle{background:rgba(25,118,210,.08)!important}
-.busqueda-form{display:flex;flex-direction:column;gap:10px}.form-actions{display:flex;gap:10px;flex-wrap:wrap}.btn-geo-activa{background:#e8f5e9!important;color:#2e7d32!important}.radio-form{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
-.lista-loading{display:flex;justify-content:center;padding:24px}.partidos-lista{display:flex;flex-direction:column;gap:14px}
-.lista-titulo{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:700;color:#0f172a;margin:0}.count-badge{background:#1976D2;color:#fff;font-size:12px;font-weight:700;border-radius:12px;padding:2px 8px}
-.partido-card{border-radius:12px!important;box-shadow:0 2px 8px rgba(0,0,0,.07)!important;border:1px solid rgba(0,0,0,.07)!important}
-.partido-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}.partido-title-group{display:flex;flex-direction:column;gap:2px}.partido-fecha{font-size:16px;font-weight:700;margin:0;color:#0f172a}.partido-hora{font-size:13px;color:#64748b}
-.jugadores-chip{background:rgba(25,118,210,.1)!important;color:#1565C0!important;font-weight:600}.jugadores-chip mat-icon{font-size:16px!important;width:16px!important;height:16px!important;margin-right:2px;vertical-align:middle}.chip-completo{background:rgba(239,68,68,.1)!important;color:#dc2626!important}
-.partido-detalles{display:flex;flex-direction:column;gap:8px;padding:10px 0}.detalle-item{display:flex;align-items:center;gap:10px;font-size:14px;color:#334155}.detalle-item mat-icon{font-size:18px!important;width:18px!important;height:18px!important;flex-shrink:0}
-.jugadores-label{font-size:13px;font-weight:600;color:#64748b;margin:0 0 8px}.jugador-chip{background:rgba(0,0,0,.05)!important;font-size:12px!important}.jugador-chip mat-icon{font-size:14px!important;width:14px!important;height:14px!important;margin-right:2px;vertical-align:middle}
-.empty-partidos{display:flex;justify-content:center}.empty-card{max-width:380px;width:100%;text-align:center;border-radius:16px!important;padding:10px}
-.snack-mensaje{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;padding:12px 18px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:999;white-space:nowrap}
-.snack-success{background:#dcfce7;color:#166534}.snack-error{background:#fee2e2;color:#991b1b}.snack-info{background:#dbeafe;color:#1e40af}
-
-@media (max-width:480px){.reservar-content{padding:0 12px 40px}.sport-hero{padding:16px 0 12px}.sport-hero-inner{flex-direction:column;text-align:center;gap:12px}.sport-icon-wrap{width:48px;height:48px}.sport-hero-icon{font-size:28px !important;width:28px !important;height:28px !important}.sport-title{font-size:18px;margin-bottom:6px}.form-row{flex-direction:column}.flex-field{min-width:auto}.horarios-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}.horario-btn{padding:8px 6px !important;font-size:11px}.hora-info{font-size:12px}.empty-horarios{padding:16px}.btn-confirmar{width:100% !important}.snack-mensaje{left:8px;right:8px;transform:none;white-space:normal;bottom:12px;font-size:12px}}
-@media (min-width:481px) and (max-width:600px){.reservar-content{padding:0 16px 44px}.sport-icon-wrap{width:56px;height:56px}.sport-title{font-size:22px}.form-row{flex-direction:column}.horarios-grid{grid-template-columns:repeat(auto-fill,minmax(136px,1fr))}.snack-mensaje{left:16px;right:16px;transform:none;white-space:normal;bottom:16px}}
-@media (min-width:601px) and (max-width:768px){.reservar-content{padding:12px 20px 48px}.sport-hero-inner{flex-direction:row;text-align:left}.sport-title{font-size:24px}.form-row{gap:12px}.flex-field{min-width:160px}}
-@media (min-width:769px) and (max-width:1024px){.reservar-content{padding:20px 24px 56px;max-width:900px}.sport-title{font-size:26px}.horarios-grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}}
-@media (min-width:1360px){.reservar-content{padding:40px 40px 80px;max-width:1100px}}
+.reservar-content {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px 56px;
+}
 
 
+.sport-hero {
+  padding: 28px 0 20px;
+}
+
+.sport-hero-inner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.sport-icon-wrap {
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(21, 101, 192, .25);
+  flex-shrink: 0;
+}
+
+.sport-hero-icon {
+  font-size: 34px !important;
+  width: 34px !important;
+  height: 34px !important;
+  color: #fff;
+}
+
+.sport-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 10px;
+  color: #0f172a;
+}
+
+.meta-chip {
+  background: rgba(25, 118, 210, .1) !important;
+  color: #1565C0 !important;
+  font-weight: 600;
+}
+
+.meta-chip mat-icon {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.modo-switch {
+  display: flex;
+  gap: 12px;
+  padding: 18px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+  flex-wrap: wrap;
+}
+
+.modo-switch-btn {
+  border-radius: 999px !important;
+  border-color: rgba(25, 118, 210, .22) !important;
+  color: #1565C0 !important;
+  font-weight: 700 !important;
+}
+
+.modo-switch-btn-active {
+  background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 6px 18px rgba(21, 101, 192, .2);
+}
+
+.modo-switch-btn-active mat-icon {
+  color: #fff !important;
+}
+
+.tab-content {
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-card,
+.resumen-card {
+  border-radius: 12px !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .06) !important;
+  border: 1px solid rgba(0, 0, 0, .06) !important;
+}
+
+.resumen-card {
+  border-left: 4px solid #1976D2 !important;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.section-header h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0;
+  color: #0f172a;
+}
+
+.fecha-label {
+  font-weight: 500;
+  color: #1976D2;
+  font-size: 14px;
+}
+
+.form-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.flex-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.hint-icon {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  color: #888;
+  cursor: help;
+}
+
+
+.horarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.horario-btn {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 11px 8px !important;
+  height: auto !important;
+  line-height: 1.2 !important;
+  border-radius: 10px !important;
+}
+
+.horario-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #1976D2;
+}
+
+.hora-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.hora-inicio,
+.hora-fin {
+  color: #0f172a;
+}
+
+.hora-guion {
+  color: #aaa;
+}
+
+.horario-seleccionado {
+  background: #1976D2 !important;
+  border-color: #1976D2 !important;
+  color: #fff !important;
+}
+
+.horario-seleccionado mat-icon,
+.horario-seleccionado .hora-inicio,
+.horario-seleccionado .hora-fin,
+.horario-seleccionado .hora-guion {
+  color: #fff !important;
+}
+
+.horario-ocupado {
+  background: #fef2f2 !important;
+  border-color: #fca5a5 !important;
+  color: #ef4444 !important;
+  cursor: not-allowed !important;
+}
+
+.horario-ocupado mat-icon {
+  color: #ef4444 !important;
+}
+
+.empty-horarios {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px;
+  color: #888;
+}
+
+.empty-horarios mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+}
+
+.btn-confirmar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.busqueda-toggle {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.active-toggle {
+  background: rgba(25, 118, 210, .08) !important;
+}
+
+.busqueda-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-geo-activa {
+  background: #e8f5e9 !important;
+  color: #2e7d32 !important;
+}
+
+.radio-form {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+
+.lista-loading {
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+}
+
+.partidos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lista-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.count-badge {
+  background: #1976D2;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 2px 8px;
+}
+
+.partido-card {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .07) !important;
+  border: 1px solid rgba(0, 0, 0, .07) !important;
+}
+
+.partido-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.partido-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.partido-fecha {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+  color: #0f172a;
+}
+
+.partido-hora {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.jugadores-chip {
+  background: rgba(25, 118, 210, .1) !important;
+  color: #1565C0 !important;
+  font-weight: 600;
+}
+
+.jugadores-chip mat-icon {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin-right: 2px;
+  vertical-align: middle;
+}
+
+.chip-completo {
+  background: rgba(239, 68, 68, .1) !important;
+  color: #dc2626 !important;
+}
+
+.partido-detalles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.detalle-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.detalle-item mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  flex-shrink: 0;
+}
+
+.jugadores-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  margin: 0 0 8px;
+}
+
+.jugador-chip {
+  background: rgba(0, 0, 0, .05) !important;
+  font-size: 12px !important;
+}
+
+.jugador-chip mat-icon {
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+  margin-right: 2px;
+  vertical-align: middle;
+}
+
+.empty-partidos {
+  display: flex;
+  justify-content: center;
+}
+
+.empty-card {
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  border-radius: 16px !important;
+  padding: 10px;
+}
+
+
+.snack-mensaje {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+  z-index: 999;
+  white-space: nowrap;
+}
+
+.snack-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.snack-error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.snack-info {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+@media (max-width: 480px) {
+  .reservar-content {
+    padding: 0 12px 40px;
+  }
+
+  .sport-hero {
+    padding: 16px 0 12px;
+  }
+
+  .sport-hero-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .sport-icon-wrap {
+    width: 48px;
+    height: 48px;
+  }
+
+  .sport-hero-icon {
+    font-size: 28px !important;
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .sport-title {
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .flex-field {
+    min-width: auto;
+  }
+
+  .horarios-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+  }
+
+  .horario-btn {
+    padding: 8px 6px !important;
+    font-size: 11px;
+  }
+
+  .hora-info {
+    font-size: 12px;
+  }
+
+  .empty-horarios {
+    padding: 16px;
+  }
+
+  .btn-confirmar {
+    width: 100% !important;
+  }
+
+  .snack-mensaje {
+    left: 8px;
+    right: 8px;
+    transform: none;
+    white-space: normal;
+    bottom: 12px;
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 600px) {
+  .reservar-content {
+    padding: 0 16px 44px;
+  }
+
+  .sport-icon-wrap {
+    width: 56px;
+    height: 56px;
+  }
+
+  .sport-title {
+    font-size: 22px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .horarios-grid {
+    grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+  }
+
+  .snack-mensaje {
+    left: 16px;
+    right: 16px;
+    transform: none;
+    white-space: normal;
+    bottom: 16px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 768px) {
+  .reservar-content {
+    padding: 12px 20px 48px;
+  }
+
+  .sport-hero-inner {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .sport-title {
+    font-size: 24px;
+  }
+
+  .form-row {
+    gap: 12px;
+  }
+
+  .flex-field {
+    min-width: 160px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .reservar-content {
+    padding: 20px 24px 56px;
+    max-width: 900px;
+  }
+
+  .sport-title {
+    font-size: 26px;
+  }
+
+  .horarios-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (min-width: 1360px) {
+  .reservar-content {
+    padding: 40px 40px 80px;
+    max-width: 1100px;
+  }
+}

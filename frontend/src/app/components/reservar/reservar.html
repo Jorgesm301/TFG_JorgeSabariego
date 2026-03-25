@@ -9,13 +9,11 @@
     (deporteSelect)="navegarADeporte($event)"
   ></app-shared-page-header>
 
-  <!-- Loading inicial -->
   <div class="loading-state" *ngIf="cargando && !sport">
     <mat-spinner diameter="48"></mat-spinner>
     <p>Cargando deporte...</p>
   </div>
 
-  <!-- Error state -->
   <div class="error-state" *ngIf="!cargando && !sport">
     <mat-card class="error-card">
       <mat-card-content>
@@ -30,10 +28,8 @@
     </mat-card>
   </div>
 
-  <!-- Contenido principal -->
   <div class="reservar-content" *ngIf="sport">
 
-    <!-- Sport Hero -->
     <div class="sport-hero">
       <div class="sport-hero-inner">
         <div class="sport-icon-wrap">
@@ -78,7 +74,6 @@
 
     <div class="tab-content" *ngIf="modo === 'crear'">
 
-          <!-- Formulario detalles -->
           <mat-card class="form-card">
             <mat-card-content>
               <div class="section-header">
@@ -121,7 +116,6 @@
             </mat-card-content>
           </mat-card>
 
-          <!-- Horarios disponibles -->
           <mat-card class="form-card">
             <mat-card-content>
               <div class="section-header">
@@ -157,7 +151,6 @@
             </mat-card-content>
           </mat-card>
 
-          <!-- Resumen de reserva -->
           <mat-card class="resumen-card" *ngIf="horaSeleccionada && !estaOcupado(horaSeleccionada)">
             <mat-card-content>
               <div class="section-header">
@@ -212,7 +205,6 @@
 
     <div class="tab-content" *ngIf="modo === 'unirse'">
 
-          <!-- Búsqueda -->
           <mat-card class="form-card">
             <mat-card-content>
               <div class="section-header">
@@ -237,7 +229,6 @@
                 </button>
               </div>
 
-              <!-- Búsqueda por texto -->
               <div *ngIf="!usarGeolocalizacion" class="busqueda-form">
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Filtrar por ubicación</mat-label>
@@ -257,7 +248,6 @@
                 </div>
               </div>
 
-              <!-- Búsqueda por radio -->
               <div *ngIf="usarGeolocalizacion" class="busqueda-form">
                 <button mat-raised-button
                   [color]="geolocalizacionActiva ? '' : 'primary'"
@@ -289,12 +279,10 @@
             </mat-card-content>
           </mat-card>
 
-          <!-- Spinner carga partidos -->
           <div class="lista-loading" *ngIf="cargando">
             <mat-spinner diameter="36"></mat-spinner>
           </div>
 
-          <!-- Lista de partidos disponibles -->
           <div *ngIf="reservasDisponibles.length > 0 && !cargando" class="partidos-lista">
             <h3 class="lista-titulo">
               <mat-icon color="primary">sports</mat-icon>
@@ -359,7 +347,6 @@
             </mat-card>
           </div>
 
-          <!-- Estado vacío -->
           <div class="empty-partidos" *ngIf="reservasDisponibles.length === 0 && !cargando">
             <mat-card class="empty-card">
               <mat-card-content>
@@ -376,7 +363,6 @@
 
     </div>
 
-    <!-- Mensaje feedback -->
     <div class="snack-mensaje" *ngIf="mensaje"
       [class.snack-error]="mensajeTipo === 'error'"
       [class.snack-success]="mensajeTipo === 'success'"

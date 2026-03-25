@@ -52,7 +52,6 @@ export class Reservar implements OnInit, OnDestroy {
 
   modo: 'crear' | 'unirse' = 'crear';
 
-  // Variables para crear reserva
   fechaSeleccionada: string = '';
   fechaSeleccionadaDate: Date | null = null;
   fechaMinimaDate: Date | null = null;
@@ -62,27 +61,20 @@ export class Reservar implements OnInit, OnDestroy {
   reservasDelDia: IBooking[] = [];
   horariosDisponibles: string[] = [];
 
-  // Variables para unirse a reserva
   reservasDisponibles: IBooking[] = [];
   filtroUbicacion: string = '';
-
-  // Variables para geolocalización y búsqueda por radio
   miLatitud: number | null = null;
   miLongitud: number | null = null;
   usarGeolocalizacion: boolean = false;
-  radioBusqueda: number = 10; // Radio en kilómetros
+  radioBusqueda: number = 10;
   radiosDisponibles = [5, 10, 25, 50, 100];
   geolocalizacionActiva: boolean = false;
 
-  // Variables para crear reserva con ubicación
   latitudReserva: number | null = null;
   longitudReserva: number | null = null;
   ubicacionAutomatica: boolean = false;
 
-  // Debounce geocoding manual
   geocodingTimeout: any = null;
-
-  // ⚠️ Ajusta el puerto si tu Laravel corre en otro
   private readonly backendUrl = 'http://127.0.0.1:8000';
 
   mensaje: string = '';
@@ -102,11 +94,9 @@ export class Reservar implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Suscribirse a los cambios de parámetros
     this.routeParamsSubscription = this.route.paramMap.subscribe((params) => {
       this.sportSlug = params.get('deporte') || '';
 
-      // Resetear variables cuando cambias de deporte
       if (this.sport && this.normalizar(this.sport.nombre) !== this.sportSlug) {
         this.sport = null;
         this.reservasDelDia = [];
@@ -114,7 +104,6 @@ export class Reservar implements OnInit, OnDestroy {
         this.horariosDisponibles = [];
       }
 
-      // Fecha mínima hoy y máxima un mes
       const hoy = this.normalizarFecha(new Date());
       this.fechaMinimaDate = hoy;
       this.fechaSeleccionadaDate = hoy;
@@ -204,7 +193,6 @@ export class Reservar implements OnInit, OnDestroy {
     this.drawerMessagesService.irAMensajes();
   }
 
-  // Normalizamos el texto (tildes, espacios, etc.)
   normalizar(texto: string): string {
     return texto
       .normalize('NFD')
@@ -328,31 +316,28 @@ export class Reservar implements OnInit, OnDestroy {
     this.horaSeleccionada = '';
     this.cargarReservasDelDia();
 
-    // Manual: geocodificar texto con debounce
     if (!this.ubicacionAutomatica && this.ubicacionSeleccionada && this.ubicacionSeleccionada.trim() !== '') {
-      // ✅ Evita coords viejas si falla el geocode
       this.latitudReserva = null;
       this.longitudReserva = null;
 
       if (this.geocodingTimeout) clearTimeout(this.geocodingTimeout);
 
       this.geocodingTimeout = setTimeout(async () => {
-        console.log('🔵 Geocodificando ubicación manual:', this.ubicacionSeleccionada);
+        console.log('Geocodificando ubicación manual:', this.ubicacionSeleccionada);
         const coords = await this.geocode(this.ubicacionSeleccionada);
 
         if (coords) {
           this.latitudReserva = coords.lat;
           this.longitudReserva = coords.lon;
-          console.log('✅ Coordenadas obtenidas para ubicación manual:', coords);
+          console.log('Coordenadas obtenidas para ubicación manual:', coords);
         } else {
-          console.log('⚠️ No se pudieron obtener coordenadas para:', this.ubicacionSeleccionada);
+          console.log('No se pudieron obtener coordenadas para:', this.ubicacionSeleccionada);
         }
 
         this.cdr.detectChanges();
       }, 1000);
 
     } else if (!this.ubicacionSeleccionada || this.ubicacionSeleccionada.trim() === '') {
-      // Si se borra el campo, limpiar coords (si no es GPS)
       if (!this.ubicacionAutomatica) {
         this.latitudReserva = null;
         this.longitudReserva = null;
@@ -431,7 +416,7 @@ export class Reservar implements OnInit, OnDestroy {
     this.reservasDisponibles = [];
   }
 
-  // Ubicación del navegador (para buscar por radio)
+
   obtenerUbicacion() {
     if (!navigator.geolocation) {
       this.mostrarMensaje('Tu navegador no soporta geolocalización', 'error');
@@ -493,7 +478,6 @@ export class Reservar implements OnInit, OnDestroy {
     });
   }
 
-  // Reverse geocoding (coords -> texto). Si en algún momento te da CORS, lo pasamos al backend también.
   async reverseGeocode(lat: number, lon: number): Promise<string> {
     try {
       const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=es`;
@@ -516,7 +500,6 @@ export class Reservar implements OnInit, OnDestroy {
     }
   }
 
-  // ✅ Geocoding (texto -> coords) usando TU backend (evita CORS)
   async geocode(address: string): Promise<{ lat: number, lon: number } | null> {
     try {
       const url = `${this.backendUrl}/api/geocode?q=${encodeURIComponent(address)}`;
@@ -534,10 +517,9 @@ export class Reservar implements OnInit, OnDestroy {
   }
 
   toggleUbicacionAutomatica() {
-    console.log('🔵 toggleUbicacionAutomatica llamado. Estado actual:', this.ubicacionAutomatica);
+    console.log('toggleUbicacionAutomatica llamado. Estado actual:', this.ubicacionAutomatica);
 
     if (this.ubicacionAutomatica) {
-      // Activar GPS
       if (!navigator.geolocation) {
         this.mostrarMensaje('Tu navegador no soporta geolocalización', 'error');
         this.ubicacionAutomatica = false;
@@ -545,13 +527,13 @@ export class Reservar implements OnInit, OnDestroy {
       }
 
       this.cargando = true;
-      console.log('🔵 Solicitando geolocalización...');
+      console.log(' Solicitando geolocalización...');
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           this.latitudReserva = position.coords.latitude;
           this.longitudReserva = position.coords.longitude;
 
-          console.log('✅ Coordenadas obtenidas:', {
+          console.log(' Coordenadas obtenidas:', {
             latitud: this.latitudReserva,
             longitud: this.longitudReserva
           });
@@ -560,7 +542,7 @@ export class Reservar implements OnInit, OnDestroy {
           this.ubicacionSeleccionada = direccion;
 
           this.cargando = false;
-          console.log('✅ Ubicación completa:', direccion);
+          console.log('Ubicación completa:', direccion);
           this.mostrarMensaje('Ubicación obtenida correctamente', 'success');
           this.cdr.detectChanges();
         },
@@ -569,19 +551,17 @@ export class Reservar implements OnInit, OnDestroy {
           this.ubicacionAutomatica = false;
           this.latitudReserva = null;
           this.longitudReserva = null;
-          console.error('❌ Error al obtener ubicación:', error);
+          console.error('Error al obtener ubicación:', error);
           this.mostrarMensaje('No se pudo obtener tu ubicación', 'error');
           this.cdr.detectChanges();
         }
       );
     } else {
-      // Desactivar GPS
       this.latitudReserva = null;
       this.longitudReserva = null;
 
-      //Limpiamos el texto para evitar que se quede la direccion automatica
       this.ubicacionSeleccionada = '';
-      console.log('🔴 Ubicación automática desactivada');
+      console.log('Ubicación automática desactivada');
       this.mostrarMensaje('Ubicación automática desactivada', 'info');
     }
   }
@@ -620,7 +600,6 @@ export class Reservar implements OnInit, OnDestroy {
     return `${horaFin.toString().padStart(2, '0')}:${minutosFin.toString().padStart(2, '0')}`;
   }
 
-  // ✅ IMPORTANTE: ahora es async para poder hacer geocode final si hace falta
   async crearReserva() {
     if (!this.authService.isAuthenticated()) {
       this.mostrarMensaje('Debes iniciar sesión para crear una reserva', 'error');
@@ -645,7 +624,6 @@ export class Reservar implements OnInit, OnDestroy {
       return;
     }
 
-    // ✅ Si NO es GPS, asegúrate de que hay coords (geocode final obligatorio)
     if (!this.ubicacionAutomatica) {
       if (this.latitudReserva === null || this.longitudReserva === null) {
         const coords = await this.geocode(this.ubicacionSeleccionada);
@@ -666,7 +644,7 @@ export class Reservar implements OnInit, OnDestroy {
       pista: 'Pista 1'
     };
 
-    console.log('🔵 Verificando coordenadas:', {
+    console.log('Verificando coordenadas:', {
       latitudReserva: this.latitudReserva,
       longitudReserva: this.longitudReserva,
       ubicacionAutomatica: this.ubicacionAutomatica
@@ -675,12 +653,12 @@ export class Reservar implements OnInit, OnDestroy {
     if (this.latitudReserva !== null && this.longitudReserva !== null) {
       reserva.latitud = this.latitudReserva;
       reserva.longitud = this.longitudReserva;
-      console.log('✅ Coordenadas añadidas a la reserva');
+      console.log('Coordenadas añadidas a la reserva');
     } else {
-      console.log('⚠️ No se añaden coordenadas (están en null)');
+      console.log('No se añaden coordenadas (están en null)');
     }
 
-    console.log('🔵 Objeto reserva que se enviará:', reserva);
+    console.log('Objeto reserva que se enviará:', reserva);
 
     this.cargando = true;
     this.cdr.detectChanges();
@@ -757,18 +735,6 @@ export class Reservar implements OnInit, OnDestroy {
 
   get nombreUsuario(): string {
     return this.authService.getUserData()?.name || '';
-  }
-
-  irALogin() {
-    this.router.navigate(['/login']);
-  }
-
-  irARegistro() {
-    this.router.navigate(['/registro']);
-  }
-
-  irAPerfil() {
-    this.router.navigate(['/perfil']);
   }
 
   navegarADeporte(ruta: string) {
