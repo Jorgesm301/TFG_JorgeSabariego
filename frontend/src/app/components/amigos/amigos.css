@@ -41,14 +41,16 @@
 }
 
 .tab-btn {
-  color: rgba(0, 0, 0, 0.68) !important;
-  border: 1px solid rgba(21, 101, 192, 0.12);
-  border-radius: 10px;
-  background: rgba(25, 118, 210, 0.04);
   display: inline-flex;
   align-items: center;
   gap: 8px;
+
   font-weight: 600;
+  color: rgba(0, 0, 0, 0.68) !important;
+
+  border: 1px solid rgba(21, 101, 192, 0.12);
+  border-radius: 10px;
+  background: rgba(25, 118, 210, 0.04);
 }
 
 .tab-btn:hover {
@@ -58,7 +60,11 @@
 
 .tab-btn.active {
   color: #1565C0 !important;
-  background: linear-gradient(135deg, rgba(21,101,192,0.12), rgba(66,165,245,0.16));
+  background: linear-gradient(
+    135deg,
+    rgba(21, 101, 192, 0.12),
+    rgba(66, 165, 245, 0.16)
+  );
   border-color: rgba(25, 118, 210, 0.28);
 }
 
@@ -67,12 +73,15 @@
   min-width: 22px;
   height: 22px;
   border-radius: 999px;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   padding: 0 6px;
   font-size: 12px;
   font-weight: 700;
+
   color: #1565C0;
   background: rgba(66, 165, 245, 0.16);
   border: 1px solid rgba(25, 118, 210, 0.2);
@@ -95,14 +104,17 @@
   gap: 14px;
 }
 
+
 .friend-card {
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(21, 101, 192, 0.08);
   border-radius: 14px;
+
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.05),
     0 2px 8px rgba(0, 0, 0, 0.03);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+  transition: all 0.2s ease;
 }
 
 .friend-card:hover {
@@ -120,15 +132,18 @@
   padding: 16px !important;
 }
 
+
 .avatar-wrap {
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1976D2 0%, #42A5F5 100%);
+
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+
+  background: linear-gradient(135deg, #1976D2 0%, #42A5F5 100%);
   box-shadow: 0 6px 16px rgba(21, 101, 192, 0.22);
 }
 
@@ -138,6 +153,7 @@
   width: 30px;
   height: 30px;
 }
+
 
 .person-info {
   flex: 1;
@@ -150,6 +166,7 @@
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
+
   font-size: 16px;
   font-weight: 600;
   color: #0f172a;
@@ -157,15 +174,15 @@
 
 .person-info p {
   margin: 4px 0 0;
-  color: rgba(0, 0, 0, 0.62);
   font-size: 14px;
+  color: rgba(0, 0, 0, 0.62);
 }
 
 .person-info small {
   display: block;
   margin-top: 6px;
-  color: rgba(0, 0, 0, 0.48);
   font-size: 12px;
+  color: rgba(0, 0, 0, 0.48);
 }
 
 .actions-wrap {
@@ -187,9 +204,11 @@
 
 .search-card {
   margin-bottom: 14px;
+
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(21, 101, 192, 0.08);
   border-radius: 14px;
+
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.05),
     0 2px 8px rgba(0, 0, 0, 0.03);
@@ -199,12 +218,15 @@
   width: 100%;
 }
 
+
 .state-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+
   padding: 6px 12px;
   border-radius: 999px;
+
   font-size: 12px;
   font-weight: 600;
   border: 1px solid transparent;
@@ -219,19 +241,16 @@
 .state-badge.pending {
   color: #b45309;
   background: rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.18);
 }
 
 .state-badge.friend {
   color: #15803d;
   background: rgba(34, 197, 94, 0.12);
-  border-color: rgba(34, 197, 94, 0.18);
 }
 
 .state-badge.blocked {
   color: #c62828;
   background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.18);
 }
 
 .loading-state,
@@ -244,8 +263,8 @@
 .loading-state p,
 .error-state p,
 .empty-state p {
-  color: rgba(0, 0, 0, 0.58);
   margin-top: 12px;
+  color: rgba(0, 0, 0, 0.58);
 }
 
 .empty-state mat-icon,
@@ -258,8 +277,40 @@
 
 .empty-state h3 {
   margin: 10px 0 0;
-  color: #1565C0;
   font-size: 22px;
+  color: #1565C0;
+}
+
+.snack-mensaje {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+  z-index: 999;
+  white-space: nowrap;
+}
+
+.snack-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.snack-error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.snack-info {
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 @media (max-width: 480px) {
@@ -328,17 +379,9 @@
     gap: 6px;
   }
 
-  .detalle-item {
-    font-size: 12px;
-  }
-
   .state-badge {
     font-size: 11px;
     padding: 4px 10px;
-  }
-
-  .search-card {
-    margin-bottom: 12px;
   }
 
   .empty-state {
@@ -353,56 +396,57 @@
   }
 }
 
-  @media (min-width: 481px) and (max-width: 768px) {
 
-    .amigos-content {
-      padding: 20px 12px;
-    }
+@media (min-width: 481px) and (max-width: 768px) {
 
-    .page-title {
-      font-size: 32px;
-    }
-
-    .tabs-row {
-      padding: 10px;
-    }
-
-    .tab-btn {
-      width: calc(50% - 5px);
-      justify-content: center;
-    }
-
-    .card-content {
-      gap: 12px;
-    }
-
-    .person-info h3 {
-      font-size: 15px;
-    }
-
-    .person-info p {
-      font-size: 13px;
-    }
-
-    .empty-state {
-      padding: 40px 20px;
-    }
+  .amigos-content {
+    padding: 20px 12px;
   }
 
-
-  @media (min-width: 769px) and (max-width: 1024px) {
-
-    .amigos-content {
-      padding: 22px 18px;
-      max-width: 960px;
-    }
+  .page-title {
+    font-size: 32px;
   }
 
-
-  @media (min-width: 1360px) {
-
-    .amigos-content {
-      padding: 32px 40px;
-      max-width: 1100px;
-    }
+  .tabs-row {
+    padding: 10px;
   }
+
+  .tab-btn {
+    width: calc(50% - 5px);
+    justify-content: center;
+  }
+
+  .card-content {
+    gap: 12px;
+  }
+
+  .person-info h3 {
+    font-size: 15px;
+  }
+
+  .person-info p {
+    font-size: 13px;
+  }
+
+  .empty-state {
+    padding: 40px 20px;
+  }
+}
+
+
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  .amigos-content {
+    padding: 22px 18px;
+    max-width: 960px;
+  }
+}
+
+
+@media (min-width: 1360px) {
+
+  .amigos-content {
+    padding: 32px 40px;
+    max-width: 1100px;
+  }
+}

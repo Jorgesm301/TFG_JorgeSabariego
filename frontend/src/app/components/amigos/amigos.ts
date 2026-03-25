@@ -61,6 +61,8 @@ export class Amigos implements OnInit, OnDestroy {
   cargandoAmigosDrawer = false;
   private intervaloMensajes: any;
   vistaActual: 'amigos' | 'solicitudes' | 'buscar' | 'bloqueados' = 'amigos';
+  mensaje: string = '';
+  mensajeTipo: 'success' | 'error' | 'info' = 'info';
 
   deportesMenu = [
     { nombre: 'Futbol', icon: 'sports_soccer', ruta: '/reservar/futbol' },
@@ -214,13 +216,13 @@ export class Amigos implements OnInit, OnDestroy {
   aceptarSolicitud(solicitud: IFriendship): void {
     this.friendshipService.aceptarSolicitud(solicitud.id).subscribe({
       next: () => {
-        alert('Solicitud aceptada');
+        this.mostrarMensaje('¡Solicitud aceptada!', 'success');
         this.cargarAmigos();
         this.cargarSolicitudes();
       },
       error: (err) => {
         console.error('Error al aceptar solicitud:', err);
-        alert('No se pudo aceptar la solicitud');
+        this.mostrarMensaje('No se pudo aceptar la solicitud', 'error');
       }
     });
   }
@@ -228,29 +230,25 @@ export class Amigos implements OnInit, OnDestroy {
   rechazarSolicitud(solicitud: IFriendship): void {
     this.friendshipService.rechazarSolicitud(solicitud.id).subscribe({
       next: () => {
-        alert('Solicitud rechazada');
+        this.mostrarMensaje('Solicitud rechazada', 'info');
         this.cargarSolicitudes();
       },
       error: (err) => {
         console.error('Error al rechazar solicitud:', err);
-        alert('No se pudo rechazar la solicitud');
+        this.mostrarMensaje('No se pudo rechazar la solicitud', 'error');
       }
     });
   }
 
   eliminarAmigo(amigo: IUser): void {
-    if (!confirm(`¿Eliminar a ${amigo.name} de tus amigos?`)) {
-      return;
-    }
-
     this.friendshipService.eliminarAmigoPorUserId(amigo.id).subscribe({
       next: () => {
-        alert(`${amigo.name} eliminado de tus amigos`);
+        this.mostrarMensaje(`${amigo.name} eliminado de tus amigos`, 'info');
         this.cargarAmigos();
       },
       error: (err) => {
         console.error('Error al eliminar amistad:', err);
-        alert(err.error?.message || 'No se pudo eliminar la amistad');
+        this.mostrarMensaje(err.error?.message || 'No se pudo eliminar la amistad', 'error');
       }
     });
   }
@@ -267,35 +265,27 @@ export class Amigos implements OnInit, OnDestroy {
   }
 
   bloquearAmigo(amigo: IUser): void {
-    if (!confirm(`¿Estás seguro de bloquear a ${amigo.name}? No podréis comunicaros hasta que lo desbloquees.`)) {
-      return;
-    }
-
     this.blockedUserService.bloquearUsuario(amigo.id).subscribe({
       next: () => {
-        alert(`${amigo.name} bloqueado`);
+        this.mostrarMensaje(`${amigo.name} bloqueado`, 'info');
         this.cargarAmigos();
       },
       error: (err) => {
         console.error('Error al bloquear usuario:', err);
-        alert(err.error?.message || 'No se pudo bloquear al usuario');
+        this.mostrarMensaje(err.error?.message || 'No se pudo bloquear al usuario', 'error');
       }
     });
   }
 
   desbloquearAmigoDirecto(amigo: IUser): void {
-    if (!confirm(`¿Desbloquear a ${amigo.name}? Podrán volver a comunicarse.`)) {
-      return;
-    }
-
     this.blockedUserService.desbloquearUsuario(amigo.id).subscribe({
       next: () => {
-        alert(`${amigo.name} desbloqueado`);
+        this.mostrarMensaje(`${amigo.name} desbloqueado`, 'success');
         this.cargarAmigos();
       },
       error: (err) => {
         console.error('Error al desbloquear usuario:', err);
-        alert('No se pudo desbloquear al usuario');
+        this.mostrarMensaje('No se pudo desbloquear al usuario', 'error');
       }
     });
   }
@@ -317,18 +307,14 @@ export class Amigos implements OnInit, OnDestroy {
   }
 
   desbloquearUsuario(bloqueado: IBlockedUser): void {
-    if (!confirm(`¿Desbloquear a ${bloqueado.usuario.name}? Podrán volver a comunicarse y la amistad se restaurará.`)) {
-      return;
-    }
-
     this.blockedUserService.desbloquearUsuario(bloqueado.usuario.id).subscribe({
       next: () => {
-        alert(`${bloqueado.usuario.name} desbloqueado`);
+        this.mostrarMensaje(`${bloqueado.usuario.name} desbloqueado`, 'success');
         this.cargarBloqueados();
       },
       error: (err) => {
         console.error('Error al desbloquear usuario:', err);
-        alert('No se pudo desbloquear al usuario');
+        this.mostrarMensaje('No se pudo desbloquear al usuario', 'error');
       }
     });
   }
@@ -357,18 +343,26 @@ export class Amigos implements OnInit, OnDestroy {
   enviarSolicitud(usuario: IUser): void {
     this.friendshipService.enviarSolicitud(usuario.id).subscribe({
       next: () => {
-        alert(`Solicitud enviada a ${usuario.name}`);
+        this.mostrarMensaje(`¡Solicitud enviada a ${usuario.name}!`, 'success');
         this.buscarUsuarios();
       },
       error: (err) => {
         console.error('Error al enviar solicitud:', err);
-        alert(err.error?.message || 'No se pudo enviar la solicitud');
+        this.mostrarMensaje(err.error?.message || 'No se pudo enviar la solicitud', 'error');
       }
     });
   }
 
   navegarADeporte(ruta: string): void {
     this.router.navigate([ruta]);
+  }
+
+  mostrarMensaje(texto: string, tipo: 'success' | 'error' | 'info') {
+    this.mensaje = texto;
+    this.mensajeTipo = tipo;
+    setTimeout(() => {
+      this.mensaje = '';
+    }, 4000);
   }
 }
 

@@ -266,4 +266,12 @@
     (abrirChat)="abrirChatDrawer($event)"
     (irAMensajes)="irAMensajes()"
   ></app-shared-messages-drawer>
+
+  <div class="snack-mensaje" *ngIf="mensaje"
+    [class.snack-error]="mensajeTipo === 'error'"
+    [class.snack-success]="mensajeTipo === 'success'"
+    [class.snack-info]="mensajeTipo === 'info'">
+    <mat-icon>{{ mensajeTipo === 'error' ? 'error_outline' : mensajeTipo === 'success' ? 'check_circle' : 'info' }}</mat-icon>
+    {{ mensaje }}
+  </div>
 </div>

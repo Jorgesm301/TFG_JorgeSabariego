@@ -69,7 +69,6 @@ export class Registro {
         error: (err) => {
           this.isLoading = false;
           if (err.status === 422) {
-            // Error de validación - probablemente email duplicado
             const errors = err.error.errors;
             if (errors?.email) {
               this.registroError = 'Este email ya está registrado';
