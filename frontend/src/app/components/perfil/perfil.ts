@@ -44,10 +44,8 @@ export class Perfil implements OnInit, OnDestroy {
   usuario: any = null;
   deportesElo: any[] = [];
   cargandoElo = false;
-  totalPartidos = 0;
   deportesMenu = DEPORTES_MENU;
 
-  // Victorias
   cargandoPartidos = false;
   victorias = 0;
   totalPartidosJugados = 0;
@@ -67,7 +65,6 @@ export class Perfil implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.usuario = this.authService.getUserData();
 
-    //Si no esta registrado el usuario, redirigimos al login
     if (!this.usuario) {
       this.router.navigate(['/login']);
     } else {
@@ -97,7 +94,6 @@ export class Perfil implements OnInit, OnDestroy {
     this.eloService.getMyElo().subscribe({
       next: (data) => {
         this.deportesElo = data.sports;
-        this.totalPartidos = data.sports.reduce((sum: number, sport: any) => sum + sport.matches_played, 0);
         this.cargandoElo = false;
         this.cdr.detectChanges();
       },
@@ -131,12 +127,11 @@ export class Perfil implements OnInit, OnDestroy {
 
   private calcularRachaVictorias(partidos: any[]): number {
     let racha = 0;
-    // Los partidos vienen más recientes primero, así que iteramos desde el inicio
     for (const partido of partidos) {
       if (partido.gane) {
         racha++;
       } else {
-        break; // Rompe la racha en el primer partido perdido
+        break;
       }
     }
     return racha;
