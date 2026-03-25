@@ -12,8 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Escalar todos los ELOs dividiéndolos entre 10
-        // Ejemplo: 1200 -> 120, 800 -> 80, 1000 -> 100
+        //Bajamos los ELOS dividiendolos por 10 y redondeando hacia abajo, asegurándonos de que no bajen de 0
         DB::table('sport_user')->update([
             'elo' => DB::raw('GREATEST(0, CAST(elo / 10 AS INTEGER))')
         ]);
@@ -24,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Revertir: multiplicar por 10
+        //Multiplicamos los ELOS por 10 para volver a la escala original
         DB::table('sport_user')->update([
             'elo' => DB::raw('elo * 10')
         ]);

@@ -24,11 +24,6 @@ Route::post('/register', [AuthController::class, 'register']);
 //Ruta para el login
 Route::post('/login', [AuthController::class, 'login']);
 
-//Ruta para ver todos los usuarios
-Route::get('/ver-usuarios', function () {
-    return User::all();
-});
-
 // Rutas públicas para deportes (sin autenticación)
 Route::get('/sports', [SportController::class, 'index']);
 Route::get('/sports/{id}', [SportController::class, 'show']);
@@ -60,7 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Para probar el ELO
     Route::get('/me/elo', [EloController::class, 'myElo']);
 
-    // ========== RUTAS DE AMISTAD ==========
+    //Rutas de amistad
     Route::get('/users/search', [FriendshipController::class, 'buscarUsuarios']);
     Route::post('/friendships', [FriendshipController::class, 'enviarSolicitud']);
     Route::put('/friendships/{id}/accept', [FriendshipController::class, 'aceptarSolicitud']);
@@ -70,14 +65,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/friendships/{id}', [FriendshipController::class, 'eliminarAmistad']);
     Route::delete('/friends/{friendId}', [FriendshipController::class, 'eliminarAmigoPorUserId']);
 
-    // ========== RUTAS DE MENSAJERÍA ==========
+    //Rutas de mensajeria
     Route::post('/messages', [MessageController::class, 'enviarMensaje']);
     Route::get('/messages/{userId}', [MessageController::class, 'obtenerConversacion']);
     Route::get('/conversations', [MessageController::class, 'listarConversaciones']);
     Route::put('/messages/{id}/read', [MessageController::class, 'marcarComoLeido']);
     Route::put('/messages/conversation/{userId}/read', [MessageController::class, 'marcarConversacionLeida']);
 
-    // ========== RUTAS DE BLOQUEOS ==========
+    //Rutas de bloqueos
     Route::post('/blocked-users', [BlockedUserController::class, 'bloquearUsuario']);
     Route::delete('/blocked-users/{blockedUserId}', [BlockedUserController::class, 'desbloquearUsuario']);
     Route::get('/blocked-users', [BlockedUserController::class, 'listarBloqueados']);
