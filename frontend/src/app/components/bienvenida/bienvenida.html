@@ -8,7 +8,6 @@
     (deporteSelect)="navegarADeporte($event)"
   ></app-shared-page-header>
 
-  <!-- CARD PRÓXIMO PARTIDO - ESQUINA SUPERIOR DERECHA -->
   <div class="proximo-partido-flotante" *ngIf="estaLogueado && proximoPartido">
     <mat-card class="proximo-partido-flotante-card" (click)="proximoPartido.id && irAPartidoDetalle(proximoPartido.id)">
       <mat-card-content>
@@ -27,15 +26,12 @@
     </mat-card>
   </div>
 
-  <!-- CONTENIDO PRINCIPAL -->
   <main class="content">
 
-    <!-- TÍTULO PRINCIPAL -->
     <div class="hero-text animate-on-scroll">
       <h1 class="hero-title">¡Bienvenido de nuevo!</h1>
     </div>
 
-    <!-- SLIDER CON MATERIAL CARD -->
     <section class="slider animate-on-scroll" aria-label="Galería de deportes">
       <mat-card class="slider-card">
         <div class="slider-frame">
@@ -71,7 +67,6 @@
       </mat-card>
     </section>
 
-    <!-- CALENDARIO SECCIÓN COMPLETA -->
     <section class="calendario-section animate-on-scroll" *ngIf="estaLogueado">
       <div class="calendario-header">
         <h2 class="calendario-title">Tus próximas reservas</h2>
@@ -79,7 +74,6 @@
 
       <mat-card class="calendario-card-full">
         <mat-card-content>
-          <!-- Controles de navegación -->
           <div class="calendario-controls">
             <button mat-icon-button (click)="cambiarMes(-1)" class="btn-nav-calendario">
               <mat-icon>chevron_left</mat-icon>
@@ -89,15 +83,12 @@
               <mat-icon>chevron_right</mat-icon>
             </button>
           </div>
-
-          <!-- Días de la semana -->
           <div class="dias-semana-full">
             <div *ngFor="let day of ['L', 'M', 'X', 'J', 'V', 'S', 'D']" class="dia-semana-full">
               {{ day }}
             </div>
           </div>
 
-          <!-- Grid de días -->
           <div class="dias-grid-full">
             <div
               *ngFor="let dia of diasCalendario"
@@ -125,7 +116,6 @@
 
   </main>
 
-  <!-- FOOTER -->
   <footer class="footer animate-on-scroll">
     <div class="footer-content">
       <div class="footer-section">
@@ -156,7 +146,6 @@
     </div>
     </div>
 
-    <!-- Copyright -->
     <div class="footer-bottom">
       <p class="copyright">
         © {{ currentYear }} Gestion de reservas JS. Todos los derechos reservados.
