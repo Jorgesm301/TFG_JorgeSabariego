@@ -21,7 +21,6 @@ export class GoogleCallback implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Leer parámetros de la URL
     const token = this.route.snapshot.queryParamMap.get('token');
     const email = this.route.snapshot.queryParamMap.get('email');
 
@@ -35,7 +34,7 @@ export class GoogleCallback implements OnInit {
 
     this.authService.saveToken(token);
 
-    // Validar el token contra el backend
+    // Validamos el token contra el backend
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
@@ -45,14 +44,11 @@ export class GoogleCallback implements OnInit {
       next: (userData) => {
         // Guardamos los datos completos del usuario desde el backend
         this.authService.saveUserData(userData);
-
-        // Navegamos al inicio
         this.router.navigate(['/']);
       },
       error: (error) => {
         console.error('ERROR: Fallo validando token de Google -', error.status, error.message);
 
-        // Si falla la validación, limpiamos el token y redirigimos al login
         this.authService.logout();
 
         this.router.navigate(['/login'], {
