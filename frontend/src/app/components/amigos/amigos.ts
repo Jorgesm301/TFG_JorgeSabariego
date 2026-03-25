@@ -61,6 +61,7 @@ export class Amigos implements OnInit, OnDestroy {
   cargandoAmigosDrawer = false;
   private intervaloMensajes: any;
   vistaActual: 'amigos' | 'solicitudes' | 'buscar' | 'bloqueados' = 'amigos';
+
   deportesMenu = [
     { nombre: 'Futbol', icon: 'sports_soccer', ruta: '/reservar/futbol' },
     { nombre: 'Futbol Sala', icon: 'sports_soccer', ruta: '/reservar/futbol-sala' },
@@ -364,10 +365,6 @@ export class Amigos implements OnInit, OnDestroy {
         alert(err.error?.message || 'No se pudo enviar la solicitud');
       }
     });
-  }
-
-  volverInicio(): void {
-    this.router.navigate(['/']);
   }
 
   navegarADeporte(ruta: string): void {
