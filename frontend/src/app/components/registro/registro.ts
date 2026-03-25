@@ -45,7 +45,6 @@ export class Registro {
     if (this.registroForm.valid) {
       this.authService.registrar(this.registroForm.value).subscribe({
         next: (res) => {
-          //Para que el usuario no tenga que meter otra vez los datos
           this.authService.login({
             email: this.registroForm.value.email,
             password: this.registroForm.value.password
