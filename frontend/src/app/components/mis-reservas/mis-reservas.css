@@ -1,8 +1,4 @@
-﻿/* ================================================
-   MIS-RESERVAS PAGE — Angular Material Blue Theme
-   ================================================ */
-
-@keyframes fadeIn {
+﻿@keyframes fadeIn {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
@@ -32,9 +28,6 @@
   pointer-events: none;
 }
 
-
-
-/* ---- PAGE CONTENT ---- */
 .page-content {
   position: relative;
   z-index: 1;
@@ -44,7 +37,6 @@
   animation: fadeIn 0.4s ease;
 }
 
-/* ---- PAGE TITLE ---- */
 .page-title-row {
   display: flex;
   align-items: flex-start;
@@ -71,7 +63,6 @@
   margin: 0;
 }
 
-/* ---- LOADING & ERROR ---- */
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -109,7 +100,6 @@
   margin: 0 auto 12px;
 }
 
-/* ---- EMPTY STATE ---- */
 .empty-state {
   display: flex;
   justify-content: center;
@@ -147,7 +137,6 @@
   margin: 0 0 20px;
 }
 
-/* ---- RESERVAS GRID ---- */
 .reservas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -155,7 +144,6 @@
   animation: slideInUp 0.3s ease;
 }
 
-/* ---- RESERVA CARD ---- */
 .reserva-card {
   border-radius: 14px !important;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07) !important;
@@ -169,7 +157,6 @@
   transform: translateY(-2px);
 }
 
-/* ---- RESERVA TOP ---- */
 .reserva-top {
   display: flex;
   align-items: center;
@@ -194,7 +181,6 @@
   height: 20px;
 }
 
-/* ---- ESTADO CHIPS ---- */
 .estado-chip {
   font-size: 12px !important;
   font-weight: 600 !important;
@@ -253,8 +239,6 @@
   flex-shrink: 0;
 }
 
-
-/* ---- RESERVA ACCIONES (BOTONES) ---- */
 mat-card-actions.reserva-acciones {
   display: flex !important;
   flex-direction: column !important;
@@ -298,8 +282,6 @@ mat-card-actions.reserva-acciones {
   font-weight: 600;
 }
 
-/* ---- RESPONSIVE ---- */
-/* Mobile Pequeño (320px) */
 @media (max-width: 480px) {
   .page-content {
     padding: 16px 12px 40px;
@@ -339,7 +321,6 @@ mat-card-actions.reserva-acciones {
   }
 }
 
-/* Tablet (768px) */
 @media (min-width: 481px) and (max-width: 768px) {
   .page-content {
     padding: 20px 16px 48px;
@@ -362,7 +343,6 @@ mat-card-actions.reserva-acciones {
   }
 }
 
-/* Tablet Grande (1024px) */
 @media (min-width: 769px) and (max-width: 1024px) {
   .page-content {
     padding: 28px 24px 56px;
@@ -373,7 +353,6 @@ mat-card-actions.reserva-acciones {
   }
 }
 
-/* Desktop (1360px+) */
 @media (min-width: 1360px) {
   .page-content {
     padding: 40px 40px 80px;

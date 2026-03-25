@@ -61,7 +61,6 @@ export class MisReservas implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.usuario = this.authService.getUserData();
 
-    //Si no hay usuario, redirigir a login
     if (!this.usuario) {
       this.router.navigate(['/login']);
       return;
@@ -124,10 +123,6 @@ export class MisReservas implements OnInit, OnDestroy {
     return tieneGoogleCalendar || tieneSalir;
   }
 
-  volverInicio() {
-    this.router.navigate(['/']);
-  }
-
   get estaLogueado(): boolean {
     return this.authService.isAuthenticated();
   }
@@ -136,23 +131,10 @@ export class MisReservas implements OnInit, OnDestroy {
     return this.authService.getUserData()?.name || '';
   }
 
-  irALogin() {
-    this.router.navigate(['/login']);
-  }
-
-  irARegistro() {
-    this.router.navigate(['/registro']);
-  }
-
-  irAPerfil() {
-    this.router.navigate(['/perfil']);
-  }
-
   navegarADeporte(ruta: string) {
     this.router.navigate([ruta]);
   }
 
-  // ===== DRAWER MESSAGING =====
   get drawerAbierto$() {
     return this.drawerMessagesService.drawerAbierto$;
   }
