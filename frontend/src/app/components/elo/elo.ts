@@ -118,18 +118,6 @@ export class Elo implements OnInit {
     return this.authService.getUserData()?.name || '';
   }
 
-  irALogin() {
-    this.router.navigate(['/login']);
-  }
-
-  irARegistro() {
-    this.router.navigate(['/registro']);
-  }
-
-  irAPerfil() {
-    this.router.navigate(['/perfil']);
-  }
-
   navegarADeporte(ruta: string) {
     this.router.navigate([ruta]);
   }
@@ -251,7 +239,6 @@ export class Elo implements OnInit {
   getRutaReserva(nombreDeporte: string): string | null {
     const nombre = nombreDeporte.toLowerCase();
 
-    // Búsqueda por palabra clave en lugar de coincidencia exacta
     if (nombre.includes('futbol')) {
       return nombre.includes('sala') ? '/reservar/futbol-sala' : '/reservar/futbol';
     }

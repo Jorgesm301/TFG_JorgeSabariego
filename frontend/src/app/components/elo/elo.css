@@ -1,37 +1,363 @@
-.elo-page{min-height:100vh;background:#fafafa;position:relative;overflow-x:hidden;color:#0f172a}
-.elo-page::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,0,0,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.02) 1px,transparent 1px);background-size:40px 40px;z-index:0;pointer-events:none}
+.elo-page {
+  min-height: 100vh;
+  background: #fafafa;
+  position: relative;
+  overflow-x: hidden;
+  color: #0f172a;
+}
+
+.elo-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, .02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, .02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 0;
+  pointer-events: none;
+}
 
 
+.elo-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 56px;
+}
 
-.elo-content{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:32px 24px 56px}
-.page-title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:24px}
-.page-title{font-size:28px;font-weight:800;margin:0 0 4px;color:#0f172a}.page-subtitle{font-size:14px;color:#64748b;margin:0}
+.page-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
 
-.loading-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:64px 24px;color:#1976D2}.loading-state p{font-size:16px;color:#555}
+.page-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 4px;
+  color: #0f172a;
+}
 
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px}
-.stat-card{border-radius:14px!important;border:1px solid rgba(21,101,192,.14)!important;box-shadow:0 4px 14px rgba(15,23,42,.06)!important;background:linear-gradient(160deg,#ffffff 0%,#f0f7ff 100%)!important}
-.stat-card mat-card-content{display:flex;flex-direction:column;gap:6px;padding:16px!important}
-.stat-label{font-size:12px;text-transform:uppercase;letter-spacing:.7px;color:#64748b;font-weight:700}
-.stat-value{font-size:30px;line-height:1;font-weight:800;color:#0f172a}
-.stat-value-name{font-size:20px;color:#1565C0}
+.page-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
 
-.deportes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.deporte-card{border-radius:14px!important;box-shadow:0 8px 22px rgba(15,23,42,.08)!important;border:1px solid rgba(0,0,0,.06)!important;background:linear-gradient(180deg,#ffffff 0%,#fcfdff 100%)!important}
-.deporte-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.deporte-icon-wrap{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,#1976D2 0%,#1565C0 100%);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 12px rgba(21,101,192,.22)}
-.deporte-icon-wrap mat-icon{font-size:26px!important;width:26px!important;height:26px!important}
-.deporte-titulo{min-width:0}.deporte-nombre{font-size:20px;font-weight:700;margin:0 0 2px;color:#0f172a}.deporte-partidos{font-size:13px;color:#64748b;margin:0}
-.nivel-chip{margin-left:auto}
-.deporte-elo{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:18px;background:rgba(25,118,210,.06);border:1px solid rgba(25,118,210,.16);border-radius:12px}
-.elo-badge-large{font-size:42px;font-weight:800;color:#1565C0;line-height:1}.elo-label{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#64748b;margin-top:8px}
-:host ::ng-deep .deporte-elo .mat-mdc-progress-bar{width:100%;border-radius:999px;overflow:hidden}
-.progress-label{font-size:12px;color:#475569;font-weight:600}
-.deporte-actions{margin-top:14px;display:flex;justify-content:flex-end}
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 64px 24px;
+  color: #1976D2;
+}
 
-.empty-state{display:flex;justify-content:center;padding:28px 0}.empty-card{max-width:480px;width:100%;text-align:center;border-radius:16px!important;padding:16px}.empty-icon{font-size:56px!important;width:56px!important;height:56px!important;color:#94a3b8}
+.loading-state p {
+  font-size: 16px;
+  color: #555;
+}
 
-@media (max-width:480px){.elo-content{padding:16px 12px 40px}.page-title-row{flex-direction:column}.page-title{font-size:20px}.stats-grid{grid-template-columns:repeat(2,1fr);gap:10px}.deportes-grid{grid-template-columns:1fr}.deporte-card{border-radius:12px !important}.deporte-header{flex-wrap:wrap;gap:8px}.deporte-icon-wrap{width:48px;height:48px}.deporte-icon-wrap mat-icon{font-size:22px !important;width:22px !important;height:22px !important}.deporte-nome{font-size:16px}.deporte-partidos{font-size:12px}.nivel-chip{margin-left:0;font-size:11px;padding:2px 8px !important}.deporte-elo{padding:12px;gap:6px}.elo-badge-large{font-size:32px}.elo-label{font-size:10px}.deporte-actions{flex-direction:column;margin-top:10px}.deporte-actions button{width:100%;font-size:12px;height:36px !important}}
-@media (min-width:481px) and (max-width:768px){.elo-content{padding:20px 16px 48px}.stats-grid{grid-template-columns:repeat(2,1fr)}.deportes-grid{grid-template-columns:1fr}.nivel-chip{margin-left:0}.deporte-header{flex-wrap:wrap}.deporte-actions button{width:100%}}
-@media (min-width:769px) and (max-width:1024px){.elo-content{padding:24px 20px 52px;max-width:960px}.stats-grid{grid-template-columns:repeat(3,1fr)}.deportes-grid{grid-template-columns:repeat(2,1fr)}}
-@media (min-width:1360px){.elo-content{padding:40px 40px 80px;max-width:1200px}.stats-grid{grid-template-columns:repeat(4,1fr)}}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  border-radius: 14px !important;
+  border: 1px solid rgba(21, 101, 192, .14) !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, .06) !important;
+  background: linear-gradient(160deg, #ffffff 0%, #f0f7ff 100%) !important;
+}
+
+.stat-card mat-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px !important;
+}
+
+.stat-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.stat-value {
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.stat-value-name {
+  font-size: 20px;
+  color: #1565C0;
+}
+
+
+.deportes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.deporte-card {
+  border-radius: 14px !important;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, .08) !important;
+  border: 1px solid rgba(0, 0, 0, .06) !important;
+  background: linear-gradient(180deg, #ffffff 0%, #fcfdff 100%) !important;
+}
+
+.deporte-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.deporte-icon-wrap {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(21, 101, 192, .22);
+}
+
+.deporte-icon-wrap mat-icon {
+  font-size: 26px !important;
+  width: 26px !important;
+  height: 26px !important;
+}
+
+.deporte-titulo {
+  min-width: 0;
+}
+
+.deporte-nombre {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 2px;
+  color: #0f172a;
+}
+
+.deporte-partidos {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+.nivel-chip {
+  margin-left: auto;
+}
+
+.deporte-elo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px;
+  background: rgba(25, 118, 210, .06);
+  border: 1px solid rgba(25, 118, 210, .16);
+  border-radius: 12px;
+}
+
+.elo-badge-large {
+  font-size: 42px;
+  font-weight: 800;
+  color: #1565C0;
+  line-height: 1;
+}
+
+.elo-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-top: 8px;
+}
+
+:host ::ng-deep .deporte-elo .mat-mdc-progress-bar {
+  width: 100%;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.deporte-actions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  padding: 28px 0;
+}
+
+.empty-card {
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  border-radius: 16px !important;
+  padding: 16px;
+}
+
+.empty-icon {
+  font-size: 56px !important;
+  width: 56px !important;
+  height: 56px !important;
+  color: #94a3b8;
+}
+
+@media (max-width: 480px) {
+
+  .elo-content {
+    padding: 16px 12px 40px;
+  }
+
+  .page-title-row {
+    flex-direction: column;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .deportes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .deporte-card {
+    border-radius: 12px !important;
+  }
+
+  .deporte-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .deporte-icon-wrap {
+    width: 48px;
+    height: 48px;
+  }
+
+  .deporte-icon-wrap mat-icon {
+    font-size: 22px !important;
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .deporte-partidos {
+    font-size: 12px;
+  }
+
+  .nivel-chip {
+    margin-left: 0;
+    font-size: 11px;
+    padding: 2px 8px !important;
+  }
+
+  .deporte-elo {
+    padding: 12px;
+    gap: 6px;
+  }
+
+  .elo-badge-large {
+    font-size: 32px;
+  }
+
+  .elo-label {
+    font-size: 10px;
+  }
+
+  .deporte-actions {
+    flex-direction: column;
+    margin-top: 10px;
+  }
+
+  .deporte-actions button {
+    width: 100%;
+    font-size: 12px;
+    height: 36px !important;
+  }
+}
+
+
+@media (min-width: 481px) and (max-width: 768px) {
+
+  .elo-content {
+    padding: 20px 16px 48px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .deportes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nivel-chip {
+    margin-left: 0;
+  }
+
+  .deporte-header {
+    flex-wrap: wrap;
+  }
+
+  .deporte-actions button {
+    width: 100%;
+  }
+}
+
+
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  .elo-content {
+    padding: 24px 20px 52px;
+    max-width: 960px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .deportes-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+@media (min-width: 1360px) {
+
+  .elo-content {
+    padding: 40px 40px 80px;
+    max-width: 1200px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
