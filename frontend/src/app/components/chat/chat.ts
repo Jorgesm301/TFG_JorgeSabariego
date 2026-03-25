@@ -11,7 +11,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
@@ -27,7 +26,6 @@ import { MatMenuModule } from '@angular/material/menu';
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    MatCardModule,
     MatMenuModule
   ],
   templateUrl: './chat.html',
@@ -80,7 +78,6 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   cargarDatosAmigo(): void {
-    // Cargar datos del amigo
     this.friendshipService.listarAmigos().subscribe({
       next: (amigos) => {
         this.amigo = amigos.find(a => a.id === this.amigoId) || null;
@@ -142,7 +139,6 @@ export class Chat implements OnInit, OnDestroy {
   marcarConversacionComoLeida(): void {
     this.messageService.marcarConversacionLeida(this.amigoId).subscribe({
       next: () => {
-        // Conversación marcada como leída
       },
       error: (err) => {
         console.error('Error al marcar conversación como leída:', err);
@@ -151,7 +147,6 @@ export class Chat implements OnInit, OnDestroy {
   }
 
   iniciarActualizacionAutomatica(): void {
-    // Actualizar mensajes cada 5 segundos
     this.intervalId = setInterval(() => {
       this.actualizarMensajesSilenciosamente();
     }, 5000);
