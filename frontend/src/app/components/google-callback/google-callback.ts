@@ -34,7 +34,7 @@ export class GoogleCallback implements OnInit {
 
     this.authService.saveToken(token);
 
-    // Validamos el token contra el backend
+    // Validamos el token
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'

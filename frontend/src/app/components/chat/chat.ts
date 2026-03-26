@@ -129,7 +129,7 @@ export class Chat implements OnInit, OnDestroy {
       error: (err) => {
         console.error('Error al enviar mensaje:', err);
         this.error = 'No se pudo enviar el mensaje';
-        this.nuevoMensaje = mensajeTexto; // Restaurar el mensaje
+        this.nuevoMensaje = mensajeTexto;
         this.enviando = false;
         this.cdr.detectChanges();
       }

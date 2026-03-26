@@ -41,16 +41,6 @@ php artisan config:clear
 cd backend
 php artisan serve
 
-
-##  Arrancar el servidor laravel
- ``` bash
-cd frontend
-ng serve
-
-##  Arrancar localhost desde una aplicacion como por ejemplo XAMPP
-Apache y MySQL start
-
-
 ## Características
 
 - Sistema de autenticación con Laravel Sanctum
