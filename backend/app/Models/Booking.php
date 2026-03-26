@@ -97,16 +97,6 @@ class Booking extends Model
         return $radioTierra * $c;
     }
 
-    /**
-     * Busca reservas disponibles dentro de un radio desde una ubicación
-     *
-     * @param int $deporteId ID del deporte
-     * @param float $latitud Latitud del centro de búsqueda
-     * @param float $longitud Longitud del centro de búsqueda
-     * @param float $radioKm Radio de búsqueda en kilómetros
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-
     //Funcion que busca reservas disponibles dentro de un radio desde una ubicación. Para esto usamos la función calcularDistancia.
     public static function buscarPorRadio($deporteId, $latitud, $longitud, $radioKm)
     {

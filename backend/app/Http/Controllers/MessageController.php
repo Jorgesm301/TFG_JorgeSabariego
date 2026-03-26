@@ -29,7 +29,7 @@ class MessageController extends Controller
                 return response()->json(['message' => 'No puedes enviarte mensaje a ti mismo'], 400);
             }
 
-            // Vrificamos si algun usuario bloqueó al otro
+            // Verificamos si algun usuario bloqueó al otro
             $estaBloqueado = BlockedUser::where(function ($query) use ($senderId, $receiverId) {
                 $query->where('user_id', $senderId)->where('blocked_user_id', $receiverId);
             })->orWhere(function ($query) use ($senderId, $receiverId) {

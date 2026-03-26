@@ -1,8 +1,8 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-# Backend - Polideportivo Municipal (TFG)
+# Backend - TFG Jorge Sabariego
 
-Sistema de gestión de reservas deportivas con sistema de ranking ERO.
+Sistema de gestión de reservas deportivas con sistema de ranking ELO.
 
 ## Instalación
 
@@ -22,7 +22,7 @@ php artisan key:generate
 php artisan migrate --seed
 ```
 
-4. Configurado - ¡Listo!
+4. Configurado
 
 ## Comandos útiles
 
@@ -35,14 +35,28 @@ php artisan route:list
 ```bash
 php artisan cache:clear
 php artisan config:clear
-```
+
+##  Arrancar el servidor backend
+ ``` bash
+cd backend
+php artisan serve
+
+
+##  Arrancar el servidor laravel
+ ``` bash
+cd frontend
+ng serve
+
+##  Arrancar localhost desde una aplicacion como por ejemplo XAMPP
+Apache y MySQL start
+
 
 ## Características
 
 - Sistema de autenticación con Laravel Sanctum
 - Gestión de reservas deportivas
-- Sistema de ranking ERO (similar a ELO)
-- Búsqueda de partidos por ubicación y radio GPS
+- Sistema de ranking ELO 
+- Búsqueda de partidos por ubicación y radio de geolocalizacion
 - Sistema de equipos equilibrados
 - Mensajería entre usuarios
 - Sistema de amistad
