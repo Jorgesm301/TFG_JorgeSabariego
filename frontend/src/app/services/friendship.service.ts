@@ -39,7 +39,6 @@ export class FriendshipService {
     });
   }
 
-  // Enviar solicitud de amistad
   enviarSolicitud(friendId: number): Observable<any> {
     let headers: HttpHeaders;
     try {
@@ -50,7 +49,6 @@ export class FriendshipService {
     return this.http.post(`${this.apiUrl}/friendships`, { friend_id: friendId }, { headers });
   }
 
-  // Aceptar solicitud de amistad
   aceptarSolicitud(friendshipId: number): Observable<any> {
     let headers: HttpHeaders;
     try {
@@ -61,7 +59,6 @@ export class FriendshipService {
     return this.http.put(`${this.apiUrl}/friendships/${friendshipId}/accept`, {}, { headers });
   }
 
-  // Rechazar solicitud de amistad
   rechazarSolicitud(friendshipId: number): Observable<any> {
     let headers: HttpHeaders;
     try {
@@ -72,7 +69,6 @@ export class FriendshipService {
     return this.http.put(`${this.apiUrl}/friendships/${friendshipId}/reject`, {}, { headers });
   }
 
-  // Listar mis amigos
   listarAmigos(): Observable<IUser[]> {
     let headers: HttpHeaders;
     try {
@@ -83,7 +79,6 @@ export class FriendshipService {
     return this.http.get<IUser[]>(`${this.apiUrl}/friends`, { headers });
   }
 
-  // Listar solicitudes pendientes (recibidas)
   listarSolicitudesPendientes(): Observable<IFriendship[]> {
     let headers: HttpHeaders;
     try {
@@ -94,7 +89,6 @@ export class FriendshipService {
     return this.http.get<IFriendship[]>(`${this.apiUrl}/friend-requests`, { headers });
   }
 
-  // Eliminar amistad
   eliminarAmistad(friendshipId: number): Observable<any> {
     let headers: HttpHeaders;
     try {
@@ -105,7 +99,6 @@ export class FriendshipService {
     return this.http.delete(`${this.apiUrl}/friendships/${friendshipId}`, { headers });
   }
 
-  // Eliminar amigo por userId
   eliminarAmigoPorUserId(friendId: number): Observable<any> {
     let headers: HttpHeaders;
     try {
@@ -116,7 +109,6 @@ export class FriendshipService {
     return this.http.delete(`${this.apiUrl}/friends/${friendId}`, { headers });
   }
 
-  // Buscar usuarios
   buscarUsuarios(query: string): Observable<IUser[]> {
     let headers: HttpHeaders;
     try {

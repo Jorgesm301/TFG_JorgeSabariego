@@ -38,7 +38,6 @@ export class MessageService {
     });
   }
 
-  // Enviar mensaje
   enviarMensaje(receiverId: number, mensaje: string): Observable<any> {
     let headers: HttpHeaders;
     try {
@@ -53,7 +52,6 @@ export class MessageService {
     );
   }
 
-  // Obtener conversación con un usuario
   obtenerConversacion(userId: number): Observable<IMessage[]> {
     let headers: HttpHeaders;
     try {
@@ -64,7 +62,6 @@ export class MessageService {
     return this.http.get<IMessage[]>(`${this.apiUrl}/messages/${userId}`, { headers });
   }
 
-  // Listar todas las conversaciones
   listarConversaciones(): Observable<IConversation[]> {
     let headers: HttpHeaders;
     try {
@@ -75,7 +72,6 @@ export class MessageService {
     return this.http.get<IConversation[]>(`${this.apiUrl}/conversations`, { headers });
   }
 
-  // Marcar mensaje como leído
   marcarComoLeido(messageId: number): Observable<any> {
     let headers: HttpHeaders;
     try {
@@ -86,7 +82,6 @@ export class MessageService {
     return this.http.put(`${this.apiUrl}/messages/${messageId}/read`, {}, { headers });
   }
 
-  // Marcar conversación completa como leída
   marcarConversacionLeida(userId: number): Observable<any> {
     let headers: HttpHeaders;
     try {

@@ -14,7 +14,7 @@ export interface IBooking {
   ubicacion?: string;
   latitud?: number | null;
   longitud?: number | null;
-  distancia_km?: number; // Solo presente en búsquedas por radio
+  distancia_km?: number; // Solo usado para las búsquedas por radio
   max_jugadores: number;
   jugadores_actuales: number;
   estado: 'abierto' | 'completo' | 'cancelado' | 'jugado';

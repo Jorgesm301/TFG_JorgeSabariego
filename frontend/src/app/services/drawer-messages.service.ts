@@ -6,15 +6,13 @@ import { FriendshipService, IUser } from './friendship.service';
 
 @Injectable({ providedIn: 'root' })
 export class DrawerMessagesService {
-  // Estado del drawer
+
   drawerAbierto$ = new BehaviorSubject<boolean>(false);
   modoNuevoMensaje$ = new BehaviorSubject<boolean>(false);
 
-  // Conversaciones
   conversaciones$ = new BehaviorSubject<IConversation[]>([]);
   cargandoConversaciones$ = new BehaviorSubject<boolean>(false);
 
-  // Amigos para nuevo mensaje
   amigos$ = new BehaviorSubject<IUser[]>([]);
   cargandoAmigos$ = new BehaviorSubject<boolean>(false);
 
@@ -26,7 +24,6 @@ export class DrawerMessagesService {
     private router: Router
   ) {}
 
-  // ===== ESTADO =====
   toggleDrawer(): void {
     const estado = !this.drawerAbierto$.value;
     this.drawerAbierto$.next(estado);
@@ -49,7 +46,6 @@ export class DrawerMessagesService {
     this.modoNuevoMensaje$.next(false);
   }
 
-  // ===== CONVERSACIONES =====
   cargarConversaciones(): void {
     this.cargandoConversaciones$.next(true);
     this.messageService.listarConversaciones().subscribe({
@@ -65,7 +61,6 @@ export class DrawerMessagesService {
   }
 
   iniciarActualizacionMensajes(): void {
-    // Actualizar cada 30 segundos
     this.intervaloMensajes = setInterval(() => {
       this.cargarConversaciones();
     }, 30000);
@@ -87,7 +82,6 @@ export class DrawerMessagesService {
     });
   }
 
-  // ===== AMIGOS =====
   cargarAmigos(): void {
     this.cargandoAmigos$.next(true);
     this.friendshipService.listarAmigos().subscribe({
@@ -102,7 +96,6 @@ export class DrawerMessagesService {
     });
   }
 
-  // ===== NAVEGACIÓN =====
   abrirChat(amigoId: number): void {
     this.cerrarDrawer();
     this.router.navigate(['/chat', amigoId]);
@@ -113,7 +106,6 @@ export class DrawerMessagesService {
     this.router.navigate(['/mensajes']);
   }
 
-  // ===== LIMPIEZA =====
   limpiar(): void {
     this.detenerActualizacionMensajes();
     this.drawerAbierto$.next(false);

@@ -70,7 +70,7 @@ class FriendshipController extends Controller
         }
     }
 
-    // Funcio para aceptar una solicitud de amistad
+    // Funcion para aceptar una solicitud de amistad
     public function aceptarSolicitud($id)
     {
         try {

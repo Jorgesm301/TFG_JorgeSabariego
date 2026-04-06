@@ -32,7 +32,6 @@ export class SharedMessagesDrawerComponent {
   @Input() cargandoAmigos: boolean | null = false;
   @Input() amigos: IUser[] | null = [];
 
-  // Getters para manejar null values de forma segura
   get abiertoClear(): boolean {
     return this.abierto ?? false;
   }

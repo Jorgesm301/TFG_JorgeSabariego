@@ -26,7 +26,7 @@ export class BlockedUserService {
     });
   }
 
-  // Bloquear usuario
+  // Bloqueamos al usuario
   bloquearUsuario(userId: number): Observable<any> {
     let headers: HttpHeaders;
     try {
@@ -41,7 +41,7 @@ export class BlockedUserService {
     );
   }
 
-  // Desbloquear usuario
+  // Desbloqueamos al usuario
   desbloquearUsuario(userId: number): Observable<any> {
     let headers: HttpHeaders;
     try {
@@ -52,7 +52,7 @@ export class BlockedUserService {
     return this.http.delete(`${this.apiUrl}/blocked-users/${userId}`, { headers });
   }
 
-  // Listar usuarios bloqueados
+  // Listamos usuarios bloqueados
   listarBloqueados(): Observable<IBlockedUser[]> {
     let headers: HttpHeaders;
     try {
