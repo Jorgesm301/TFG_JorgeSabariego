@@ -1,0 +1,143 @@
+<div *ngIf="visible" class="modal-overlay" (click)="cancelar()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Configuración del Perfil</h2>
+      <button type="button" class="close-btn" (click)="cancelar()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="modal-tabs">
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'profile'"
+        (click)="setActiveTab('profile')"
+        [disabled]="cargando"
+      >
+        <mat-icon>person</mat-icon>
+        <span>Datos Personales</span>
+      </button>
+      <button
+        class="tab-btn"
+        [class.active]="activeTab === 'password'"
+        (click)="setActiveTab('password')"
+        [disabled]="cargando"
+      >
+        <mat-icon>lock</mat-icon>
+        <span>Cambiar Contraseña</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <form *ngIf="activeTab === 'profile'" [formGroup]="profileForm" class="form-container">
+        <mat-form-field class="form-field">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="name" type="text">
+        </mat-form-field>
+
+        <mat-form-field class="form-field">
+          <mat-label>Apellido</mat-label>
+          <input matInput formControlName="last_name" type="text">
+        </mat-form-field>
+
+        <mat-form-field class="form-field">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email">
+        </mat-form-field>
+
+        <div *ngIf="errorMessage" class="error-message">
+          <mat-icon>error</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <div *ngIf="successMessage" class="success-message">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ successMessage }}</span>
+        </div>
+
+        <div *ngIf="cargando" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <span>Guardando cambios...</span>
+        </div>
+      </form>
+
+
+      <form *ngIf="activeTab === 'password'" [formGroup]="passwordForm" class="form-container">
+        <div class="password-field-wrapper">
+          <mat-form-field class="form-field">
+            <mat-label>Contraseña Actual</mat-label>
+            <input matInput formControlName="current_password" type="password">
+          </mat-form-field>
+
+          <div class="password-verification">
+            <div *ngIf="verificandoPassword" class="verifying">
+              <mat-spinner diameter="20"></mat-spinner>
+              <span>Verificando...</span>
+            </div>
+            <div *ngIf="!verificandoPassword && passwordValida === true" class="valid-indicator">
+              <mat-icon class="check-icon">check_circle</mat-icon>
+              <span>Contraseña correcta</span>
+            </div>
+            <div *ngIf="!verificandoPassword && passwordValida === false" class="invalid-indicator">
+              <mat-icon class="error-icon">cancel</mat-icon>
+              <span>Contraseña incorrecta</span>
+            </div>
+          </div>
+        </div>
+
+        <mat-form-field class="form-field">
+          <mat-label>Nueva Contraseña</mat-label>
+          <input matInput formControlName="new_password" type="password">
+          <mat-hint>Mínimo 8 caracteres</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field class="form-field">
+          <mat-label>Confirmar Nueva Contraseña</mat-label>
+          <input matInput formControlName="new_password_confirmation" type="password">
+        </mat-form-field>
+
+        <div *ngIf="errorMessage" class="error-message">
+          <mat-icon>error</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <div *ngIf="successMessage" class="success-message">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ successMessage }}</span>
+        </div>
+
+        <div *ngIf="cargando" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <span>Cambiando contraseña...</span>
+        </div>
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button mat-button (click)="cancelar()" [disabled]="cargando" class="btn-cancel">
+        Cancelar
+      </button>
+      <button
+        *ngIf="activeTab === 'profile'"
+        mat-raised-button
+        color="primary"
+        (click)="guardarPerfil()"
+        [disabled]="profileForm.invalid || cargando"
+        class="btn-save"
+      >
+
+      </button>
+      <button
+        *ngIf="activeTab === 'password'"
+        mat-raised-button
+        color="primary"
+        (click)="guardarPassword()"
+        [disabled]="passwordForm.invalid || cargando"
+        class="btn-save"
+      >
+
+      </button>
+    </div>
+  </div>
+</div>
+

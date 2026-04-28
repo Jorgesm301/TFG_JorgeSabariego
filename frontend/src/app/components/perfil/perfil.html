@@ -23,10 +23,9 @@
             <mat-icon class="info-icon">email</mat-icon>
             {{ usuario?.email }}
           </p>
-          <p class="perfil-fecha">
-            <mat-icon class="info-icon">event</mat-icon>
-            Miembro desde {{ usuario?.created_at | date:'MMMM yyyy' }}
-          </p>
+          <button mat-icon-button (click)="abrirEditarPerfil()" class="editar-btn" matTooltip="Editar perfil" matTooltipPosition="below">
+            <mat-icon>edit</mat-icon>
+          </button>
         </div>
       </mat-card-content>
     </mat-card>
@@ -114,4 +113,11 @@
     (abrirChat)="abrirChat($event)"
     (irAMensajes)="irAMensajes()"
   ></app-shared-messages-drawer>
+
+  <app-configurar-perfil
+    [data]="{ name: usuario?.name, last_name: usuario?.last_name, email: usuario?.email }"
+    [visible]="editProfileVisible"
+    (save)="onEditProfileSave($event)"
+    (cancel)="onEditProfileCancel()"
+  ></app-configurar-perfil>
 </div>

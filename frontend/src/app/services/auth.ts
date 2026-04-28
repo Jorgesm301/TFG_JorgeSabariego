@@ -54,4 +54,22 @@ export class AuthService {
     return this.getToken() !== null;
   }
 
+  updatePerfil(userData: any): Observable<any> {
+    return this.http.put(`${this.API_URL}/user/update`, userData).pipe(
+      tap((response: any) => {
+        if (response.user) {
+          this.saveUserData(response.user);
+        }
+      })
+    );
+  }
+
+  changePassword(passwordData: any): Observable<any> {
+    return this.http.put(`${this.API_URL}/user/change-password`, passwordData);
+  }
+
+  verifyPassword(password: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/user/verify-password`, { current_password: password });
+  }
+
 }

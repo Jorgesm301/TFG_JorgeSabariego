@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -16,8 +16,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
 import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
+import { ConfigurarPerfilComponent } from '../configurar-perfil/configurar-perfil';
 
 @Component({
   selector: 'app-perfil',
@@ -35,7 +37,8 @@ import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/
     MatChipsModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
-    SharedMessagesDrawerComponent
+    SharedMessagesDrawerComponent,
+    ConfigurarPerfilComponent
   ],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
@@ -52,6 +55,9 @@ export class Perfil implements OnInit, OnDestroy {
   tasaVictoria = 0;
   rachaVictorias = 0;
   historialPartidos: any[] = [];
+
+  editProfileVisible = false;
+  @ViewChild(ConfigurarPerfilComponent) editProfileDialog!: ConfigurarPerfilComponent;
 
   constructor(
     private authService: AuthService,
@@ -213,6 +219,32 @@ export class Perfil implements OnInit, OnDestroy {
 
   irAMensajes(): void {
     this.drawerMessagesService.irAMensajes();
+  }
+
+  abrirEditarPerfil(): void {
+    this.editProfileVisible = true;
+    if (this.editProfileDialog) {
+      this.editProfileDialog.data = {
+        name: this.usuario.name,
+        last_name: this.usuario.last_name,
+        email: this.usuario.email
+      };
+      this.editProfileDialog.visible = true;
+      this.cdr.detectChanges();
+    }
+  }
+
+  onEditProfileSave(result: any): void {
+    if (result) {
+      this.usuario = result;
+      this.editProfileVisible = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  onEditProfileCancel(): void {
+    this.editProfileVisible = false;
+    this.cdr.detectChanges();
   }
 
   logout() {

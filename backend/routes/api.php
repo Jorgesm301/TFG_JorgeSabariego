@@ -24,6 +24,13 @@ Route::post('/register', [AuthController::class, 'register']);
 //Ruta para el login
 Route::post('/login', [AuthController::class, 'login']);
 
+// Rutas protegidas para el perfil
+Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/user/update', [AuthController::class, 'update']);
+    Route::post('/user/verify-password', [AuthController::class, 'verifyPassword']);
+    Route::put('/user/change-password', [AuthController::class, 'changePassword']);
+});
+
 // Rutas públicas para deportes (sin autenticación)
 Route::get('/sports', [SportController::class, 'index']);
 Route::get('/sports/{id}', [SportController::class, 'show']);
