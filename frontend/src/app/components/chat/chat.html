@@ -15,20 +15,6 @@
     </div>
 
     <span class="spacer"></span>
-
-    <button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="amigo">
-      <mat-icon>more_vert</mat-icon>
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item>
-        <mat-icon>person</mat-icon>
-        <span>Ver perfil</span>
-      </button>
-      <button mat-menu-item>
-        <mat-icon>delete</mat-icon>
-        <span>Borrar conversación</span>
-      </button>
-    </mat-menu>
   </mat-toolbar>
 
   <div class="chat-content">
