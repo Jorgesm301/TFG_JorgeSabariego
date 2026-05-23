@@ -230,6 +230,11 @@ class BookingController extends Controller
                     $booking->update(['estado' => 'abierto']);
                 }
 
+                // Si la reserva quedó vacía, la eliminamos
+                if ($booking->jugadores_actuales <= 0) {
+                    $booking->delete();
+                }
+
                 DB::commit();
 
                 return response()->json([
@@ -245,6 +250,11 @@ class BookingController extends Controller
 
                 if ($booking->estado === 'completo') {
                     $booking->update(['estado' => 'abierto']);
+                }
+
+                // Si la reserva quedó vacía, la eliminamos
+                if ($booking->jugadores_actuales <= 0) {
+                    $booking->delete();
                 }
 
                 DB::commit();
