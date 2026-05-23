@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/update', [AuthController::class, 'update']);
     Route::post('/user/verify-password', [AuthController::class, 'verifyPassword']);
     Route::put('/user/change-password', [AuthController::class, 'changePassword']);
+    Route::delete('/user/delete', [AuthController::class, 'deleteAccount']);
 });
 
 // Rutas públicas para deportes (sin autenticación)

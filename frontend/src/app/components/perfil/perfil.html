@@ -23,9 +23,14 @@
             <mat-icon class="info-icon">email</mat-icon>
             {{ usuario?.email }}
           </p>
-          <button mat-icon-button (click)="abrirEditarPerfil()" class="editar-btn" matTooltip="Editar perfil" matTooltipPosition="below">
-            <mat-icon>edit</mat-icon>
-          </button>
+          <div class="perfil-actions">
+            <button mat-icon-button (click)="abrirEditarPerfil()" class="editar-btn" matTooltip="Editar perfil" matTooltipPosition="below">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="eliminarCuenta()" class="eliminar-btn" matTooltip="Eliminar cuenta" matTooltipPosition="below">
+              <mat-icon>delete_forever</mat-icon>
+            </button>
+          </div>
         </div>
       </mat-card-content>
     </mat-card>

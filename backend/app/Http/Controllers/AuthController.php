@@ -152,4 +152,48 @@ class AuthController extends Controller
         ], 200);
     }
 
+    public function deleteAccount(Request $request)
+    {
+        $user = $request->user();
+
+        $reservasUnidas = $user->bookings()->get();
+
+        foreach ($reservasUnidas as $reserva) {
+            if ($reserva->jugadores_actuales > 0) {
+                $reserva->decrement('jugadores_actuales');
+            }
+
+            // Si la reserva estaba completa, cambiarla a abierto
+            if ($reserva->estado === 'completo') {
+                $reserva->update(['estado' => 'abierto']);
+            }
+        }
+
+        // Desvinculamos al usuario de todas sus reservas
+        $user->bookings()->detach();
+
+        $reservasCreadas = $user->bookingsCreadas()->get();
+
+        foreach ($reservasCreadas as $reserva) {
+
+            $otrosJugadores = $reserva->usuarios()->count();
+
+            if ($otrosJugadores > 0) {
+                $primerJugador = $reserva->usuarios()->first();
+                $reserva->update(['creador_id' => $primerJugador->id]);
+            } else {
+                $reserva->delete();
+            }
+        }
+
+        $user->tokens()->delete();
+
+        // Eliminamos el usuario
+        $user->delete();
+
+        return response()->json([
+            'message' => 'Cuenta eliminada correctamente'
+        ], 200);
+    }
+
 }

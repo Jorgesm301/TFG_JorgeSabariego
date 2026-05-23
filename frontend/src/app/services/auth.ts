@@ -72,4 +72,8 @@ export class AuthService {
     return this.http.post(`${this.API_URL}/user/verify-password`, { current_password: password });
   }
 
+  deleteAccount(): Observable<any> {
+    return this.http.delete(`${this.API_URL}/user/delete`);
+  }
+
 }

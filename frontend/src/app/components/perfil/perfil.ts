@@ -252,6 +252,26 @@ export class Perfil implements OnInit, OnDestroy {
     this.router.navigate(['/']);
   }
 
+  eliminarCuenta(): void {
+    const confirmacion = confirm('¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es irreversible.\n\nTambién se eliminarán todas tus reservas.');
+
+    if (!confirmacion) {
+      return;
+    }
+
+    this.authService.deleteAccount().subscribe({
+      next: () => {
+        // Logout y redirección a bienvenida
+        this.authService.logout();
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        console.error('Error al eliminar la cuenta:', err);
+        alert('Hubo un error al eliminar tu cuenta. Por favor, intenta de nuevo.');
+      }
+    });
+  }
+
   navegarADeporte(ruta: string): void {
     this.router.navigate([ruta]);
   }

@@ -427,7 +427,6 @@
 }
 
 .editar-btn {
-  margin-top: 12px;
   color: #1976D2;
   font-size: 24px;
   transition: all 0.2s ease;
@@ -439,3 +438,21 @@
   background-color: rgba(25, 118, 210, 0.08);
 }
 
+.perfil-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  align-items: center;
+}
+
+.eliminar-btn {
+  color: #ef4444;
+  font-size: 24px;
+  transition: all 0.2s ease;
+}
+
+.eliminar-btn:hover {
+  color: #dc2626;
+  transform: scale(1.15);
+  background-color: rgba(239, 68, 68, 0.08);
+}
