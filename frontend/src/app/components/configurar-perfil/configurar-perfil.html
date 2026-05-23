@@ -40,11 +40,6 @@
           <input matInput formControlName="last_name" type="text">
         </mat-form-field>
 
-        <mat-form-field class="form-field">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email">
-        </mat-form-field>
-
         <div *ngIf="errorMessage" class="error-message">
           <mat-icon>error</mat-icon>
           <span>{{ errorMessage }}</span>

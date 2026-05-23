@@ -51,8 +51,7 @@ export class ConfigurarPerfilComponent implements OnInit {
   ngOnInit(): void {
     this.profileForm = this.fb.group({
       name: [this.data.name, [Validators.required, Validators.minLength(2)]],
-      last_name: [this.data.last_name, [Validators.required, Validators.minLength(2)]],
-      email: [this.data.email, [Validators.required, Validators.email]]
+      last_name: [this.data.last_name, [Validators.required, Validators.minLength(2)]]
     });
 
     this.passwordForm = this.fb.group({

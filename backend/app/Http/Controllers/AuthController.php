@@ -77,7 +77,6 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
         ]);
 
         if ($validator->fails()) {
@@ -87,7 +86,6 @@ class AuthController extends Controller
         $user->update([
             'name' => $request->name,
             'last_name' => $request->last_name,
-            'email' => $request->email,
         ]);
 
         return response()->json([
