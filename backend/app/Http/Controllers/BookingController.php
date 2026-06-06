@@ -233,6 +233,13 @@ class BookingController extends Controller
                 // Si la reserva quedó vacía, la eliminamos
                 if ($booking->jugadores_actuales <= 0) {
                     $booking->delete();
+
+                    DB::commit();
+
+                    return response()->json([
+                        'message' => 'Como eres el último participante, la reserva se ha eliminado',
+                        'cancelado' => true
+                    ]);
                 }
 
                 DB::commit();
@@ -255,6 +262,13 @@ class BookingController extends Controller
                 // Si la reserva quedó vacía, la eliminamos
                 if ($booking->jugadores_actuales <= 0) {
                     $booking->delete();
+
+                    DB::commit();
+
+                    return response()->json([
+                        'message' => 'Como eres el último participante, la reserva se ha eliminado',
+                        'cancelado' => true
+                    ]);
                 }
 
                 DB::commit();
