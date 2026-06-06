@@ -455,6 +455,11 @@
   font-weight: 700;
 }
 
+.resultado-empate {
+  color: #7c3aed;
+  font-weight: 700;
+}
+
 .resultado-perdio {
   color: #991b1b;
   font-weight: 700;

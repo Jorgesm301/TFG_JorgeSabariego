@@ -33,6 +33,7 @@ export interface ICambioElo {
   nuevo_elo: number;
   partidos_jugados: number;
   gano: boolean;
+  empate: boolean;
 }
 
 export interface IResultadoResponse {

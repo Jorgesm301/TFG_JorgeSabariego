@@ -121,7 +121,7 @@
                   <div class="cambio-elo"><span class="cambio-label">Nuevo ELO</span><span class="cambio-value">{{ cambio.nuevo_elo }}</span></div>
                   <div class="cambio-partidos"><span class="cambio-label">Partidos</span><span class="cambio-value">{{ cambio.partidos_jugados }}</span></div>
                 </div>
-                <div class="cambio-resultado"><span *ngIf="cambio.gano" class="resultado-gano">Victoria</span><span *ngIf="!cambio.gano" class="resultado-perdio">Derrota</span></div>
+                <div class="cambio-resultado"><span *ngIf="cambio.gano" class="resultado-gano">Victoria</span><span *ngIf="!cambio.gano && cambio.empate" class="resultado-empate">Empate</span><span *ngIf="!cambio.gano && !cambio.empate" class="resultado-perdio">Derrota</span></div>
               </div>
             </div>
           </mat-card-content>

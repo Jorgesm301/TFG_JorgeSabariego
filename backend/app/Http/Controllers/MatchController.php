@@ -244,7 +244,8 @@ class MatchController extends Controller
                 'team' => $jugador->pivot->team,
                 'nuevo_elo' => $sport ? $sport->pivot->elo : 100,
                 'partidos_jugados' => $sport ? $sport->pivot->matches_played : 0,
-                'gano' => $jugador->pivot->team == $booking->winner_team
+                'gano' => $jugador->pivot->team == $booking->winner_team,
+                'empate' => $booking->winner_team === null
             ];
         });
     }
