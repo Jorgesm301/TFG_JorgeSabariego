@@ -516,6 +516,7 @@ export class Reservar implements OnInit, OnDestroy {
     }
   }
 
+  // Activa/desactiva la geolocalización automática, obtiene las coordenadas del dispositivo y las convierte en una dirección legible.
   toggleUbicacionAutomatica() {
     console.log('toggleUbicacionAutomatica llamado. Estado actual:', this.ubicacionAutomatica);
 
