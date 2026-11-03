@@ -1,0 +1,505 @@
+import { Component, OnDestroy, OnInit, ChangeDetectorRef, HostListener, AfterViewInit, ElementRef } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth';
+import { MessageService, IConversation } from '../../services/message.service';
+import { FriendshipService, IUser } from '../../services/friendship.service';
+import { BookingService, IBooking } from '../../services/booking';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { SharedPageHeaderComponent } from '../shared/shared-page-header/shared-page-header';
+import { SharedMessagesDrawerComponent } from '../shared/shared-messages-drawer/shared-messages-drawer';
+import { FormatFechaPipe } from '../../pipes/format-fecha.pipe';
+
+type Slide = {
+  title: string;
+  imageUrl: string;
+};
+
+@Component({
+  selector: 'app-bienvenida',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    SharedPageHeaderComponent,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatCardModule,
+    MatListModule,
+    MatDividerModule,
+    MatChipsModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    SharedMessagesDrawerComponent,
+    FormatFechaPipe
+  ],
+  templateUrl: './bienvenida.html',
+  styleUrl: './bienvenida.css'
+})
+export class Bienvenida implements OnInit, OnDestroy, AfterViewInit {
+  private timerId: any;
+  currentYear = new Date().getFullYear();
+  private observer?: IntersectionObserver;
+
+  // Mensajería
+  drawerAbierto = false;
+  conversaciones: IConversation[] = [];
+  cargandoConversaciones = false;
+  private intervaloMensajes: any;
+  private intervaloProximoPartido: any;
+
+  // Nuevo mensaje
+  modoNuevoMensaje = false;
+  amigos: IUser[] = [];
+  cargandoAmigos = false;
+
+  // Próximo partido y calendario
+  proximoPartido: IBooking | null = null;
+  misPartidos: IBooking[] = [];
+  cargandoPartidos = false;
+  partidosPorDia: Map<string, IBooking[]> = new Map();
+
+  // Calendario
+  mesActual = new Date().getMonth();
+  añoActual = new Date().getFullYear();
+  diaHoy = new Date().getDate();
+  mesHoy = new Date().getMonth();
+  añoHoy = new Date().getFullYear();
+  diasCalendario: (number | null)[] = [];
+  nombreMes = '';
+
+  deportesMenu = [
+
+    { nombre: 'Fútbol', icon: 'sports_soccer', ruta: '/reservar/futbol'},
+    { nombre: 'Fútbol Sala', icon: 'sports_soccer', ruta: '/reservar/futbol-sala'},
+    { nombre: 'Baloncesto', icon: 'sports_basketball', ruta: '/reservar/baloncesto' },
+    { nombre: 'Tenis', icon: 'sports_tennis', ruta: '/reservar/tenis' },
+    { nombre: 'Pádel', icon: 'sports_tennis', ruta: '/reservar/padel' },
+    { nombre: 'Voleibol', icon: 'sports_volleyball', ruta: '/reservar/voleibol' },
+    { nombre: 'Natación', icon: 'pool', ruta: '/reservar/natacion' },
+    { nombre: 'Atletismo', icon: 'directions_run', ruta: '/reservar/atletismo' }
+  ];
+
+  // Cada deporte tiene un color distinto para que sea mas facil de identificar en el calendario
+  coloresDeporte: { [key: string]: string } = {
+    'Fútbol': '#E53935',
+    'Fútbol Sala': '#eeff00',
+    'Baloncesto': '#F57C00',
+    'Tenis': '#7CB342',
+    'Pádel': '#8c00ff',
+    'Voleibol': '#AB47BC',
+    'Natación': '#0288D1',
+    'Atletismo': '#EF5350'
+  };
+
+  getColorProximoPartido(): string {
+    if (this.proximoPartido?.sport?.nombre) {
+      return this.coloresDeporte[this.proximoPartido.sport.nombre] || '#1976D2';
+    }
+    return '#1976D2';
+  }
+
+  getIconoProximoPartido(): string {
+    if (this.proximoPartido?.sport?.nombre) {
+      const deporte = this.deportesMenu.find(d => d.nombre === this.proximoPartido?.sport?.nombre);
+      return deporte ? deporte.icon : 'sports_soccer';
+    }
+    return 'sports_soccer';
+  }
+
+  slides: Slide[] = [
+  {
+    title: 'Fútbol',
+    imageUrl: 'https://images.pexels.com/photos/274506/pexels-photo-274506.jpeg'
+  },
+  {
+    title: 'Fútbol Sala',
+     imageUrl: 'https://images.pexels.com/photos/15673775/pexels-photo-15673775.jpeg'
+  },
+  {
+    title: 'Baloncesto',
+    imageUrl: 'https://images.pexels.com/photos/1752757/pexels-photo-1752757.jpeg'
+  },
+  {
+    title: 'Pádel',
+    imageUrl: 'https://images.pexels.com/photos/32896996/pexels-photo-32896996.jpeg'
+  },
+  {
+    title: 'Tenis',
+    imageUrl: 'https://images.pexels.com/photos/209977/pexels-photo-209977.jpeg'
+  },
+  {
+    title: 'Voleibol',
+    imageUrl: 'https://images.pexels.com/photos/6180391/pexels-photo-6180391.jpeg'
+  },
+  {
+    title: 'Natación',
+    imageUrl: 'https://images.pexels.com/photos/261185/pexels-photo-261185.jpeg'
+  },
+  {
+    title: 'Atletismo',
+    imageUrl: 'https://images.pexels.com/photos/3764011/pexels-photo-3764011.jpeg'
+  }
+];
+
+  currentIndex = 0;
+
+  constructor(
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService,
+    private messageService: MessageService,
+    private friendshipService: FriendshipService,
+    private bookingService: BookingService,
+    private el: ElementRef
+  ) {}
+
+  get estaLogueado(): boolean {
+    return this.authService.isAuthenticated();
+  }
+
+  get nombreUsuario(): string {
+    return this.authService.getUserData()?.name || '';
+  }
+
+  ngOnInit(): void {
+    this.startAutoSlide();
+    if (this.estaLogueado) {
+      this.cargarConversaciones();
+      this.iniciarActualizacionMensajes();
+      this.cargarMisPartidos();
+      // Recargamos partidos cada 60 segundos
+      setInterval(() => {
+        if (this.estaLogueado) {
+          this.cargarMisPartidos();
+        }
+      }, 60000);
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.setupScrollAnimations();
+  }
+
+  ngOnDestroy(): void {
+    this.stopAutoSlide();
+    this.observer?.disconnect();
+    if (this.intervaloMensajes) {
+      clearInterval(this.intervaloMensajes);
+    }
+    if (this.intervaloProximoPartido) {
+      clearInterval(this.intervaloProximoPartido);
+    }
+  }
+
+  cargarMisPartidos(): void {
+    this.cargandoPartidos = true;
+    this.bookingService.getMisReservas().subscribe({
+      next: (partidos) => {
+        // Filtramos solo los partidos canceleados
+        this.misPartidos = partidos.filter(p => p.estado !== 'cancelado' && p.fecha);
+        console.log('Partidos cargados:', this.misPartidos);
+        this.obtenerProximoPartido();
+        this.agruparPartidosPorDia();
+
+        this.iniciarCheckProximoPartido();
+        this.cargandoPartidos = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar partidos:', err);
+        this.cargandoPartidos = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  obtenerProximoPartido(): void {
+    const ahora = new Date();
+
+    let proximoPartido = this.misPartidos
+      .filter(p => p.estado === 'completo' && new Date(`${p.fecha}T${p.hora_inicio}`) >= ahora)
+      .sort((a, b) => {
+        const fechaA = new Date(`${a.fecha}T${a.hora_inicio}`).getTime();
+        const fechaB = new Date(`${b.fecha}T${b.hora_inicio}`).getTime();
+        return fechaA - fechaB;
+      })[0];
+
+      if (!proximoPartido && this.misPartidos.length > 0) {
+      proximoPartido = this.misPartidos
+        .filter(p => p.estado === 'completo')
+        .sort((a, b) => {
+          const fechaA = new Date(`${a.fecha}T${a.hora_inicio}`).getTime();
+          const fechaB = new Date(`${b.fecha}T${b.hora_inicio}`).getTime();
+          return fechaB - fechaA;
+        })[0];
+    }
+
+    this.proximoPartido = proximoPartido || null;
+  }
+
+  esPartidoCompleto(partido: IBooking): boolean {
+    return partido.jugadores_actuales === partido.max_jugadores;
+  }
+
+  iniciarCheckProximoPartido(): void {
+    if (this.intervaloProximoPartido) {
+      clearInterval(this.intervaloProximoPartido);
+    }
+
+    this.intervaloProximoPartido = setInterval(() => {
+      if (!this.proximoPartido) return;
+
+      const ahora = new Date();
+      const horaFinPartido = new Date(`${this.proximoPartido.fecha}T${this.proximoPartido.hora_fin}`);
+
+      if (ahora > horaFinPartido) {
+        console.log('Hora del partido pasada, actualizando al siguiente...');
+        this.obtenerProximoPartido();
+        this.cdr.detectChanges();
+      }
+    }, 60000);
+  }
+
+  agruparPartidosPorDia(): void {
+    this.partidosPorDia.clear();
+    this.misPartidos.forEach(partido => {
+
+      if (!this.esPartidoCompleto(partido)) {
+        return;
+      }
+
+      const fechaNormalizada = partido.fecha.split('T')[0];
+      if (!this.partidosPorDia.has(fechaNormalizada)) {
+        this.partidosPorDia.set(fechaNormalizada, []);
+      }
+      this.partidosPorDia.get(fechaNormalizada)?.push(partido);
+    });
+    console.log('Partidos agrupados (solo completos):', Array.from(this.partidosPorDia.entries()));
+    this.generarCalendario();
+  }
+
+  generarCalendario(): void {
+    const primerDia = new Date(this.añoActual, this.mesActual, 1);
+    const ultimoDia = new Date(this.añoActual, this.mesActual + 1, 0);
+    this.diasCalendario = [];
+
+    for (let i = 1; i <= ultimoDia.getDate(); i++) {
+      this.diasCalendario.push(i);
+    }
+
+    const opciones: Intl.DateTimeFormatOptions = { month: 'long', year: 'numeric' };
+    this.nombreMes = primerDia.toLocaleDateString('es-ES', opciones);
+  }
+
+  cambiarMes(direccion: number): void {
+    const nuevoMes = this.mesActual + direccion;
+    const nuevoAño = this.mesActual + direccion > 11 ? this.añoActual + 1 :
+                    this.mesActual + direccion < 0 ? this.añoActual - 1 : this.añoActual;
+
+    //Para no ir mas de 1 mes hacia atras
+    if (nuevoMes < this.mesHoy && nuevoAño === this.añoHoy) {
+      return;
+    }
+
+    //Para no ir mas de 1 mes adelante
+    if (nuevoMes > this.mesHoy + 1 && nuevoAño === this.añoHoy) {
+      return;
+    }
+
+    this.mesActual = nuevoMes > 11 ? 0 : nuevoMes < 0 ? 11 : nuevoMes;
+    this.añoActual = nuevoAño;
+    this.generarCalendario();
+  }
+
+  obtenerFechaCalendario(dia: number | null): string | null {
+    if (dia === null) return null;
+    const mes = String(this.mesActual + 1).padStart(2, '0');
+    const diaStr = String(dia).padStart(2, '0');
+    return `${this.añoActual}-${mes}-${diaStr}`;
+  }
+
+  tienePartidoEnDia(dia: number | null): boolean {
+    const fecha = this.obtenerFechaCalendario(dia);
+    const tiene = fecha !== null && this.partidosPorDia.has(fecha) && this.partidosPorDia.get(fecha)!.length > 0;
+    if (tiene) {
+      console.log(`Día ${dia} tiene partido (fecha: ${fecha})`);
+    }
+    return tiene;
+  }
+
+  getPartidosPorDia(dia: number | null): IBooking[] {
+    const fecha = this.obtenerFechaCalendario(dia);
+    return fecha ? this.partidosPorDia.get(fecha) || [] : [];
+  }
+
+  obtenerColorDeporte(nombreDeporte: string | undefined): string {
+    if (!nombreDeporte) return '#1976D2';
+    return this.coloresDeporte[nombreDeporte] || '#1976D2';
+  }
+
+  obtenerDetallesPartido(partido: IBooking): string {
+    const deporte = partido.sport?.nombre || 'Sin deporte';
+    const hora = this.formatearHora(partido.hora_inicio);
+    const pista = partido.pista || 'Sin asignar';
+    const jugadores = `${partido.jugadores_actuales}/${partido.max_jugadores}`;
+
+    return `${deporte}\n${hora}\nPista: ${pista}\nJugadores: ${jugadores}`;
+  }
+
+  esHoy(dia: number | null): boolean {
+    return dia === this.diaHoy && this.mesActual === this.mesHoy;
+  }
+
+  formatearHora(hora: string): string {
+    return hora.substring(0, 5);
+  }
+
+  irAPartidoDetalle(bookingId: number): void {
+    this.router.navigate(['/partido', bookingId]);
+  }
+
+  private setupScrollAnimations(): void {
+    const options = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, options);
+
+    const elements = this.el.nativeElement.querySelectorAll('.animate-on-scroll');
+    elements.forEach((el: Element) => this.observer?.observe(el));
+  }
+
+  cargarConversaciones(): void {
+    if (!this.estaLogueado) return;
+
+    this.cargandoConversaciones = true;
+    this.messageService.listarConversaciones().subscribe({
+      next: (data) => {
+        this.conversaciones = data;
+        this.cargandoConversaciones = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar conversaciones:', err);
+        this.cargandoConversaciones = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  iniciarActualizacionMensajes(): void {
+    this.intervaloMensajes = setInterval(() => {
+      this.cargarConversaciones();
+    }, 30000);
+  }
+
+  getTotalNoLeidos(): number {
+    return this.conversaciones.reduce((sum, conv) => sum + conv.no_leidos, 0);
+  }
+
+  toggleDrawer(): void {
+    this.drawerAbierto = !this.drawerAbierto;
+    if (this.drawerAbierto) {
+      this.cargarConversaciones();
+    }
+  }
+
+  cerrarDrawer(): void {
+    this.drawerAbierto = false;
+    this.modoNuevoMensaje = false;
+  }
+
+  abrirNuevoMensaje(): void {
+    this.modoNuevoMensaje = true;
+    this.cargarAmigos();
+  }
+
+  volverAConversaciones(): void {
+    this.modoNuevoMensaje = false;
+  }
+
+  cargarAmigos(): void {
+    this.cargandoAmigos = true;
+    this.friendshipService.listarAmigos().subscribe({
+      next: (data) => {
+        this.amigos = data;
+        this.cargandoAmigos = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar amigos:', err);
+        this.cargandoAmigos = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  abrirChat(amigoId: number): void {
+    this.cerrarDrawer();
+    this.router.navigate(['/chat', amigoId]);
+  }
+
+  irAMensajes(): void {
+    this.cerrarDrawer();
+    this.router.navigate(['/mensajes']);
+  }
+
+  private startAutoSlide(): void {
+    this.stopAutoSlide();
+    this.timerId = setInterval(() => {
+      this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+      this.cdr.detectChanges();
+    }, 3000);
+  }
+
+  private stopAutoSlide(): void {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+      this.timerId = null;
+    }
+  }
+
+  navegarADeporte(ruta: string) {
+    this.router.navigate([ruta]);
+  }
+
+  nextSlide() {
+    this.stopAutoSlide();
+    this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+    this.startAutoSlide();
+  }
+
+  prevSlide() {
+    this.stopAutoSlide();
+    this.currentIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+    this.startAutoSlide();
+  }
+
+  goTo(i: number) {
+    this.stopAutoSlide();
+    this.currentIndex = i;
+    this.startAutoSlide();
+  }
+
+  onImageError(event: any) {
+    event.target.style.display = 'none';
+  }
+}
+

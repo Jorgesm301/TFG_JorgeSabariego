@@ -1,0 +1,128 @@
+<div class="perfil-page">
+  <app-shared-page-header
+    [estaLogueado]="true"
+    [nombreUsuario]="nombreUsuario"
+    [deportesMenu]="deportesMenu"
+    [totalNoLeidos]="totalNoLeidos$ | async"
+    (messagesClick)="toggleDrawer()"
+    (deporteSelect)="navegarADeporte($event)"
+  ></app-shared-page-header>
+
+  <div class="perfil-content">
+
+
+    <mat-card class="perfil-card">
+      <mat-card-content class="perfil-card-content">
+        <div class="perfil-avatar">
+          <mat-icon class="avatar-icon">account_circle</mat-icon>
+        </div>
+
+        <div class="perfil-info">
+          <h2 class="perfil-nombre">{{ usuario?.name }} {{ usuario?.last_name }}</h2>
+          <p class="perfil-email">
+            <mat-icon class="info-icon">email</mat-icon>
+            {{ usuario?.email }}
+          </p>
+          <div class="perfil-actions">
+            <button mat-icon-button (click)="abrirEditarPerfil()" class="editar-btn" matTooltip="Editar perfil" matTooltipPosition="below">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="eliminarCuenta()" class="eliminar-btn" matTooltip="Eliminar cuenta" matTooltipPosition="below">
+              <mat-icon>delete_forever</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content class="stat-content">
+          <mat-icon class="stat-icon" color="accent">assessment</mat-icon>
+          <div class="stat-info">
+            <div class="stat-label">Tasa de victoria</div>
+            <div class="stat-value" *ngIf="!cargandoPartidos">{{ tasaVictoria }}%</div>
+            <mat-spinner *ngIf="cargandoPartidos" diameter="30"></mat-spinner>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="info-card">
+        <mat-card-content class="info-content">
+          <mat-icon class="info-icon">{{ nivelIcon }}</mat-icon>
+          <div class="info-text">
+            <div class="info-label">Tu nivel</div>
+            <div class="info-value">{{ nivel }}</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="info-card">
+        <mat-card-content class="info-content">
+          <mat-icon class="info-icon fire-icon">local_fire_department</mat-icon>
+          <div class="info-text">
+            <div class="info-label">Racha de victorias</div>
+            <div class="info-value">{{ rachaVictorias }}</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="opciones-card">
+      <mat-card-header>
+        <mat-card-title>Acciones rápidas</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-nav-list>
+          <mat-list-item routerLink="/amigos">
+            <mat-icon matListItemIcon>people</mat-icon>
+            <div matListItemTitle>Amigos</div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+
+          <mat-list-item routerLink="/elo" class="nivel-promedio-item">
+            <mat-icon matListItemIcon>leaderboard</mat-icon>
+            <div matListItemTitle>Tu ELO</div>
+            <div matListItemLine *ngIf="!cargandoElo && deportesElo.length > 0">{{ eloPromedio }}</div>
+            <div matListItemLine *ngIf="cargandoElo">Cargando...</div>
+            <div matListItemLine *ngIf="!cargandoElo && deportesElo.length === 0">Sin datos aún</div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+
+          <mat-list-item routerLink="/niveles">
+            <mat-icon matListItemIcon>stars</mat-icon>
+            <div matListItemTitle>Ranking ELO</div>
+          </mat-list-item>
+          <mat-divider></mat-divider>
+
+          <mat-list-item (click)="logout()" class="logout-item">
+            <mat-icon matListItemIcon color="warn">logout</mat-icon>
+            <div matListItemTitle>Cerrar Sesión</div>
+          </mat-list-item>
+        </mat-nav-list>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+
+  <app-shared-messages-drawer
+    [abierto]="drawerAbierto$ | async"
+    [modoNuevoMensaje]="modoNuevoMensaje$ | async"
+    [cargandoConversaciones]="cargandoConversaciones$ | async"
+    [conversaciones]="conversaciones$ | async"
+    [cargandoAmigos]="cargandoAmigos$ | async"
+    [amigos]="amigos$ | async"
+    (cerrar)="cerrarDrawer()"
+    (abrirNuevoMensaje)="abrirNuevoMensaje()"
+    (volverAConversaciones)="volverAConversaciones()"
+    (abrirChat)="abrirChat($event)"
+    (irAMensajes)="irAMensajes()"
+  ></app-shared-messages-drawer>
+
+  <app-configurar-perfil
+    [data]="{ name: usuario?.name, last_name: usuario?.last_name, email: usuario?.email }"
+    [visible]="editProfileVisible"
+    (save)="onEditProfileSave($event)"
+    (cancel)="onEditProfileCancel()"
+  ></app-configurar-perfil>
+</div>

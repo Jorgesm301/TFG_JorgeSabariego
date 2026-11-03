@@ -1,0 +1,348 @@
+:host {
+  --primary: #1976D2;
+  --primary-light: #42A5F5;
+  --success: #4CAF50;
+  --dark: #0f172a;
+  --text: #1a1a1a;
+  --border: #e0e0e0;
+}
+
+.niveles-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.niveles-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 50px;
+  animation: slideDown 0.6s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero h1 {
+  font-size: 48px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #1565C0 0%, #42A5F5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 12px 0;
+  letter-spacing: -1px;
+}
+
+.hero p {
+  font-size: 18px;
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+}
+
+.tu-nivel-section {
+  margin-bottom: 50px;
+  animation: slideUp 0.6s ease 0.1s both;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tu-nivel-card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.25);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.tu-nivel-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.tu-nivel-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  font-size: 40px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.tu-nivel-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.tu-nivel-label {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tu-nivel-valor {
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.niveles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.nivel-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  border: 2px solid #e8e8e8;
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  animation: slideUp 0.6s ease both;
+}
+
+.nivel-item:nth-child(1) { animation-delay: 0.2s; }
+.nivel-item:nth-child(2) { animation-delay: 0.25s; }
+.nivel-item:nth-child(3) { animation-delay: 0.3s; }
+.nivel-item:nth-child(4) { animation-delay: 0.35s; }
+.nivel-item:nth-child(5) { animation-delay: 0.4s; }
+
+.nivel-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1565C0, #42A5F5);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.nivel-item:hover::before {
+  transform: scaleX(1);
+}
+
+.nivel-item:hover {
+  border-color: #1976D2;
+  box-shadow: 0 8px 24px rgba(25, 118, 210, 0.15);
+  transform: translateX(8px);
+}
+
+.nivel-item.activo {
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.08) 0%, rgba(66, 165, 245, 0.04) 100%);
+  border-color: #1976D2;
+  border-width: 2px;
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.2);
+}
+
+.nivel-rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e0e6f0 100%);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.nivel-item.activo .nivel-rank {
+  background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.3);
+}
+
+.nivel-icon-badge {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: #1976D2;
+}
+
+.nivel-item.activo .nivel-icon-badge {
+  color: white;
+}
+
+.nivel-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.nivel-nombre {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  color: #1565C0;
+}
+
+.nivel-rango {
+  font-size: 12px;
+  color: #888;
+  font-weight: 600;
+  background: #f5f5f5;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.nivel-item.activo .nivel-rango {
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.15) 0%, rgba(66, 165, 245, 0.1) 100%);
+  color: #1565C0;
+}
+
+@media (max-width: 480px) {
+
+  .niveles-container {
+    padding: 16px 12px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .hero p {
+    font-size: 14px;
+  }
+
+  .tu-nivel-section {
+    margin-bottom: 32px;
+  }
+
+  .tu-nivel-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .tu-nivel-icon-box {
+    width: 56px;
+    height: 56px;
+    font-size: 32px;
+  }
+
+  .tu-nivel-valor {
+    font-size: 32px;
+  }
+
+  .tu-nivel-label {
+    font-size: 11px;
+  }
+
+  .nivel-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .nivel-item::before {
+    height: 2px;
+  }
+
+  .nivel-item:hover {
+    transform: translateY(-2px);
+  }
+
+  .nivel-rank {
+    width: 52px;
+    height: 52px;
+  }
+
+  .nivel-icon-badge {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .nivel-nombre {
+    font-size: 17px;
+  }
+
+  .nivel-rango {
+    font-size: 11px;
+    padding: 2px 10px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  .niveles-container {
+    padding: 40px 24px;
+    max-width: 950px;
+  }
+
+  .tu-nivel-card {
+    gap: 20px;
+    padding: 28px;
+  }
+
+  .nivel-item {
+    gap: 18px;
+    padding: 22px;
+  }
+}
+
+@media (min-width: 1360px) {
+
+  .niveles-container {
+    padding: 60px 40px;
+    max-width: 1200px;
+  }
+}

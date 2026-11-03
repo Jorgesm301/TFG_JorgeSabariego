@@ -1,0 +1,364 @@
+﻿@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mis-reservas-page {
+  min-height: 100vh;
+  background-color: #fafafa;
+  position: relative;
+  overflow-x: hidden;
+  color: #0f172a;
+}
+
+.mis-reservas-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.page-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+  animation: fadeIn 0.4s ease;
+}
+
+.page-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.page-title-info {
+  flex: 1;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 4px;
+  color: #0f172a;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 80px 24px;
+  color: #1976D2;
+}
+
+.loading-state p {
+  font-size: 16px;
+  color: #555;
+}
+
+.error-state {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.error-card {
+  max-width: 400px;
+  width: 100%;
+  border-radius: 16px !important;
+  text-align: center;
+  padding: 24px;
+}
+
+.error-icon {
+  font-size: 48px !important;
+  width: 48px !important;
+  height: 48px !important;
+  display: block;
+  margin: 0 auto 12px;
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.empty-card {
+  max-width: 440px;
+  width: 100%;
+  border-radius: 16px !important;
+  text-align: center;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06) !important;
+}
+
+.empty-icon {
+  font-size: 56px !important;
+  width: 56px !important;
+  height: 56px !important;
+  color: #cbd5e1;
+  display: block;
+  margin: 0 auto 16px;
+}
+
+.empty-card h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px;
+}
+
+.empty-card p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 20px;
+}
+
+.reservas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  animation: slideInUp 0.3s ease;
+}
+
+.reserva-card {
+  border-radius: 14px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07) !important;
+  border: 1px solid rgba(0,0,0,0.07) !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  overflow: hidden;
+}
+
+.reserva-card:hover {
+  box-shadow: 0 6px 20px rgba(25,118,210,0.12) !important;
+  transform: translateY(-2px);
+}
+
+.reserva-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.deporte-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.deporte-badge mat-icon {
+  color: #1976D2;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.estado-chip {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  padding: 0 10px !important;
+  height: 28px !important;
+}
+
+.estado-chip mat-icon {
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.chip-abierto {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+.chip-completo {
+  background: rgba(25,118,210,0.12) !important;
+  color: #1565C0 !important;
+}
+
+.chip-jugado {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+.chip-cancelado {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+
+.reserva-detalles {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 0 8px;
+}
+
+.detalle-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.detalle-item mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  flex-shrink: 0;
+}
+
+mat-card-actions.reserva-acciones {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 16px !important;
+  justify-content: flex-start !important;
+}
+
+.acciones-row {
+  display: flex !important;
+  gap: 10px !important;
+  width: 100%;
+}
+
+.action-btn {
+  flex: 1 1 auto !important;
+  min-width: 120px !important;
+  height: 40px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 12px 16px !important;
+}
+
+.btn-full-width {
+  width: 100% !important;
+  flex: none !important;
+}
+
+.action-btn mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.action-btn span {
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .page-content {
+    padding: 16px 12px 40px;
+  }
+
+  .page-title-row {
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .reservas-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .estado-chip {
+    font-size: 11px !important;
+  }
+
+  .detalle-item {
+    font-size: 12px;
+  }
+
+  mat-card-actions.reserva-acciones {
+    flex-direction: column !important;
+    padding: 12px !important;
+  }
+
+  .action-btn {
+    width: 100% !important;
+    height: 36px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .page-content {
+    padding: 20px 16px 48px;
+  }
+
+  .reservas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-title-row {
+    flex-direction: column;
+  }
+
+  mat-card-actions.reserva-acciones {
+    flex-direction: column !important;
+  }
+
+  .action-btn {
+    width: 100% !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .page-content {
+    padding: 28px 24px 56px;
+  }
+
+  .reservas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1360px) {
+  .page-content {
+    padding: 40px 40px 80px;
+  }
+
+  .reservas-grid {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  }
+}

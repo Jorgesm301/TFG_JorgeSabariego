@@ -1,0 +1,277 @@
+<div class="amigos-page">
+  <app-shared-page-header
+    [estaLogueado]="true"
+    [nombreUsuario]="nombreUsuario"
+    [deportesMenu]="deportesMenu"
+    [totalNoLeidos]="getTotalNoLeidos()"
+    (messagesClick)="toggleDrawer()"
+    (deporteSelect)="navegarADeporte($event)"
+  ></app-shared-page-header>
+
+  <div class="amigos-content">
+    <mat-card class="tabs-card">
+      <div class="tabs-row">
+        <button mat-button class="tab-btn" [class.active]="vistaActual === 'amigos'" (click)="cambiarVista('amigos')">
+          <mat-icon>groups</mat-icon>
+          Mis Amigos
+          <span class="tab-count" *ngIf="amigos.length > 0">{{ amigos.length }}</span>
+        </button>
+
+        <button mat-button class="tab-btn" [class.active]="vistaActual === 'solicitudes'" (click)="cambiarVista('solicitudes')">
+          <mat-icon>mark_email_unread</mat-icon>
+          Solicitudes
+          <span class="tab-count alert" *ngIf="solicitudesPendientes.length > 0">{{ solicitudesPendientes.length }}</span>
+        </button>
+
+        <button mat-button class="tab-btn" [class.active]="vistaActual === 'buscar'" (click)="cambiarVista('buscar')">
+          <mat-icon>person_search</mat-icon>
+          Buscar
+        </button>
+
+        <button mat-button class="tab-btn" [class.active]="vistaActual === 'bloqueados'" (click)="cambiarVista('bloqueados')">
+          <mat-icon>block</mat-icon>
+          Bloqueados
+          <span class="tab-count" *ngIf="usuariosBloqueados.length > 0">{{ usuariosBloqueados.length }}</span>
+        </button>
+      </div>
+
+      <div class="tab-pane" *ngIf="vistaActual === 'amigos'">
+        <div class="loading-state" *ngIf="cargando">
+          <mat-spinner diameter="46"></mat-spinner>
+          <p>Cargando amigos...</p>
+        </div>
+
+        <div class="error-state" *ngIf="error && !cargando">
+          <mat-icon>error_outline</mat-icon>
+          <p>{{ error }}</p>
+          <button mat-raised-button color="primary" (click)="cargarAmigos()">Reintentar</button>
+        </div>
+
+        <div class="cards-list" *ngIf="!cargando && !error && amigos.length > 0">
+          <mat-card class="friend-card" *ngFor="let amigo of amigos">
+            <mat-card-content class="card-content">
+              <div class="avatar-wrap">
+                <mat-icon>account_circle</mat-icon>
+              </div>
+
+              <div class="person-info">
+                <h3>
+                  {{ amigo.name }} {{ amigo.last_name }}
+                  <span class="state-badge blocked" *ngIf="amigo.esta_bloqueado">Bloqueado</span>
+                </h3>
+                <p>{{ amigo.email }}</p>
+              </div>
+
+              <div class="actions-wrap">
+                <button
+                  mat-mini-fab
+                  color="primary"
+                  (click)="abrirChat(amigo)"
+                  [disabled]="amigo.esta_bloqueado"
+                  matTooltip="Enviar mensaje"
+                  aria-label="Enviar mensaje"
+                >
+                  <mat-icon>chat</mat-icon>
+                </button>
+
+                <button
+                  mat-mini-fab
+                  class="menu-button"
+                  [matMenuTriggerFor]="menuAmigo"
+                  aria-label="Mas acciones"
+                >
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menuAmigo="matMenu">
+                  <button mat-menu-item (click)="eliminarAmigo(amigo)">
+                    <mat-icon>person_remove</mat-icon>
+                    <span>Eliminar amigo</span>
+                  </button>
+                  <button mat-menu-item (click)="bloquearAmigo(amigo)" *ngIf="!amigo.esta_bloqueado">
+                    <mat-icon>block</mat-icon>
+                    <span>Bloquear usuario</span>
+                  </button>
+                  <button mat-menu-item (click)="desbloquearAmigoDirecto(amigo)" *ngIf="amigo.esta_bloqueado">
+                    <mat-icon>lock_open</mat-icon>
+                    <span>Desbloquear usuario</span>
+                  </button>
+                </mat-menu>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="empty-state" *ngIf="!cargando && !error && amigos.length === 0">
+          <mat-icon>group_off</mat-icon>
+          <h3>No tienes amigos aun</h3>
+          <p>Empieza buscando usuarios para enviar solicitudes</p>
+        </div>
+      </div>
+
+      <div class="tab-pane" *ngIf="vistaActual === 'solicitudes'">
+        <div class="loading-state" *ngIf="cargandoSolicitudes">
+          <mat-spinner diameter="46"></mat-spinner>
+          <p>Cargando solicitudes...</p>
+        </div>
+
+        <div class="cards-list" *ngIf="!cargandoSolicitudes && solicitudesPendientes.length > 0">
+          <mat-card class="friend-card" *ngFor="let solicitud of solicitudesPendientes">
+            <mat-card-content class="card-content">
+              <div class="avatar-wrap">
+                <mat-icon>person_add</mat-icon>
+              </div>
+
+              <div class="person-info">
+                <h3>{{ solicitud.user?.name }} {{ solicitud.user?.last_name }}</h3>
+                <p>{{ solicitud.user?.email }}</p>
+                <small>Enviada {{ solicitud.created_at | date:'short' }}</small>
+              </div>
+
+              <div class="actions-wrap">
+                <button mat-mini-fab color="primary" (click)="aceptarSolicitud(solicitud)" aria-label="Aceptar solicitud">
+                  <mat-icon>check</mat-icon>
+                </button>
+                <button mat-mini-fab class="danger" (click)="rechazarSolicitud(solicitud)" aria-label="Rechazar solicitud">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="empty-state" *ngIf="!cargandoSolicitudes && solicitudesPendientes.length === 0">
+          <mat-icon>drafts</mat-icon>
+          <h3>No tienes solicitudes pendientes</h3>
+          <p>Cuando alguien te agregue, aparecera aqui</p>
+        </div>
+      </div>
+
+      <div class="tab-pane" *ngIf="vistaActual === 'buscar'">
+        <mat-card class="search-card">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Buscar por nombre o email</mat-label>
+            <input matInput [(ngModel)]="busqueda" (input)="buscarUsuarios()" />
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </mat-card>
+
+        <div class="loading-state" *ngIf="cargandoBusqueda">
+          <mat-spinner diameter="46"></mat-spinner>
+          <p>Buscando usuarios...</p>
+        </div>
+
+        <div class="cards-list" *ngIf="!cargandoBusqueda && busqueda.trim().length > 0 && usuariosBuscados.length > 0">
+          <mat-card class="friend-card" *ngFor="let usuario of usuariosBuscados">
+            <mat-card-content class="card-content">
+              <div class="avatar-wrap">
+                <mat-icon>account_circle</mat-icon>
+              </div>
+
+              <div class="person-info">
+                <h3>{{ usuario.name }} {{ usuario.last_name }}</h3>
+                <p>{{ usuario.email }}</p>
+              </div>
+
+              <div class="actions-wrap">
+                <button
+                  mat-stroked-button
+                  color="primary"
+                  *ngIf="usuario.relacion === 'none'"
+                  (click)="enviarSolicitud(usuario)"
+                >
+                  <mat-icon>person_add</mat-icon>
+                  Agregar
+                </button>
+
+                <span class="state-badge pending" *ngIf="usuario.relacion === 'pending'">
+                  <mat-icon>schedule</mat-icon>
+                  Pendiente
+                </span>
+
+                <span class="state-badge friend" *ngIf="usuario.relacion === 'accepted'">
+                  <mat-icon>verified</mat-icon>
+                  Amigos
+                </span>
+
+                <span class="state-badge blocked" *ngIf="usuario.relacion === 'blocked'">
+                  <mat-icon>block</mat-icon>
+                  Bloqueado
+                </span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="empty-state" *ngIf="!cargandoBusqueda && busqueda.trim().length === 0">
+          <mat-icon>travel_explore</mat-icon>
+          <h3>Busca nuevos amigos</h3>
+          <p>Escribe un nombre o un email para empezar</p>
+        </div>
+
+        <div class="empty-state" *ngIf="!cargandoBusqueda && busqueda.trim().length > 0 && usuariosBuscados.length === 0">
+          <mat-icon>search_off</mat-icon>
+          <h3>No hay resultados</h3>
+          <p>Prueba con otro termino de busqueda</p>
+        </div>
+      </div>
+
+      <div class="tab-pane" *ngIf="vistaActual === 'bloqueados'">
+        <div class="loading-state" *ngIf="cargandoBloqueados">
+          <mat-spinner diameter="46"></mat-spinner>
+          <p>Cargando bloqueados...</p>
+        </div>
+
+        <div class="cards-list" *ngIf="!cargandoBloqueados && usuariosBloqueados.length > 0">
+          <mat-card class="friend-card blocked-card" *ngFor="let bloqueado of usuariosBloqueados">
+            <mat-card-content class="card-content">
+              <div class="avatar-wrap blocked-avatar">
+                <mat-icon>person_off</mat-icon>
+              </div>
+
+              <div class="person-info">
+                <h3>{{ bloqueado.usuario.name }}</h3>
+                <p>{{ bloqueado.usuario.email }}</p>
+                <small>Bloqueado: {{ bloqueado.bloqueado_en | date:'short' }}</small>
+              </div>
+
+              <div class="actions-wrap">
+                <button mat-stroked-button color="primary" (click)="desbloquearUsuario(bloqueado)">
+                  <mat-icon>lock_open</mat-icon>
+                  Desbloquear
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="empty-state" *ngIf="!cargandoBloqueados && usuariosBloqueados.length === 0">
+          <mat-icon>verified_user</mat-icon>
+          <h3>No tienes usuarios bloqueados</h3>
+          <p>Tu lista de bloqueados esta vacia</p>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <app-shared-messages-drawer
+    [abierto]="drawerAbierto"
+    [modoNuevoMensaje]="modoNuevoMensaje"
+    [cargandoConversaciones]="cargandoConversaciones"
+    [conversaciones]="conversaciones"
+    [cargandoAmigos]="cargandoAmigosDrawer"
+    [amigos]="amigosDrawer"
+    (cerrar)="cerrarDrawer()"
+    (abrirNuevoMensaje)="abrirNuevoMensaje()"
+    (volverAConversaciones)="volverAConversaciones()"
+    (abrirChat)="abrirChatDrawer($event)"
+    (irAMensajes)="irAMensajes()"
+  ></app-shared-messages-drawer>
+
+  <div class="snack-mensaje" *ngIf="mensaje"
+    [class.snack-error]="mensajeTipo === 'error'"
+    [class.snack-success]="mensajeTipo === 'success'"
+    [class.snack-info]="mensajeTipo === 'info'">
+    <mat-icon>{{ mensajeTipo === 'error' ? 'error_outline' : mensajeTipo === 'success' ? 'check_circle' : 'info' }}</mat-icon>
+    {{ mensaje }}
+  </div>
+</div>

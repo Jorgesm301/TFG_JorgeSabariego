@@ -1,0 +1,169 @@
+<div class="page">
+  <app-shared-page-header
+    [estaLogueado]="estaLogueado"
+    [nombreUsuario]="nombreUsuario"
+    [deportesMenu]="deportesMenu"
+    [totalNoLeidos]="getTotalNoLeidos()"
+    (messagesClick)="toggleDrawer()"
+    (deporteSelect)="navegarADeporte($event)"
+  ></app-shared-page-header>
+
+  <div class="proximo-partido-flotante" *ngIf="estaLogueado && proximoPartido">
+    <mat-card class="proximo-partido-flotante-card" (click)="proximoPartido.id && irAPartidoDetalle(proximoPartido.id)">
+      <mat-card-content>
+        <div class="partido-content">
+          <h3 class="partido-nombre">PRÓXIMO PARTIDO</h3>
+          <h4 class="partido-deporte">{{ proximoPartido.sport?.nombre }}</h4>
+          <div class="partido-rango">
+            {{ formatearHora(proximoPartido.hora_inicio) }} • {{ proximoPartido.fecha | formatFecha: 'corta' }}
+          </div>
+          <div class="partido-ubicacion">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ proximoPartido.pista }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <main class="content">
+
+    <div class="hero-text animate-on-scroll">
+      <h1 class="hero-title">¡Bienvenido de nuevo!</h1>
+    </div>
+
+    <section class="slider animate-on-scroll" aria-label="Galería de deportes">
+      <mat-card class="slider-card">
+        <div class="slider-frame">
+          <img
+            class="slide-image"
+            [src]="slides[currentIndex].imageUrl"
+            [alt]="slides[currentIndex].title"
+            (error)="onImageError($event)"
+            loading="eager"
+          />
+
+          <div class="slide-overlay">
+            <div class="slide-title">{{ slides[currentIndex].title }}</div>
+          </div>
+
+          <button mat-icon-button class="nav-arrow left" (click)="prevSlide()" aria-label="Anterior">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <button mat-icon-button class="nav-arrow right" (click)="nextSlide()" aria-label="Siguiente">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+
+        <div class="dots" role="tablist" aria-label="Seleccionar imagen">
+          <button
+            class="dot"
+            *ngFor="let s of slides; let i = index"
+            [class.active]="i === currentIndex"
+            (click)="goTo(i)"
+            [attr.aria-label]="'Ir a ' + s.title"
+          ></button>
+        </div>
+      </mat-card>
+    </section>
+
+    <section class="calendario-section animate-on-scroll" *ngIf="estaLogueado">
+      <div class="calendario-header">
+        <h2 class="calendario-title">Tus próximas reservas</h2>
+      </div>
+
+      <mat-card class="calendario-card-full">
+        <mat-card-content>
+          <div class="calendario-controls">
+            <button mat-icon-button (click)="cambiarMes(-1)" class="btn-nav-calendario">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            <h3 class="mes-nombre-full">{{ nombreMes | titlecase }}</h3>
+            <button mat-icon-button (click)="cambiarMes(1)" class="btn-nav-calendario">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+          </div>
+          <div class="dias-semana-full">
+            <div *ngFor="let day of ['L', 'M', 'X', 'J', 'V', 'S', 'D']" class="dia-semana-full">
+              {{ day }}
+            </div>
+          </div>
+
+          <div class="dias-grid-full">
+            <div
+              *ngFor="let dia of diasCalendario"
+              class="dia-cell-full"
+              [class.otro-mes]="dia === null"
+              [class.con-evento]="tienePartidoEnDia(dia)"
+              [class.hoy]="esHoy(dia)"
+              (click)="tienePartidoEnDia(dia) && dia ? irAPartidoDetalle(getPartidosPorDia(dia)[0]?.id!) : null"
+            >
+              <div class="dia-numero-full">{{ dia }}</div>
+              <div class="eventos-day" *ngIf="tienePartidoEnDia(dia)">
+                <div class="evento-item" *ngFor="let partido of getPartidosPorDia(dia).slice(0, 2)" [matTooltip]="obtenerDetallesPartido(partido)" matTooltipPosition="above" [style.backgroundColor]="obtenerColorDeporte(partido.sport?.nombre)">
+                  <mat-icon class="evento-icon">event</mat-icon>
+                  <span class="evento-deporte">{{ partido.sport?.nombre | slice:0:6 }}</span>
+                </div>
+                <div class="evento-mas" *ngIf="getPartidosPorDia(dia).length > 2">
+                  +{{ getPartidosPorDia(dia).length - 2 }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </section>
+
+  </main>
+
+  <footer class="footer animate-on-scroll">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3 class="footer-title">Cookies</h3>
+      </div>
+
+      <div class="footer-section">
+        <h3 class="footer-title">Contacto</h3>
+        <ul class="footer-links">
+          <li>
+            <mat-icon class="contact-icon">location_on</mat-icon>
+            Calle del Deporte, 123
+          </li>
+          <li>
+            <mat-icon class="contact-icon">phone</mat-icon>
+            +34 123 456 789
+          </li>
+          <li>
+            <mat-icon class="contact-icon">email</mat-icon>
+            info@polideportivo.es
+          </li>
+        </ul>
+      </div>
+
+
+    <div class="footer-section">
+      <h3 class="footer-title">Terminos y condiciones</h3>
+    </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="copyright">
+        © {{ currentYear }} Gestion de reservas JS. Todos los derechos reservados.
+      </p>
+    </div>
+  </footer>
+
+  <app-shared-messages-drawer
+    [abierto]="drawerAbierto"
+    [modoNuevoMensaje]="modoNuevoMensaje"
+    [cargandoConversaciones]="cargandoConversaciones"
+    [conversaciones]="conversaciones"
+    [cargandoAmigos]="cargandoAmigos"
+    [amigos]="amigos"
+    (cerrar)="cerrarDrawer()"
+    (abrirNuevoMensaje)="abrirNuevoMensaje()"
+    (volverAConversaciones)="volverAConversaciones()"
+    (abrirChat)="abrirChat($event)"
+    (irAMensajes)="irAMensajes()"
+  ></app-shared-messages-drawer>
+</div>

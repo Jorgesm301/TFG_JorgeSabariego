@@ -1,0 +1,55 @@
+<div class="niveles-page">
+  <app-shared-page-header
+    [estaLogueado]="estaLogueado"
+    [nombreUsuario]="nombreUsuario"
+    [deportesMenu]="deportesMenu"
+    [totalNoLeidos]="getTotalNoLeidos()"
+    (messagesClick)="toggleDrawer()"
+    (deporteSelect)="navegarADeporte($event)"
+  ></app-shared-page-header>
+
+  <div class="niveles-container">
+    <div class="hero">
+      <h1>Ranking ELO</h1>
+    </div>
+
+    <div class="tu-nivel-section" *ngIf="eloPromedio > 0">
+      <div class="tu-nivel-card">
+        <div class="tu-nivel-icon-box">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <div class="tu-nivel-info">
+          <span class="tu-nivel-label">Tu ELO</span>
+          <span class="tu-nivel-valor">{{ eloPromedio }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="niveles-list">
+      <div class="nivel-item" *ngFor="let nivel of niveles" [class.activo]="getNivelActual(nivel)">
+        <div class="nivel-rank">
+          <mat-icon class="nivel-icon-badge">{{ nivel.icon }}</mat-icon>
+        </div>
+
+        <div class="nivel-content">
+          <h3 class="nivel-nombre">{{ nivel.nombre }}</h3>
+          <span class="nivel-rango">{{ nivel.rango }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-shared-messages-drawer
+    [abierto]="drawerAbierto"
+    [modoNuevoMensaje]="modoNuevoMensaje"
+    [cargandoConversaciones]="cargandoConversaciones"
+    [conversaciones]="conversaciones"
+    [cargandoAmigos]="cargandoAmigos"
+    [amigos]="amigos"
+    (cerrar)="cerrarDrawer()"
+    (abrirNuevoMensaje)="abrirNuevoMensaje()"
+    (volverAConversaciones)="volverAConversaciones()"
+    (abrirChat)="abrirChat($event)"
+    (irAMensajes)="irAMensajes()"
+  ></app-shared-messages-drawer>
+</div>

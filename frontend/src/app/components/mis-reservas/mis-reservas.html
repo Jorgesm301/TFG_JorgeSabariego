@@ -1,0 +1,155 @@
+<div class="mis-reservas-page">
+  <app-shared-page-header
+    [estaLogueado]="estaLogueado"
+    [nombreUsuario]="nombreUsuario"
+    [deportesMenu]="deportesMenu"
+    [totalNoLeidos]="totalNoLeidos$ | async"
+    [activeNav]="'mis-reservas'"
+    (messagesClick)="toggleDrawer()"
+    (deporteSelect)="navegarADeporte($event)"
+  ></app-shared-page-header>
+
+  <div class="page-content">
+    <div class="page-title-row">
+      <div class="page-title-info">
+        <h1 class="page-title">Mis Reservas</h1>
+        <p class="page-subtitle">Gestiona tus partidos y reservas activas</p>
+      </div>
+      <button mat-raised-button color="primary" [matMenuTriggerFor]="nuevaReservaMenu">
+        <mat-icon>add_circle</mat-icon>
+        Nueva Reserva
+      </button>
+      <mat-menu #nuevaReservaMenu="matMenu">
+        <button mat-menu-item *ngFor="let deporte of deportesMenu" (click)="navegarADeporte(deporte.ruta)">
+          <mat-icon>{{ deporte.icon }}</mat-icon>
+          <span>{{ deporte.nombre }}</span>
+        </button>
+      </mat-menu>
+    </div>
+
+    <div class="loading-state" *ngIf="cargando">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Cargando tus reservas...</p>
+    </div>
+
+    <div class="error-state" *ngIf="error && !cargando">
+      <mat-card class="error-card">
+        <mat-card-content>
+          <mat-icon class="error-icon" color="warn">error_outline</mat-icon>
+          <h3>{{ error }}</h3>
+          <button mat-raised-button color="primary" (click)="cargarReservas()">
+            <mat-icon>refresh</mat-icon>
+            Reintentar
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="empty-state" *ngIf="!cargando && !error && reservas.length === 0">
+      <mat-card class="empty-card">
+        <mat-card-content>
+          <mat-icon class="empty-icon">calendar_today</mat-icon>
+          <h2>No tienes reservas</h2>
+          <p>Aún no has realizado ninguna reserva. Explora los deportes y reserva tu partido.</p>
+          <button mat-raised-button color="primary" [matMenuTriggerFor]="nuevaReservaMenu2">
+            <mat-icon>add_circle</mat-icon>
+            Reservar ahora
+          </button>
+          <mat-menu #nuevaReservaMenu2="matMenu">
+            <button mat-menu-item *ngFor="let deporte of deportesMenu" (click)="navegarADeporte(deporte.ruta)">
+              <mat-icon>{{ deporte.icon }}</mat-icon>
+              <span>{{ deporte.nombre }}</span>
+            </button>
+          </mat-menu>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="reservas-grid" *ngIf="!cargando && !error && reservas.length > 0">
+      <mat-card class="reserva-card" *ngFor="let reserva of reservas">
+        <mat-card-content>
+          <div class="reserva-top">
+            <div class="deporte-badge">
+              <mat-icon>sports</mat-icon>
+              <span>{{ reserva.sport?.nombre || 'Deporte' }}</span>
+            </div>
+            <mat-chip class="estado-chip"
+              [class.chip-abierto]="reserva.estado === 'abierto'"
+              [class.chip-completo]="reserva.estado === 'completo'"
+              [class.chip-jugado]="reserva.estado === 'jugado'"
+              [class.chip-cancelado]="reserva.estado === 'cancelado'">
+              <mat-icon>{{
+                reserva.estado === 'abierto' ? 'lock_open' :
+                reserva.estado === 'completo' ? 'groups' :
+                reserva.estado === 'jugado' ? 'emoji_events' :
+                'cancel'
+              }}</mat-icon>
+              {{
+                reserva.estado === 'abierto' ? 'Abierto' :
+                reserva.estado === 'completo' ? 'Completo' :
+                reserva.estado === 'jugado' ? 'Jugado' : 'Cancelado'
+              }}
+            </mat-chip>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <div class="reserva-detalles">
+            <div class="detalle-item">
+              <mat-icon color="primary">event</mat-icon>
+              <span>{{ reserva.fecha | formatFecha: 'corta' }}</span>
+            </div>
+            <div class="detalle-item">
+              <mat-icon color="primary">schedule</mat-icon>
+              <span>{{ reserva.hora_inicio }} — {{ reserva.hora_fin }}</span>
+            </div>
+            <div class="detalle-item">
+              <mat-icon color="primary">location_on</mat-icon>
+              <span>{{ reserva.pista }}</span>
+            </div>
+            <div class="detalle-item">
+              <mat-icon color="primary">group</mat-icon>
+              <span>{{ reserva.jugadores_actuales }}/{{ reserva.max_jugadores }} jugadores</span>
+            </div>
+            <div class="detalle-item" *ngIf="reserva.creador">
+              <mat-icon color="primary">person</mat-icon>
+              <span>Creado por {{ reserva.creador.name }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions class="reserva-acciones">
+          <button mat-raised-button color="primary" [routerLink]="['/partido', reserva.id]" *ngIf="reserva.estado === 'completo' || reserva.estado === 'jugado'" class="action-btn btn-full-width">
+            <mat-icon>visibility</mat-icon>
+            <span>Ver Partido</span>
+          </button>
+
+          <div class="acciones-row" *ngIf="mostrarSegundaFila(reserva)">
+            <button mat-raised-button color="primary" (click)="anadirAGoogleCalendar(reserva)" [matTooltip]="'Añadir a Google Calendar'" *ngIf="reserva.estado === 'completo'" class="action-btn">
+              <mat-icon>calendar_month</mat-icon>
+              <span>Google Calendar</span>
+            </button>
+            <button mat-raised-button color="warn" (click)="salirseDeReserva(reserva)" *ngIf="reserva.estado !== 'cancelado' && reserva.estado !== 'jugado'" class="action-btn">
+              <mat-icon>exit_to_app</mat-icon>
+              <span>Salir</span>
+            </button>
+          </div>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <app-shared-messages-drawer
+    [abierto]="drawerAbierto$ | async"
+    [modoNuevoMensaje]="modoNuevoMensaje$ | async"
+    [cargandoConversaciones]="cargandoConversaciones$ | async"
+    [conversaciones]="conversaciones$ | async"
+    [cargandoAmigos]="cargandoAmigos$ | async"
+    [amigos]="amigos$ | async"
+    (cerrar)="cerrarDrawer()"
+    (abrirNuevoMensaje)="abrirNuevoMensaje()"
+    (volverAConversaciones)="volverAConversaciones()"
+    (abrirChat)="abrirChat($event)"
+    (irAMensajes)="irAMensajes()"
+  ></app-shared-messages-drawer>
+</div>

@@ -1,0 +1,318 @@
+.mensajes-page {
+  min-height: 100vh;
+  background-color: #fafafa;
+  position: relative;
+  overflow-x: hidden;
+  color: #0f172a;
+}
+
+.mensajes-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.mensajes-page::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at top,
+    rgba(255, 255, 255, 0.9) 0%,
+    transparent 60%
+  );
+  z-index: 0;
+  pointer-events: none;
+}
+
+
+
+.mensajes-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 26px 20px 30px;
+  position: relative;
+  z-index: 1;
+}
+
+.title-wrap {
+  margin-bottom: 18px;
+}
+
+.page-title {
+  font-size: 36px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.3px;
+  background: linear-gradient(135deg, #1565C0 0%, #42A5F5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-subtitle {
+  margin: 8px 0 0;
+  color: rgba(0, 0, 0, 0.58);
+  font-size: 15px;
+}
+
+.info-badge {
+  --mdc-elevated-card-container-color: rgba(255, 255, 255, 0.96);
+  background: linear-gradient(135deg, rgba(21, 101, 192, 0.12), rgba(66, 165, 245, 0.16));
+  border: 1px solid rgba(25, 118, 210, 0.2);
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.08);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #1565C0;
+  font-weight: 600;
+}
+
+.loading-state,
+.error-state,
+.empty-state {
+  --mdc-elevated-card-container-color: rgba(255, 255, 255, 0.96);
+  text-align: center;
+  border-radius: 16px;
+  border: 1px solid rgba(21, 101, 192, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  padding: 32px 24px;
+}
+
+.loading-state p,
+.error-state p,
+.empty-state p {
+  margin: 12px 0 0;
+  color: rgba(0, 0, 0, 0.58);
+}
+
+.error-state mat-icon,
+.empty-state mat-icon {
+  color: #42A5F5;
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+.empty-state h3 {
+  margin: 12px 0 0;
+  color: #1565C0;
+}
+
+.empty-state button {
+  margin-top: 16px;
+}
+
+.conversaciones-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.conversacion-card {
+  --mdc-elevated-card-container-color: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(21, 101, 192, 0.08);
+  border-radius: 16px;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.05),
+    0 2px 8px rgba(0, 0, 0, 0.03);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.conversacion-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(25, 118, 210, 0.2);
+  box-shadow:
+    0 14px 30px rgba(21, 101, 192, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.conversacion-card.no-leido {
+  background: linear-gradient(135deg, rgba(21,101,192,0.06), rgba(66,165,245,0.08));
+  border-color: rgba(25, 118, 210, 0.22);
+}
+
+.conv-card-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px !important;
+}
+
+.conv-avatar {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1976D2 0%, #42A5F5 100%);
+  box-shadow: 0 6px 16px rgba(21, 101, 192, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.conv-avatar mat-icon {
+  color: #fff;
+  font-size: 30px;
+  width: 30px;
+  height: 30px;
+}
+
+.badge-no-leidos {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #1976D2;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+}
+
+.conv-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.conv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.conv-nombre {
+  margin: 0;
+  font-size: 16px;
+  color: #0f172a;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.conv-fecha {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+}
+
+.conv-mensaje {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conv-mensaje.no-leido-texto {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.tu-texto {
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+}
+
+.conv-arrow {
+  color: rgba(21, 101, 192, 0.7);
+}
+
+@media (max-width: 480px) {
+
+  .mensajes-content {
+    padding: 16px 12px 30px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .title-wrap {
+    margin-bottom: 12px;
+  }
+
+  .page-subtitle {
+    font-size: 13px;
+  }
+
+  .conv-card-content {
+    gap: 10px;
+    padding: 12px !important;
+  }
+
+  .info-badge {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .loading-state,
+  .error-state,
+  .empty-state {
+    padding: 24px 16px;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+
+  .mensajes-content {
+    padding: 20px 12px;
+  }
+
+  .page-title {
+    font-size: 30px;
+  }
+
+  .conv-card-content {
+    gap: 12px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+
+  .mensajes-content {
+    padding: 26px 18px;
+    max-width: 900px;
+  }
+
+  .page-title {
+    font-size: 32px;
+  }
+}
+
+@media (min-width: 1360px) {
+
+  .mensajes-content {
+    padding: 32px 40px;
+    max-width: 1100px;
+  }
+
+  .page-title {
+    font-size: 36px;
+  }
+}

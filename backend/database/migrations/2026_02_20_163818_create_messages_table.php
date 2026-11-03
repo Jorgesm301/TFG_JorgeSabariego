@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-
-        Schema::create('deportes', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->integer('max_jugadores')->nullable();
-            $table->text('descripcion')->nullable();
+            $table->foreignId('sender_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('receiver_id')->constrained('users')->onDelete('cascade');
+            $table->text('message');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
-
     }
 
     /**
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deportes');
+        Schema::dropIfExists('messages');
     }
 };

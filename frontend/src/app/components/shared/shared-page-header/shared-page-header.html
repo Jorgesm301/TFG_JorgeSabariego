@@ -1,0 +1,71 @@
+<mat-toolbar class="header">
+  <a routerLink="/" class="brand" aria-label="Inicio">
+    <div class="brand-icon">
+      <img src="/logo.svg" alt="JS Logo" class="logo-img">
+    </div>
+  </a>
+
+  <span class="spacer"></span>
+
+  <div class="actions">
+    <ng-container *ngIf="!estaLogueado">
+      <button mat-button routerLink="/login">Iniciar sesion</button>
+      <button mat-raised-button color="primary" routerLink="/registro">Registrarse</button>
+    </ng-container>
+
+    <ng-container *ngIf="estaLogueado">
+      <button
+        *ngIf="showMessagesButton"
+        mat-icon-button
+        (click)="onMessagesClick()"
+        class="messages-btn"
+        matTooltip="Mensajes"
+        [matBadge]="totalNoLeidos"
+        [matBadgeHidden]="totalNoLeidos === 0"
+        matBadgeColor="warn"
+        matBadgeSize="small"
+      >
+        <mat-icon>mail</mat-icon>
+      </button>
+
+      <button mat-button [routerLink]="profileRoute">
+        <mat-icon>account_circle</mat-icon>
+        <span class="user-name">{{ nombreUsuario }}</span>
+      </button>
+    </ng-container>
+  </div>
+</mat-toolbar>
+
+<nav *ngIf="showSubheader" class="subheader">
+  <div class="subheader-inner">
+    <button
+      *ngIf="showReservarMenu"
+      mat-button
+      [matMenuTriggerFor]="reservarMenu"
+      class="nav-button"
+      [class.nav-button-active]="activeNav === 'reservar'"
+    >
+      <mat-icon>event_available</mat-icon>
+      <span>Reservar</span>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+
+    <mat-menu #reservarMenu="matMenu">
+      <button mat-menu-item *ngFor="let deporte of deportesMenu" (click)="onSelectDeporte(deporte.ruta)">
+        <mat-icon>{{ deporte.icon }}</mat-icon>
+        <span>{{ deporte.nombre }}</span>
+      </button>
+    </mat-menu>
+
+    <button
+      *ngIf="showMisReservasButton"
+      mat-button
+      routerLink="/mis-reservas"
+      class="nav-button"
+      [class.nav-button-active]="activeNav === 'mis-reservas'"
+    >
+      <mat-icon>book_online</mat-icon>
+      <span>Mis Reservas</span>
+    </button>
+  </div>
+</nav>
